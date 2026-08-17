@@ -18,6 +18,8 @@ except FileNotFoundError:
 N = len(PROBES)
 FULL = 620          # px of a full-width bar
 LABEL_GAP = 9
+# Read and rewritten in place: the chart markup is source, only the rows are derived.
+OVERVIEW = "resources/overview.html"
 
 # One row per family; aliases (html5, epub3, jats_publishing) score the same.
 ROWS = ["markdown", "html", "commonmark_x", "epub", "djot", "rst", "markdown_mmd",
@@ -63,7 +65,7 @@ if CV:
             row("carve", "bridge&#8202;&#8224;", "bridge", "#2a78d6", "#eb6834")]
 out += [row(f, "", "", "#2a78d6", "#eb6834") for f in ROWS]
 
-src = open("overview.html", encoding="utf-8").read()
+src = open(OVERVIEW, encoding="utf-8").read()
 start = src.index('<div class="chart">') + len('<div class="chart">')
 end = src.index("</div>\n<div class=\"axis\"", start)
 src = src[:start] + "\n" + "\n".join(out) + "\n" + src[end:]
@@ -85,5 +87,5 @@ src = re.sub(r"moves djot from \d+ to \d+ expressed and \d+ to \d+\s*unchanged",
              % (expressed("djot"), expressed("djot") + 4, unchanged("djot"), unchanged("djot") + 2),
              src)
 src = src.replace("pandoc-format-fidelity.pdf", "docs/report.pdf")
-open("overview.html", "w", encoding="utf-8").write(src)
+open(OVERVIEW, "w", encoding="utf-8").write(src)
 print("overview rows regenerated:", len(out))

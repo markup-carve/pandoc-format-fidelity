@@ -1,13 +1,17 @@
 import { readFileSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 const bridge = process.env.CARVE_BRIDGE;
 if (!bridge) {
     console.error('set CARVE_BRIDGE to a pandoc-carve dist/index.js to run this lane');
     process.exit(2);
 }
+// A relative CARVE_BRIDGE is relative to where make was run, not to this file
+// in src/ - a bare import specifier would resolve against the module instead.
 const {
     carveToPandoc, pandocToCarve, pandocToCarveAst, carveAstToPandoc,
     PANDOC_API_VERSION,
-} = await import(bridge);
+} = await import(pathToFileURL(resolve(bridge)).href);
 
 const { probes, meta, metaBlocks } = JSON.parse(readFileSync('results/probes.json', 'utf8'));
 

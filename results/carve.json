@@ -7,8 +7,8 @@
   "superscript": "exact",
   "subscript": "exact",
   "smallcaps": "exact",
-  "quoted_double": "diff",
-  "quoted_single": "diff",
+  "quoted_double": "exact",
+  "quoted_single": "exact",
   "code_inline": "exact",
   "code_inline_attrs": "exact",
   "math_inline": "exact",
@@ -19,7 +19,7 @@
   "softbreak": "exact",
   "span_attrs": "exact",
   "note": "exact",
-  "cite": "diff",
+  "cite": "exact",
   "link": "exact",
   "link_title": "exact",
   "link_attrs": "exact",
@@ -63,8 +63,8 @@
   "table_cell_attrs": "exact",
   "table_cell_align": "exact",
   "table_row_attrs": "exact",
-  "table_block_cell": "diff",
-  "table_rowheadcols": "same",
+  "table_block_cell": "exact",
+  "table_rowheadcols": "exact",
   "table_multibody": "same"
  },
  "ast": {
@@ -75,8 +75,8 @@
   "superscript": "exact",
   "subscript": "exact",
   "smallcaps": "exact",
-  "quoted_double": "diff",
-  "quoted_single": "diff",
+  "quoted_double": "exact",
+  "quoted_single": "exact",
   "code_inline": "exact",
   "code_inline_attrs": "exact",
   "math_inline": "exact",
@@ -87,7 +87,7 @@
   "softbreak": "exact",
   "span_attrs": "exact",
   "note": "exact",
-  "cite": "diff",
+  "cite": "exact",
   "link": "exact",
   "link_title": "exact",
   "link_attrs": "exact",
@@ -131,7 +131,7 @@
   "table_cell_attrs": "exact",
   "table_cell_align": "exact",
   "table_row_attrs": "exact",
-  "table_block_cell": "diff",
+  "table_block_cell": "exact",
   "table_rowheadcols": "exact",
   "table_multibody": "exact"
  },
@@ -145,12 +145,8 @@
   "smallcaps": [
    "SmallCaps has no Carve form - degraded to a .smallcaps span"
   ],
-  "quoted_double": [
-   "Quoted degraded to literal curly quote characters - Carve has no quote node, so the quotation does not re-import as Quoted"
-  ],
-  "quoted_single": [
-   "Quoted degraded to literal curly quote characters - Carve has no quote node, so the quotation does not re-import as Quoted"
-  ],
+  "quoted_double": [],
+  "quoted_single": [],
   "code_inline": [],
   "code_inline_attrs": [],
   "math_inline": [],
@@ -217,7 +213,7 @@
    "table: a cell holds block content, which a pipe table cannot spell - emitted as a `::: list-table` (structure preserved)"
   ],
   "table_rowheadcols": [
-   "table: row-head columns - preserved in the Carve AST as `rowGroups`, but a pipe table spells only a leading run of header rows, so the emitted source flattens them into body rows"
+   "table: row-head columns, which a pipe table cannot spell - emitted as a `::: list-table` with `header-cols` (structure preserved)"
   ],
   "table_multibody": [
    "table: 2 body groups - preserved in the Carve AST as `rowGroups`, but a pipe table spells only a leading run of header rows, so the emitted source flattens them into body rows"
@@ -231,8 +227,8 @@
   "superscript": "{^alpha^}\n",
   "subscript": "{,alpha,}\n",
   "smallcaps": "[alpha]{.smallcaps}\n",
-  "quoted_double": "“alpha”\n",
-  "quoted_single": "‘alpha’\n",
+  "quoted_double": "\"alpha\"\n",
+  "quoted_single": "'alpha'\n",
   "code_inline": "`alpha`\n",
   "code_inline_attrs": "`alpha`{#cid .python k=v}\n",
   "math_inline": "$`x^2`\n",
@@ -288,7 +284,7 @@
   "table_cell_align": "|> a | b |\n| c | d |\n",
   "table_row_attrs": "| a | b |{#rid .c1}\n| c | d |\n",
   "table_block_cell": "::: list-table\n- - alpha\n\n    beta\n\n  - b\n- - c\n  - d\n:::\n",
-  "table_rowheadcols": "| a | b |\n| c | d |\n",
+  "table_rowheadcols": "{header-cols=1}\n::: list-table\n- - a\n  - b\n- - c\n  - d\n:::\n",
   "table_multibody": "| a | b |\n| c | d |\n"
  },
  "rt": {
@@ -357,7 +353,7 @@
    "table_cell_align": "diff",
    "table_row_attrs": "diff",
    "table_block_cell": "diff",
-   "table_rowheadcols": "same",
+   "table_rowheadcols": "diff",
    "table_multibody": "same"
   },
   "ast": {
@@ -435,7 +431,7 @@
    "subtitle": "exact",
    "author": "exact",
    "date": "exact",
-   "abstract": "lost",
+   "abstract": "exact",
    "keywords": "exact",
    "lang": "exact",
    "custom": "exact",
@@ -447,7 +443,7 @@
    "subtitle": "exact",
    "author": "exact",
    "date": "exact",
-   "abstract": "lost",
+   "abstract": "exact",
    "keywords": "exact",
    "lang": "exact",
    "custom": "exact",
@@ -455,5 +451,5 @@
    "flag": "exact"
   }
  },
- "carveMeta": "---yaml\ntitle: Tee\nsubtitle: Sub\nauthor: [Ann, Bob]\ndate: 2020-01-02\nkeywords: [kw1, kw2]\nlang: de\ncustom: Cust\nnested:\n  inner: Deep\nflag: true\n---\n\nbody\n"
+ "carveMeta": "---yaml\ntitle: Tee\nsubtitle: Sub\nauthor: [Ann, Bob]\ndate: 2020-01-02\nabstract: |\n  Abs\nkeywords: [kw1, kw2]\nlang: de\ncustom: Cust\nnested:\n  inner: Deep\nflag: true\n---\n\nbody\n"
 }

@@ -12,7 +12,8 @@ import base64, io, json, os, pathlib, sys, zipfile, urllib.request
 # pandoc-server has no filesystem access: media referenced by a probe has to be
 # supplied in the request, or every media-embedding writer 500s.
 FILES = {"i.png": base64.b64encode(
-    (pathlib.Path(__file__).parent / "fixtures" / "i.png").read_bytes()).decode()}
+    (pathlib.Path(__file__).resolve().parent.parent / "fixtures" / "i.png")
+    .read_bytes()).decode()}
 from concurrent.futures import ThreadPoolExecutor
 from probes import PROBES, API
 

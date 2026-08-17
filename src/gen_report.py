@@ -167,7 +167,7 @@ def table4():
     out.append("</tbody></table>")
     return "".join(out)
 
-html = open("template.html", encoding="utf-8").read()
+html = open("resources/template.html", encoding="utf-8").read()
 for key, fn in [("T1", table1), ("T2", table2), ("T3", table3), ("T4", table4),
                 ("TCARVE", tcarve)]:
     html = html.replace("{{%s}}" % key, fn())

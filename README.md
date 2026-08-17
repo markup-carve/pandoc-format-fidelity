@@ -7,19 +7,21 @@ every writer pandoc ships and read back by every reader. The output is a grid sa
 per format and per feature, whether the format can express it at all and whether it
 comes home unchanged.
 
+![Per format: how many of the 66 probes the writer can express, and how many read back unchanged](docs/overview.png)
+
 Report: [`docs/index.html`](docs/index.html) · [`docs/report.pdf`](docs/report.pdf)
 
-## The method, because it is the part people doubt
+## The method
 
 Each probe is a **pair** of ASTs - a `rich` one that uses a feature and a `degraded`
 one that does not - and the question is what pandoc does with the two of them:
 
 | lane | question | verdicts |
 |---|---|---|
-| writer (`run_matrix.py`) | is `write(rich)` byte-identical to `write(degraded)`? | `diff` = expressed, `same` = cannot express |
-| round-trip (`run_roundtrip.py`) | is `read(write(rich))` the same AST as `read(write(degraded))`? | `diff` = survives, `same` = lost |
-| exact (`run_exact.py`) | does `read(write(rich))` equal `rich`? | `exact` / `canonical` / `lossy` |
-| metadata (`run_meta.py`) | which of ten metadata shapes survive standalone? | `exact` / `partial` / `lost` |
+| writer (`src/run_matrix.py`) | is `write(rich)` byte-identical to `write(degraded)`? | `diff` = expressed, `same` = cannot express |
+| round-trip (`src/run_roundtrip.py`) | is `read(write(rich))` the same AST as `read(write(degraded))`? | `diff` = survives, `same` = lost |
+| exact (`src/run_exact.py`) | does `read(write(rich))` equal `rich`? | `exact` / `canonical` / `lossy` |
+| metadata (`src/run_meta.py`) | which of ten metadata shapes survive standalone? | `exact` / `partial` / `lost` |
 
 **The first two lanes never compare anything against the input.** Both sides go
 through the same writer with the same options, so whatever canonical styling that
@@ -72,7 +74,7 @@ PANDOC=/path/to/pandoc make lanes report      # e.g. a nightly build
 
 ## Which formats are in the round-trip lanes
 
-Formats pandoc can both write and read, minus (see `formats.py`):
+Formats pandoc can both write and read, minus (see `src/formats.py`):
 
 - `biblatex`, `bibtex`, `csljson` - bibliography databases, so a probe about tables
   says nothing about them
@@ -98,7 +100,3 @@ make carve CARVE_BRIDGE=../pandoc-carve/dist/index.js
   rejects.
 - The probe set covers single features in isolation. Interactions between them are
   not measured.
-
-## License
-
-MIT.

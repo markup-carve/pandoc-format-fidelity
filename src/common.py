@@ -3,7 +3,9 @@ import json
 import os
 import pathlib
 
-ROOT = pathlib.Path(__file__).resolve().parent
+# Repo root, one level up from src/. The lanes are run from the root by the
+# Makefile, but this has to hold whatever the working directory is.
+ROOT = pathlib.Path(__file__).resolve().parent.parent
 PANDOC = os.environ.get("PANDOC", "./vendor/pandoc/bin/pandoc")
 
 # Without this, a writer that wraps at 72 columns turns a SoftBreak into a
