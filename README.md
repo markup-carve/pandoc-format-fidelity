@@ -2,12 +2,12 @@
 
 How much of a document survives a pandoc conversion, measured rather than guessed.
 
-66 probes, each a pair of pandoc ASTs differing in exactly one feature, run through
+Each probe is a pair of pandoc ASTs differing in exactly one feature, run through
 every writer pandoc ships and read back by every reader. The output is a grid saying,
 per format and per feature, whether the format can express it at all and whether it
 comes home unchanged.
 
-![Per format: how many of the 66 probes the writer can express, and how many read back unchanged](docs/overview.png)
+![Per format: how many probes the writer can express, and how many read back unchanged](docs/overview.png)
 
 Report: [`docs/index.html`](docs/index.html) · [`docs/report.pdf`](docs/report.pdf)
 
@@ -38,7 +38,7 @@ short:
 - raw `tex` == raw `latex` - alias for one target
 - header ids invented by `--auto_identifiers` are dropped
 
-Counting those as loss overstates pandoc's markdown by eleven of 66 probes. Counting
+Counting those as loss overstates pandoc's markdown by eleven probes. Counting
 them as exact would hide real precision loss, like a column width rounded to the grid.
 Hence a column each.
 

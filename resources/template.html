@@ -135,14 +135,14 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
 <header class="top">
   <p class="eyebrow">Measured against pandoc 3.10.2</p>
   <h1>Which pandoc format actually keeps your document</h1>
-  <p class="lede">Every reader and writer pandoc ships was probed with 66 element and feature variants, one at a time. The question each probe answers: can this format
+  <p class="lede">Every reader and writer pandoc ships was probed with {{NPROBE}} element and feature variants, one at a time. The question each probe answers: can this format
   tell the rich version apart from the stripped-down one at all - and if it
   can also be read back, does the AST come home unchanged?</p>
   <div class="facts">
-    <div><b>76</b><span>output formats</span></div>
-    <div><b>51</b><span>input formats</span></div>
-    <div><b>66</b><span>element probes</span></div>
-    <div><b>34</b><span>round&#8209;trippable</span></div>
+    <div><b>{{NWRITE}}</b><span>output formats</span></div>
+    <div><b>{{NREAD}}</b><span>input formats</span></div>
+    <div><b>{{NPROBE}}</b><span>element probes</span></div>
+    <div><b>{{NBOTH}}</b><span>round&#8209;trippable</span></div>
     <div><b>3</b><span>lossless writers</span></div>
   </div>
 </header>
@@ -154,8 +154,8 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <p><b>Expressiveness.</b> For each feature a pair of documents is built: one with the
     feature (a table cell spanning two columns) and one without it (two plain cells).
     Both go through the writer. If the bytes come out identical, the format has no way
-    to say it. This needs no reader, so it covers all 76 writers.</p>
-    <p><b>Round-trip identity.</b> For the 33 formats pandoc can also read, the rich
+    to say it. This needs no reader, so it covers all {{NWRITE}} writers.</p>
+    <p><b>Round-trip identity.</b> For the {{NBOTH}} formats pandoc can also read, the rich
     document is written and read straight back. <i>Exact</i> means the returned AST equals
     what went in, after normalizing <code>Plain</code>/<code>Para</code> and stripping the
     document wrappers ipynb, epub and fb2 add. <i>Canonical</i> is the softer verdict
@@ -174,17 +174,17 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
 
 <section>
   <p class="eyebrow">Headline</p>
-  <h2>Five things the matrix says</h2>
+  <h2>Seven things the matrix says</h2>
   <div class="findings">
     <div class="finding">
-      <span class="num">64 / 59</span>
+      <span class="num">64 / 63</span>
       <h3>Carve tops the round-trip</h3>
       <p>Carve is not a pandoc format; it enters through the pandoc-carve bridge, put
-      through the identical probes. Via the exchange AST it expresses 64 features and returns 59 of them unchanged; via <code>.crv</code> source, 62 and 56. Every real
+      through the identical probes. Via the exchange AST it expresses 64 features and returns 63 of them unchanged; via <code>.crv</code> source, 63 and 61. Every real
       pandoc format is behind that on exactness - markdown 46, html 42, djot 33.</p>
     </div>
     <div class="finding">
-      <span class="num">63/66</span>
+      <span class="num">63/{{NPROBE}}</span>
       <h3>HTML is the ceiling for real formats</h3>
       <p>html, html4/5 and every HTML-backed slide writer
       (revealjs, s5, slidy, slideous, dzslides) hit 63. The epub writers and
@@ -209,7 +209,7 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
       nine; djot and markua six; org five.</p>
     </div>
     <div class="finding">
-      <span class="num">46/66</span>
+      <span class="num">46/{{NPROBE}}</span>
       <h3>Pandoc markdown is the best interchange text</h3>
       <p>It is the only text format that keeps <i>both</i> html and latex raw
       passthrough (4/4 raw), and it wins the exact round-trip at 46, ahead of html 42 and commonmark_x 39. Everything below that loses more than half.</p>
@@ -238,19 +238,20 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <p>Carve has no pandoc reader or writer - it reaches pandoc through
     <a href="https://github.com/markup-carve/pandoc-carve">pandoc-carve</a>, which maps
     the Pandoc AST to Carve's own AST and back. That is a different code path from a
-    built-in reader/writer pair, but it answers the same user-facing question, so the identical 66 probes were run through it. Two lanes were measured: through
+    built-in reader/writer pair, but it answers the same user-facing question, so the identical {{NPROBE}} probes were run through it. Two lanes were measured: through
     <code>.crv</code> source (what <code>pandoc-carve report.docx -o report.crv</code>
     produces) and through the Carve exchange AST, which skips the source layer.</p>
     <div class="scroll">{{TCARVE}}</div>
     <p>Two things no pandoc format manages: Carve carries the complete attribute model
     <i>and</i> full raw passthrough in both directions. HTML has the attributes and
     drops foreign raw; markdown keeps the raw and loses four attribute probes. Outside
-    the AST serializations, nothing else holds both. Carve also joins docx as the only
-    format expressing all sixteen inline probes.</p>
-    <p>Against the formats it is usually compared with, Carve is ahead on every group:
-    markdown 57 expressed / 45 exact, djot 50 / 32, commonmark_x 55 / 38, gfm 48 / 23.
-    On expressiveness the source lane now ties the HTML family at 61, and the AST lane
-    passes it at 63 - which makes Carve the most expressive non-AST format in the
+    the AST serializations, nothing else holds both. Carve also returns all sixteen
+    inline probes exactly, which only <code>latex</code>, <code>markdown</code> and
+    <code>native</code> also manage.</p>
+    <p>Against the formats it is usually compared with, Carve is ahead on both counts:
+    markdown 59 expressed / 46 exact, commonmark_x 57 / 39, djot 52 / 33, gfm 50 / 24.
+    On expressiveness the source lane now ties the HTML family at 63, and the AST lane
+    passes it at 64 - which makes Carve the most expressive non-AST format in the
     matrix.</p>
     <h3>What Carve does not carry, and why</h3>
     <ul class="notes">
@@ -258,31 +259,32 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
       ColWidth for every grid and multiline table from the ASCII column widths, so the
       value is usually not the author's and a diagnostic would fire on the ordinary
       case. Documented policy, not an omission.</li>
-      <li><b>Block content in metadata</b> (<code>abstract: |</code>) keeps its
-      skip-with-warn. That is decision D5(b) on markup-carve/carve#1210: flattening it
-      to one scalar throws away the paragraph structure, and writing Carve source into a
-      YAML value makes the frontmatter carry markup nothing on the reading side parses.
-      It is the one metadata probe Carve does not return, and the whole distance
-      between 9/10 and 10.</li>
-      <li><b>A foot, row groups and row-head columns</b> have no pipe-table spelling.
-      They survive whole through <code>pandocToCarveAst</code> and through the
-      <code>::: list-table</code> fallback; only the pipe source flattens them, and it
-      reports the flattening.</li>
+      <li><b>Example-list numbering</b> (<code>(@)</code>) has no Carve form. The list
+      is emitted as a decimal list, so the resolved numbers survive but the
+      document-wide counter that makes separate lists renumber each other does not.
+      Neither lane returns it - it joins column widths and header-less column
+      alignment as the three probes both lanes miss.</li>
+      <li><b>A foot and multiple row groups</b> have no pipe-table spelling. They
+      survive whole through <code>pandocToCarveAst</code>; only the pipe source
+      flattens them into body rows, and it reports the flattening. Row-head columns
+      used to flatten the same way and now do not - they reach the source as a
+      <code>::: list-table</code> with <code>header-cols</code>.</li>
       <li><b>Column alignment without a header row</b> has no column-level spelling.
       <code>docs/extensions.md</code> already lists an <code>aligns=</code> attribute as
       the follow-up; the per-cell fallback carries it in the meantime, and reports
       the move.</li>
-      <li><b>Quoted text, citations and block cells</b> change AST shape on the way
-      back - curly quotes, a citation without its definitions, a
-      <code>::: list-table</code>. The content survives; the node type does not. Each
-      already emits a warning.</li>
+      <li><b>Citations come back as citations, without their definitions.</b> Quoted
+      text, citations and block cells used to change AST shape on the way back and now
+      return unchanged. What a citation still cannot carry is the bibliography: entries
+      live in pandoc metadata, so no <code>[@key]:</code> definitions are emitted and an
+      undefined key renders verbatim.</li>
     </ul>
   </section>
 
 <section>
   <p class="eyebrow">Table 1</p>
-  <h2>Writer expressiveness, all 76 output formats</h2>
-  <p class="col dim">How many of the 66 features the writer can represent at all,
+  <h2>Writer expressiveness, all {{NWRITE}} output formats</h2>
+  <p class="col dim">How many of the {{NPROBE}} features the writer can represent at all,
   broken out by group. Groups: 16 inline, 9 block, 10 list, 11 table, 15 attribute,
   4 raw-passthrough probes. A raw score of 2/4 is normal and correct - a writer
   should emit raw content aimed at itself and drop raw content aimed at another target.
@@ -292,7 +294,7 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
 
 <section>
   <p class="eyebrow">Table 2</p>
-  <h2>What comes back, for the 33 formats pandoc also reads</h2>
+  <h2>What comes back, for the {{NBOTH}} formats pandoc also reads</h2>
   <p class="col dim">The gap between the writer column and the exact column is the cost of
   using a format as storage rather than as output. The last column lists features the
   writer emits correctly but the matching reader cannot recover.</p>
@@ -329,20 +331,20 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
   <h2>Picking a target</h2>
   <div class="col" style="display:flex;flex-direction:column;gap:14px">
     <p><b>Need everything preserved.</b> <code>json</code>, <code>native</code> and
-    <code>xml</code> are the AST itself and score 66/66 by construction. For anything
+    <code>xml</code> are the AST itself and score {{NPROBE}}/{{NPROBE}} by construction. For anything
     that has to render, <code>html5</code> and <code>epub3</code> are the practical
     maximum.</p>
-    <p><b>Need it back later.</b> <code>carve</code> through pandoc-carve leads at 55
-    exact (58 via its AST), then <code>markdown</code> 45 and <code>commonmark_x</code> 38.
-    Markdown's one remaining edge is metadata: it returns all ten meta values where
-    Carve returns nine, and the tenth is a ruled policy rather than a gap.</p>
-    <p><b>Print and typesetting.</b> <code>latex</code> 52 and <code>beamer</code> 53 lead,
-    <code>typst</code> 51 is close and loses mostly attributes, <code>context</code> 48
+    <p><b>Need it back later.</b> <code>carve</code> through pandoc-carve leads at 61
+    exact (63 via its AST), then <code>markdown</code> 46 and <code>commonmark_x</code> 39.
+    Metadata no longer separates them: markdown and Carve both return all ten meta
+    values.</p>
+    <p><b>Print and typesetting.</b> <code>latex</code> 54 and <code>beamer</code> 55 lead,
+    <code>typst</code> 53 is close and loses mostly attributes, <code>context</code> 50
     has the better table story but no raw passthrough at all.</p>
-    <p><b>Word processing.</b> <code>docx</code> 51 is well ahead of <code>odt</code> 46,
-    and much further ahead on attributes (8 vs 4). <code>icml</code> keeps layout but
+    <p><b>Word processing.</b> <code>docx</code> 53 is ahead of <code>odt</code> 47,
+    and much further ahead on attributes (10 vs 5). <code>icml</code> keeps layout but
     almost no attributes.</p>
-    <p><b>Structured publishing.</b> <code>jats</code> 53 is the strongest XML target and
+    <p><b>Structured publishing.</b> <code>jats</code> 54 is the strongest XML target and
     the only non-HTML writer with the complete table model; docbook and tei trail at
     42 and 40.</p>
     <p><b>Importing.</b> The best sources are html, docx, latex, jats, org, rst,
@@ -399,13 +401,13 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
 cd pandoc-format-fidelity
 make                    # fetch pinned pandoc, run every lane, build the report
 make carve CARVE_BRIDGE=../pandoc-carve/dist/index.js   # optional Carve lanes</pre>
-  <p class="col dim small">The probe set lives in <code>probes.py</code>: each entry is a pair
+  <p class="col dim small">The probe set lives in <code>src/probes.py</code>: each entry is a pair
   of pandoc AST block lists differing in exactly one feature. Writer conversions go
   through pandoc's own HTTP server for speed; the server has no filesystem access, so any media a probe references is handed over in the request; the CLI lanes get the same file through <code>--resource-path</code>. Both had to be fixed - an image pandoc cannot resolve makes epub leave the src alone and round-trip to a false <i>exact</i>.</p>
 </section>
 
 <footer>
-  pandoc 3.10.2 &middot; 66 probes &middot; 76 writers &middot; 34 round-trippable &middot; measured 2026-08-17 on Linux x86-64.
+  pandoc 3.10.2 &middot; {{NPROBE}} probes &middot; {{NWRITE}} writers &middot; {{NBOTH}} round-trippable &middot; measured 2026-08-17 on Linux x86-64.
 </footer>
 
 </div>

@@ -171,13 +171,19 @@ html = open("resources/template.html", encoding="utf-8").read()
 for key, fn in [("T1", table1), ("T2", table2), ("T3", table3), ("T4", table4),
                 ("TCARVE", tcarve)]:
     html = html.replace("{{%s}}" % key, fn())
+# The Carve lanes were added to W and EX above, so they come back out: these are
+# counts of pandoc's own writers and readers. Every count quoted in the prose goes
+# through here - a hand-typed one drifts silently on the next rerun.
 stats = {
-    "NWRITE": str(len(W) - len(CARVE) + 1),
+    "NWRITE": str(len(W) - len(CARVE)),
     "NREAD": "51",
     "NPROBE": str(N),
     "NBOTH": str(len(EX) - len(CARVE)),
 }
 for k, v in stats.items():
     html = html.replace("{{%s}}" % k, v)
+left = [k for k in ("T1", "T2", "T3", "T4", "TCARVE", *stats) if "{{%s}}" % k in html]
+if left:
+    raise SystemExit("unsubstituted placeholders: %s" % ", ".join(left))
 open("docs/index.html", "w", encoding="utf-8").write(html)
 print("wrote docs/index.html", len(html), "bytes")
