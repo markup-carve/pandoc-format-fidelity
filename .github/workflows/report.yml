@@ -1,0 +1,27 @@
+name: report
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch pinned pandoc
+        run: ./scripts/fetch-pandoc.sh
+      - name: Run every lane
+        run: make lanes
+      - name: Fail if the committed results are stale
+        run: |
+          if ! git diff --exit-code --stat results/; then
+            echo "::error::results/ differs from a fresh run - commit the rerun"
+            exit 1
+          fi
+      - name: Rebuild the report
+        run: make report

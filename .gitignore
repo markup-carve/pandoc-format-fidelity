@@ -1,0 +1,5 @@
+vendor/
+__pycache__/
+*.pyc
+.server.pid
+_*.md

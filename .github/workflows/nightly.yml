@@ -1,0 +1,33 @@
+name: nightly-pandoc
+
+# A regression watch on pandoc itself: run the same probes against the pandoc
+# nightly and report any cell that moved. This has already caught real writer
+# changes, in both directions.
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch pinned pandoc
+        run: ./scripts/fetch-pandoc.sh
+      - name: Fetch pandoc nightly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id=$(gh run list -R jgm/pandoc --workflow nightly.yml \
+                    --status success --limit 1 --json databaseId -q '.[0].databaseId')
+          gh run download "$run_id" -R jgm/pandoc -n nightly-linux -D nightly
+          chmod +x nightly/*/pandoc
+          echo "NIGHTLY=$(echo nightly/*/pandoc)" >> "$GITHUB_ENV"
+      - name: Measure the nightly
+        run: PANDOC=$NIGHTLY make lanes
+      - name: Report what moved
+        run: git --no-pager diff --stat results/ || true

@@ -1,0 +1,67 @@
+# Every target is reproducible from a clean checkout: `make` fetches the pinned
+# pandoc, runs all four pandoc lanes, and regenerates the report.
+PANDOC     ?= ./vendor/pandoc/bin/pandoc
+PORT       ?= 3033
+SERVER_URL ?= http://localhost:$(PORT)/
+FORMATS    := $(shell $(PANDOC) --list-output-formats 2>/dev/null | tr '\n' ',' | sed 's/,$$//')
+# Round-trip lanes need a format pandoc can both write and read. Excluded from
+# that intersection:
+#   biblatex, bibtex, csljson  bibliography databases - they carry references,
+#                              not documents, so a probe about tables is noise
+#   json, xml                  pandoc's own AST serializations - lossless by
+#                              construction, and `native` already sits in the
+#                              chart as the reference row
+READABLE   := $(shell python3 formats.py 2>/dev/null)
+
+.PHONY: all pandoc lanes report carve clean check
+
+all: pandoc lanes report
+
+pandoc:
+	./scripts/fetch-pandoc.sh
+
+lanes: results/matrix.json results/roundtrip.json results/exact.json results/meta.json
+
+results/matrix.json:
+	@echo "starting pandoc server on port $(PORT)"
+	@$(PANDOC) server --port $(PORT) & echo $$! > .server.pid; sleep 3; \
+	  PANDOC_SERVER=$(SERVER_URL) python3 run_matrix.py "$(FORMATS)" > $@; \
+	  st=$$?; kill `cat .server.pid` 2>/dev/null; rm -f .server.pid; exit $$st
+
+results/roundtrip.json:
+	PANDOC=$(PANDOC) python3 run_roundtrip.py "$(READABLE)" > $@
+
+results/exact.json:
+	PANDOC=$(PANDOC) python3 run_exact.py "$(READABLE)" > $@
+
+results/meta.json:
+	PANDOC=$(PANDOC) python3 run_meta.py "$(READABLE)" > $@
+
+# Opt-in: the Carve lanes are not pandoc formats and are excluded by default.
+carve: results/probes.json
+	CARVE_BRIDGE=$(CARVE_BRIDGE) node run_carve.mjs
+
+results/probes.json:
+	python3 dump_probes.py
+
+report:
+	python3 gen_report.py
+	python3 gen_overview.py
+	@command -v google-chrome >/dev/null && $(MAKE) docs/report.pdf docs/overview.png || \
+	  echo "(no chrome found - skipped the pdf and png)"
+
+docs/report.pdf: docs/index.html
+	google-chrome --headless --disable-gpu --no-sandbox --no-pdf-header-footer \
+	  --print-to-pdf=$(CURDIR)/$@ "file://$(CURDIR)/docs/index.html"
+
+docs/overview.png: overview.html
+	google-chrome --headless --disable-gpu --no-sandbox --hide-scrollbars \
+	  --force-device-scale-factor=2 --window-size=1080,1180 \
+	  --screenshot=$(CURDIR)/$@ "file://$(CURDIR)/overview.html"
+
+check:
+	python3 -c "import probes; print(len(probes.PROBES), 'probes load')"
+	python3 -m json.tool results/matrix.json > /dev/null && echo "matrix.json valid"
+
+clean:
+	rm -f results/*.json docs/index.html

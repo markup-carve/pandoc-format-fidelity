@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<title>Pandoc Format Fidelity</title>
+<style>
+:root{
+  --paper:#F4F6F7; --surface:#FFFFFF; --surface-2:#EDF1F2;
+  --ink:#111A20; --muted:#5B6B75; --line:#D6DDE1;
+  --accent:#0E6B70; --accent-soft:#D6E9E8;
+  --warn:#8E6410; --warn-soft:#F0E5CE;
+  --bad:#8E3A31; --bad-soft:#F0DEDA;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --serif:Charter,"Bitstream Charter","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1418; --surface:#131C21; --surface-2:#18242A;
+    --ink:#DDE6EA; --muted:#8798A2; --line:#243138;
+    --accent:#57B7B6; --accent-soft:#0F2F31;
+    --warn:#CFA057; --warn-soft:#2E2512;
+    --bad:#DE8B80; --bad-soft:#331A17;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1418; --surface:#131C21; --surface-2:#18242A;
+  --ink:#DDE6EA; --muted:#8798A2; --line:#243138;
+  --accent:#57B7B6; --accent-soft:#0F2F31;
+  --warn:#CFA057; --warn-soft:#2E2512;
+  --bad:#DE8B80; --bad-soft:#331A17;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px 96px}
+.col{max-width:70ch}
+h1,h2,h3{font-family:var(--serif); font-weight:600; text-wrap:balance; margin:0}
+h1{font-size:clamp(2.1rem,5vw,3.1rem); line-height:1.08; letter-spacing:-.015em}
+h2{font-size:1.65rem; line-height:1.2; margin-top:.2em}
+h3{font-size:1.12rem; line-height:1.3}
+p{margin:0}
+a{color:var(--accent)}
+code,.fmt,.mono{font-family:var(--mono); font-size:.86em}
+.eyebrow{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--accent); margin:0;
+}
+.dim{color:var(--muted)}
+.small{font-size:.8rem}
+
+header.top{
+  border-bottom:1px solid var(--line); padding:64px 0 32px; margin-bottom:8px;
+  display:flex; flex-direction:column; gap:18px;
+}
+header.top .lede{font-size:1.08rem; color:var(--muted); max-width:62ch}
+.facts{
+  display:flex; flex-wrap:wrap; gap:0; margin-top:10px;
+  border:1px solid var(--line); border-radius:2px; background:var(--surface);
+}
+.facts div{
+  flex:1 1 150px; padding:12px 16px; border-right:1px solid var(--line);
+}
+.facts div:last-child{border-right:0}
+.facts b{
+  display:block; font-family:var(--mono); font-size:1.35rem;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+}
+.facts span{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+
+section{padding:44px 0 0; display:flex; flex-direction:column; gap:16px}
+section + section{border-top:1px solid var(--line); margin-top:36px}
+
+.findings{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); margin-top:6px}
+.finding{
+  background:var(--surface); border:1px solid var(--line); border-radius:2px;
+  padding:16px 18px; display:flex; flex-direction:column; gap:6px;
+}
+.finding h3{font-family:var(--sans); font-size:.95rem; font-weight:650}
+.finding p{font-size:.9rem; color:var(--muted)}
+.finding .num{
+  font-family:var(--mono); font-size:1.5rem; color:var(--accent);
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+}
+
+.scroll{overflow-x:auto; border:1px solid var(--line); background:var(--surface); border-radius:2px}
+table.grid{border-collapse:collapse; width:100%; font-size:.82rem}
+table.grid th,table.grid td{
+  padding:5px 10px; text-align:right; white-space:nowrap;
+  border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums;
+}
+table.grid th{
+  position:sticky; top:0; background:var(--surface-2); z-index:2;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.08em;
+  text-transform:uppercase; font-weight:600; color:var(--muted);
+}
+table.grid th span{opacity:.6; font-weight:400}
+table.grid td.l,table.grid th.l{text-align:left}
+table.grid tbody tr:hover td{background:var(--surface-2)}
+table.grid tbody tr.hi td{background:var(--accent-soft); font-weight:600}
+table.grid tbody tr.hi td.fmt{box-shadow:inset 3px 0 0 var(--accent)}
+table.grid td.fmt{font-family:var(--mono); font-size:.8rem}
+th.vert{writing-mode:vertical-rl; transform:rotate(180deg); height:104px; padding:8px 3px; text-align:left}
+th.vert span{display:inline-block}
+
+.cell-bar{position:relative; display:inline-block; min-width:44px; padding:1px 5px; border-radius:2px}
+.cell-bar i{position:absolute; inset:0; width:var(--p); background:var(--accent-soft); border-radius:2px}
+.cell-bar.mid i{background:var(--warn-soft)}
+.cell-bar.low i{background:var(--bad-soft)}
+.cell-bar b{position:relative; font-family:var(--mono); font-weight:500}
+.cell-bar.low b{color:var(--bad)}
+.dot{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--accent)}
+.dot.mid{background:var(--warn)}
+.dot.low{background:var(--line); box-shadow:inset 0 0 0 1px var(--muted)}
+
+ul.notes{margin:0; padding-left:1.1em; display:flex; flex-direction:column; gap:8px}
+ul.notes li{color:var(--muted); font-size:.93rem}
+ul.notes b{color:var(--ink); font-weight:600}
+pre{
+  margin:0; padding:14px 16px; background:var(--surface); border:1px solid var(--line);
+  border-radius:2px; overflow-x:auto; font-family:var(--mono); font-size:.8rem; line-height:1.5;
+}
+.legend{display:flex; gap:18px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); align-items:center}
+.legend span{display:flex; gap:6px; align-items:center}
+footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.82rem}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">Measured against pandoc 3.10.2</p>
+  <h1>Which pandoc format actually keeps your document</h1>
+  <p class="lede">Every reader and writer pandoc ships was probed with 66 element and feature variants, one at a time. The question each probe answers: can this format
+  tell the rich version apart from the stripped-down one at all - and if it
+  can also be read back, does the AST come home unchanged?</p>
+  <div class="facts">
+    <div><b>76</b><span>output formats</span></div>
+    <div><b>51</b><span>input formats</span></div>
+    <div><b>66</b><span>element probes</span></div>
+    <div><b>34</b><span>round&#8209;trippable</span></div>
+    <div><b>3</b><span>lossless writers</span></div>
+  </div>
+</header>
+
+<section>
+  <p class="eyebrow">Method</p>
+  <h2>Two questions, two different answers</h2>
+  <div class="col" style="display:flex;flex-direction:column;gap:14px">
+    <p><b>Expressiveness.</b> For each feature a pair of documents is built: one with the
+    feature (a table cell spanning two columns) and one without it (two plain cells).
+    Both go through the writer. If the bytes come out identical, the format has no way
+    to say it. This needs no reader, so it covers all 76 writers.</p>
+    <p><b>Round-trip identity.</b> For the 33 formats pandoc can also read, the rich
+    document is written and read straight back. <i>Exact</i> means the returned AST equals
+    what went in, after normalizing <code>Plain</code>/<code>Para</code> and stripping the
+    document wrappers ipynb, epub and fb2 add. <i>Canonical</i> is the softer verdict
+    beside it: the content came back but the writer restyled it - a default-aligned
+    column reported as left-aligned, a measured column width where the source gave
+    none, raw <code>tex</code> for raw <code>latex</code>, a heading id invented by
+    <code>--auto_identifiers</code>. Counting those as loss overstates pandoc's markdown by eleven probes, so they get their own column instead of being folded either way.</p>
+    <p>Every writer runs with <code>--wrap=preserve</code>. Without it a wrapping
+    writer turns a SoftBreak into a space, and the probe reads as "cannot express" for
+    a distinction the format handles fine - that alone moved 46 writers.</p>
+    <p>All figures are the released pandoc 3.10.2. On the 2026-08-17 nightly the djot writer gained raw-content passthrough: its four raw probes (inline and block, html and latex) go from inexpressible to expressed and read back cleanly, taking djot to 56 expressed, 56 round-trip and 35 exact. No other format differs between the two builds.</p>
+    <p>Expressiveness is the ceiling; exact round-trip is the floor. Between them sits
+    everything that renders correctly but cannot be parsed back - which is most of it.</p>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Headline</p>
+  <h2>Five things the matrix says</h2>
+  <div class="findings">
+    <div class="finding">
+      <span class="num">64 / 59</span>
+      <h3>Carve tops the round-trip</h3>
+      <p>Carve is not a pandoc format; it enters through the pandoc-carve bridge, put
+      through the identical probes. Via the exchange AST it expresses 64 features and returns 59 of them unchanged; via <code>.crv</code> source, 62 and 56. Every real
+      pandoc format is behind that on exactness - markdown 46, html 42, djot 33.</p>
+    </div>
+    <div class="finding">
+      <span class="num">63/66</span>
+      <h3>HTML is the ceiling for real formats</h3>
+      <p>html, html4/5 and every HTML-backed slide writer
+      (revealjs, s5, slidy, slideous, dzslides) hit 63. The epub writers and
+      chunkedhtml land one behind for different reasons: epub still folds a SoftBreak
+      into a space, chunkedhtml spends a heading level splitting files. The three
+      every one of them misses are latex raw inline and raw block (dropped on purpose)
+      and the <code>1)</code> vs <code>1.</code> list delimiter. Nothing else in
+      pandoc's AST is beyond them.</p>
+    </div>
+    <div class="finding">
+      <span class="num">16 / 16</span>
+      <h3>Attributes are the real divider</h3>
+      <p>Ids, classes and key-value pairs are where formats fall apart. HTML and EPUB
+      carry all sixteen attribute probes, JATS 14, djot 13, pandoc markdown 12, latex 10, docx 10, typst 9, ODT only 5 - and fb2, rtf, man, texinfo and haddock zero.</p>
+    </div>
+    <div class="finding">
+      <span class="num">2</span>
+      <h3>Only HTML and JATS do the whole table model</h3>
+      <p>Pandoc's table type has row groups, a row-head-column count, a foot, and
+      attributes on the table, each row and each cell. Only the HTML family and JATS
+      express all eleven table probes. LaTeX, typst, docx, ODT and asciidoc manage
+      nine; djot and markua six; org five.</p>
+    </div>
+    <div class="finding">
+      <span class="num">46/66</span>
+      <h3>Pandoc markdown is the best interchange text</h3>
+      <p>It is the only text format that keeps <i>both</i> html and latex raw
+      passthrough (4/4 raw), and it wins the exact round-trip at 46, ahead of html 42 and commonmark_x 39. Everything below that loses more than half.</p>
+    </div>
+    <div class="finding">
+      <span class="num">10/10</span>
+      <h3>Metadata survives in exactly one family</h3>
+      <p>markdown, gfm and commonmark_x round-trip arbitrary YAML metadata - nested
+      maps, booleans, custom keys, all of it. markdown_mmd manages 6.5, LaTeX / JATS /
+      docx / docbook about 4, and djot, rst, mediawiki, ODT, ipynb, rtf and pptx zero.</p>
+    </div>
+    <div class="finding">
+      <span class="num">0</span>
+      <h3>pptx and rtf are one-way doors</h3>
+      <p>The pptx writer expresses 40 features; its reader recovers none of them
+      exactly - it is a text extractor with slide headers. rtf writes 40 and
+      round-trips 26, dropping code, notes, blockquotes and every list style.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Carve</p>
+  <h2>Where Carve lands</h2>
+  <div class="col" style="display:flex;flex-direction:column;gap:14px">
+    <p>Carve has no pandoc reader or writer - it reaches pandoc through
+    <a href="https://github.com/markup-carve/pandoc-carve">pandoc-carve</a>, which maps
+    the Pandoc AST to Carve's own AST and back. That is a different code path from a
+    built-in reader/writer pair, but it answers the same user-facing question, so the identical 66 probes were run through it. Two lanes were measured: through
+    <code>.crv</code> source (what <code>pandoc-carve report.docx -o report.crv</code>
+    produces) and through the Carve exchange AST, which skips the source layer.</p>
+    <div class="scroll">{{TCARVE}}</div>
+    <p>Two things no pandoc format manages: Carve carries the complete attribute model
+    <i>and</i> full raw passthrough in both directions. HTML has the attributes and
+    drops foreign raw; markdown keeps the raw and loses four attribute probes. Outside
+    the AST serializations, nothing else holds both. Carve also joins docx as the only
+    format expressing all sixteen inline probes.</p>
+    <p>Against the formats it is usually compared with, Carve is ahead on every group:
+    markdown 57 expressed / 45 exact, djot 50 / 32, commonmark_x 55 / 38, gfm 48 / 23.
+    On expressiveness the source lane now ties the HTML family at 61, and the AST lane
+    passes it at 63 - which makes Carve the most expressive non-AST format in the
+    matrix.</p>
+    <h3>What Carve does not carry, and why</h3>
+    <ul class="notes">
+      <li><b>Column widths</b> are dropped deliberately. Pandoc <i>derives</i> a
+      ColWidth for every grid and multiline table from the ASCII column widths, so the
+      value is usually not the author's and a diagnostic would fire on the ordinary
+      case. Documented policy, not an omission.</li>
+      <li><b>Block content in metadata</b> (<code>abstract: |</code>) keeps its
+      skip-with-warn. That is decision D5(b) on markup-carve/carve#1210: flattening it
+      to one scalar throws away the paragraph structure, and writing Carve source into a
+      YAML value makes the frontmatter carry markup nothing on the reading side parses.
+      It is the one metadata probe Carve does not return, and the whole distance
+      between 9/10 and 10.</li>
+      <li><b>A foot, row groups and row-head columns</b> have no pipe-table spelling.
+      They survive whole through <code>pandocToCarveAst</code> and through the
+      <code>::: list-table</code> fallback; only the pipe source flattens them, and it
+      reports the flattening.</li>
+      <li><b>Column alignment without a header row</b> has no column-level spelling.
+      <code>docs/extensions.md</code> already lists an <code>aligns=</code> attribute as
+      the follow-up; the per-cell fallback carries it in the meantime, and reports
+      the move.</li>
+      <li><b>Quoted text, citations and block cells</b> change AST shape on the way
+      back - curly quotes, a citation without its definitions, a
+      <code>::: list-table</code>. The content survives; the node type does not. Each
+      already emits a warning.</li>
+    </ul>
+  </section>
+
+<section>
+  <p class="eyebrow">Table 1</p>
+  <h2>Writer expressiveness, all 76 output formats</h2>
+  <p class="col dim">How many of the 66 features the writer can represent at all,
+  broken out by group. Groups: 16 inline, 9 block, 10 list, 11 table, 15 attribute,
+  4 raw-passthrough probes. A raw score of 2/4 is normal and correct - a writer
+  should emit raw content aimed at itself and drop raw content aimed at another target.
+  The two highlighted rows are Carve through pandoc-carve, not pandoc built-ins.</p>
+  <div class="scroll">{{T1}}</div>
+</section>
+
+<section>
+  <p class="eyebrow">Table 2</p>
+  <h2>What comes back, for the 33 formats pandoc also reads</h2>
+  <p class="col dim">The gap between the writer column and the exact column is the cost of
+  using a format as storage rather than as output. The last column lists features the
+  writer emits correctly but the matching reader cannot recover.</p>
+  <div class="scroll">{{T2}}</div>
+  <p class="col dim small">ipynb's round-trip column is not meaningful: its reader stamps a
+  fresh UUID on every cell, so any two conversions differ. Its exact column is measured
+  after that wrapper is stripped and is trustworthy.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Table 3</p>
+  <h2>Which elements are hard</h2>
+  <p class="col dim">Sorted by how rarely a feature makes it through a round-trip intact.
+  Emphasis and bullet lists are universal; table row groups, cell alignment, example
+  lists and citations effectively are not.</p>
+  <div class="scroll">{{T3}}</div>
+</section>
+
+<section>
+  <p class="eyebrow">Table 4</p>
+  <h2>Document metadata</h2>
+  <p class="col dim">A standalone document carrying ten metadata values, written and read
+  back. Filled dot = identical, half dot = present but reshaped, hollow = gone.</p>
+  <div class="legend">
+    <span><b class="dot ok"></b> exact</span>
+    <span><b class="dot mid"></b> partial</span>
+    <span><b class="dot low"></b> lost</span>
+  </div>
+  <div class="scroll">{{T4}}</div>
+</section>
+
+<section>
+  <p class="eyebrow">Reading the result</p>
+  <h2>Picking a target</h2>
+  <div class="col" style="display:flex;flex-direction:column;gap:14px">
+    <p><b>Need everything preserved.</b> <code>json</code>, <code>native</code> and
+    <code>xml</code> are the AST itself and score 66/66 by construction. For anything
+    that has to render, <code>html5</code> and <code>epub3</code> are the practical
+    maximum.</p>
+    <p><b>Need it back later.</b> <code>carve</code> through pandoc-carve leads at 55
+    exact (58 via its AST), then <code>markdown</code> 45 and <code>commonmark_x</code> 38.
+    Markdown's one remaining edge is metadata: it returns all ten meta values where
+    Carve returns nine, and the tenth is a ruled policy rather than a gap.</p>
+    <p><b>Print and typesetting.</b> <code>latex</code> 52 and <code>beamer</code> 53 lead,
+    <code>typst</code> 51 is close and loses mostly attributes, <code>context</code> 48
+    has the better table story but no raw passthrough at all.</p>
+    <p><b>Word processing.</b> <code>docx</code> 51 is well ahead of <code>odt</code> 46,
+    and much further ahead on attributes (8 vs 4). <code>icml</code> keeps layout but
+    almost no attributes.</p>
+    <p><b>Structured publishing.</b> <code>jats</code> 53 is the strongest XML target and
+    the only non-HTML writer with the complete table model; docbook and tei trail at
+    42 and 40.</p>
+    <p><b>Importing.</b> The best sources are html, docx, latex, jats, org, rst,
+    mediawiki and markdown. Avoid pptx and rtf as inputs when structure matters.
+    Twelve input formats - bits, creole, csv, endnotexml, mdoc, pod, ris, tikiwiki,
+    tsv, twiki, vimwiki, xlsx - have no matching writer and are not measured here.</p>
+    <p><b>Not document writers at all.</b> <code>csljson</code>, <code>bibtex</code> and
+    <code>biblatex</code> serialize the <code>references</code> metadata and emit nothing
+    for body content; <code>opml</code> keeps only the heading outline. Their low scores
+    describe their purpose, not a defect.</p>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Limits</p>
+  <h2>What these numbers do not say</h2>
+  <ul class="notes col">
+    <li><b>Expressed is not faithful.</b> gfm and markdown_strict "express" colspans and
+    tables by falling back to a raw HTML block. That counts as a difference in the
+    output bytes, and it is genuinely lossless, but the result is no longer that
+    format's own markup.</li>
+    <li><b>SoftBreak is a flag artifact.</b> Under the default <code>--wrap=auto</code>
+    almost every text writer folds SoftBreak into a space. With
+    <code>--wrap=preserve</code> html, markdown, latex, djot and typst all distinguish
+    it. Treat that one row as noise.</li>
+    <li><b>Dropping foreign raw is correct.</b> An html writer discarding
+    <code>RawBlock "latex"</code> is target routing working as designed, not a coverage
+    gap. Only formats that host both (markdown, commonmark_x, muse) reach 4/4.</li>
+    <li><b>Defaults only.</b> No extension tuning, no <code>--columns</code>, no custom
+    templates. Turning on <code>markdown_strict+raw_html</code> or similar moves these
+    numbers.</li>
+    <li><b>One feature at a time.</b> Interactions are untested - a format may keep
+    an id on a heading and lose it on a heading inside a table cell.</li>
+    <li><b>Carve is measured through a bridge.</b> The <code>carve</code> and
+    <code>carve-ast</code> rows come from pandoc-carve's own converters, not from a
+    pandoc reader/writer pair. Same probes, same two questions - but a library
+    written against the Pandoc AST has an easier job than a writer constrained by an
+    existing file format's syntax. Read the comparison as "what a user gets", not as
+    a like-for-like implementation contest.</li>
+    <li><b>pdf is excluded</b> because the writer shells out to an external TeX engine
+    that is not present here. Its fidelity is LaTeX's, minus everything the engine
+    rasterizes away.</li>
+    <li><b>Binary formats</b> (docx, odt, pptx, epub, chunkedhtml) are compared after
+    unzipping and dropping the timestamp-bearing members, with
+    <code>SOURCE_DATE_EPOCH=0</code>. A determinism control confirmed every format
+    except ipynb produces byte-identical output for identical input.</li>
+  </ul>
+</section>
+
+<section>
+  <p class="eyebrow">Reproduce</p>
+  <h2>How it was run</h2>
+  <pre>git clone https://github.com/markup-carve/pandoc-format-fidelity
+cd pandoc-format-fidelity
+make                    # fetch pinned pandoc, run every lane, build the report
+make carve CARVE_BRIDGE=../pandoc-carve/dist/index.js   # optional Carve lanes</pre>
+  <p class="col dim small">The probe set lives in <code>probes.py</code>: each entry is a pair
+  of pandoc AST block lists differing in exactly one feature. Writer conversions go
+  through pandoc's own HTTP server for speed; the server has no filesystem access, so any media a probe references is handed over in the request; the CLI lanes get the same file through <code>--resource-path</code>. Both had to be fixed - an image pandoc cannot resolve makes epub leave the src alone and round-trip to a false <i>exact</i>.</p>
+</section>
+
+<footer>
+  pandoc 3.10.2 &middot; 66 probes &middot; 76 writers &middot; 34 round-trippable &middot; measured 2026-08-17 on Linux x86-64.
+</footer>
+
+</div>
+
+
+<style>
+@page { size: A4 landscape; margin: 10mm 12mm; }
+@media print {
+  html, body { background: #fff }
+  .wrap { max-width: none; padding: 0 }
+  .scroll { overflow: visible !important; border: 1px solid var(--line) }
+  table.grid { font-size: .62rem; width: 100% }
+  table.grid th, table.grid td { padding: 2px 4px; white-space: nowrap }
+  table.grid th { position: static }
+  .cell-bar { min-width: 24px; padding: 1px 3px }
+  th.vert { height: 80px }
+  section { break-inside: auto; padding-top: 26px }
+  .finding, tr, h2, h3 { break-inside: avoid }
+  h2, h3 { break-after: avoid }
+  .col { max-width: 100ch }
+}
+</style>
+
+</html>
