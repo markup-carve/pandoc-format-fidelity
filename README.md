@@ -46,7 +46,7 @@ Two settings are load-bearing and were both bugs before they were settings:
 
 - `--wrap=preserve` on every writer. Without it a wrapping writer turns a `SoftBreak`
   into a space and the probe reads as "cannot express" a distinction the format
-  handles fine. This moved 46 writers.
+  handles fine.
 - `--resource-path=fixtures` on every writer, and the same image handed to
   `pandoc server` in the request. An image pandoc cannot resolve makes epub leave the
   src untouched, which round-trips to a **false** `exact`; when it resolves, epub
@@ -59,7 +59,13 @@ make          # fetch the pinned pandoc, run every lane, rebuild the report
 make lanes    # just the measurements
 make report   # just the HTML from existing results/
 make check    # sanity checks
+make controls # the two controls the report quotes (see src/controls.py)
 ```
+
+`make controls` is not part of the grid. It checks that the writer lane's comparison
+means what the report claims: every writer is asked to emit the same document twice
+(75 of 76 are byte-identical; `pdf` errors, so it cannot be checked), and the
+`--wrap=preserve` effect is counted on the `softbreak` probe.
 
 Requires python3, node (only for the Carve lanes) and curl. The pinned pandoc is
 fetched into `vendor/` by `scripts/fetch-pandoc.sh`; nothing is installed globally.
@@ -95,8 +101,12 @@ make carve CARVE_BRIDGE=../pandoc-carve/dist/index.js
 
 - A `diff` in the writer lane means the format distinguishes the two documents, not
   that it distinguishes them *well*. Escaping to raw HTML counts.
-- Three cells are genuine pandoc round-trip errors rather than losses: `muse` writes
-  a header id its own reader rejects, and `typst` emits a heading its own reader
-  rejects.
+- Some cells are genuine pandoc round-trip errors rather than losses. Three are
+  isolated: `muse` writes a header id its own reader rejects, and `typst` emits a
+  heading its own reader rejects. `opml` is the bulk of them - its reader rejects 64
+  of the 66 probes, because it serializes a heading outline and not a document.
+- `pdf` reads 0 everywhere because the writer needs an external TeX engine that is not
+  installed here, so every pdf conversion errors. That row measures this machine, not
+  the format.
 - The probe set covers single features in isolation. Interactions between them are
   not measured.

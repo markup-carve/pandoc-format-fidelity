@@ -7,7 +7,7 @@ Runs against `pandoc server`, so it covers every writer including the binary
 ones. The server has no filesystem access: any media a probe references has to
 be handed over in the request, or every media-embedding writer 500s.
 """
-import base64, io, json, os, pathlib, sys, zipfile, urllib.request
+import base64, json, os, pathlib, sys, urllib.request
 
 # pandoc-server has no filesystem access: media referenced by a probe has to be
 # supplied in the request, or every media-embedding writer 500s.
@@ -35,22 +35,10 @@ def conv(blocks, to, meta=None):
     return ("OK", normalize(out, to))
 
 def normalize(out, to):
-    # binary writers come back base64-encoded
-    if to in BINARY:
-        raw = out
-        try:
-            z = zipfile.ZipFile(io.BytesIO(raw))
-            parts = []
-            for n in sorted(z.namelist()):
-                if n.endswith(("core.xml", "app.xml", "meta.xml")):
-                    continue
-                parts.append(n.encode() + b"|" + z.read(n))
-            return b"".join(parts)
-        except zipfile.BadZipFile:
-            return raw
-    return out
+    # zip containers differ in their timestamp members on every run
+    return zip_normalize(out) if to in BINARY else out
 
-from common import BINARY  # noqa: E402
+from common import BINARY, zip_normalize  # noqa: E402
 
 def work(args):
     w, name = args

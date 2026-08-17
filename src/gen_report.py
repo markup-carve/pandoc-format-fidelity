@@ -174,11 +174,15 @@ for key, fn in [("T1", table1), ("T2", table2), ("T3", table3), ("T4", table4),
 # The Carve lanes were added to W and EX above, so they come back out: these are
 # counts of pandoc's own writers and readers. Every count quoted in the prose goes
 # through here - a hand-typed one drifts silently on the next rerun.
+FMT = json.load(open("results/formats.json"))
 stats = {
     "NWRITE": str(len(W) - len(CARVE)),
-    "NREAD": "51",
+    "NREAD": str(len(FMT["inputs"])),
     "NPROBE": str(N),
     "NBOTH": str(len(EX) - len(CARVE)),
+    # The AST serializations: every probe expressed, lossless by construction.
+    "NLOSSLESS": str(sum(1 for f in W if f not in CARVE
+                         and all(W[f].get(n) == "diff" for n in PROBES))),
 }
 for k, v in stats.items():
     html = html.replace("{{%s}}" % k, v)

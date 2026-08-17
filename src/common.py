@@ -33,6 +33,20 @@ RAW_ALIAS = {"tex": "latex", "html4": "html", "html5": "html"}
 WRAPCLS = {"cell", "section"}
 
 
+def zip_normalize(raw):
+    """Compare a zip container by its members, minus the ones that carry a
+    timestamp. Used by the writer lane and by the determinism control, so the
+    two cannot drift apart."""
+    import io
+    import zipfile
+    try:
+        z = zipfile.ZipFile(io.BytesIO(raw))
+    except zipfile.BadZipFile:
+        return raw
+    return b"".join(n.encode() + b"|" + z.read(n) for n in sorted(z.namelist())
+                    if not n.endswith(("core.xml", "app.xml", "meta.xml")))
+
+
 def plain_para(x):
     """Fold Plain into Para. The minimum needed to compare at all: readers
     choose between them on grounds that have nothing to do with the probe."""

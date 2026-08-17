@@ -13,14 +13,19 @@ FORMATS    := $(shell $(PANDOC) --list-output-formats 2>/dev/null | tr '\n' ',' 
 #                              chart as the reference row
 READABLE   := $(shell python3 src/formats.py 2>/dev/null)
 
-.PHONY: all pandoc lanes report carve clean check
+.PHONY: all pandoc lanes report carve clean check controls
 
 all: pandoc lanes report
 
 pandoc:
 	./scripts/fetch-pandoc.sh
 
-lanes: results/matrix.json results/roundtrip.json results/exact.json results/meta.json
+lanes: results/formats.json results/matrix.json results/roundtrip.json \
+       results/exact.json results/meta.json
+
+# The format inventory the report quotes, captured while pandoc is still in hand.
+results/formats.json:
+	PANDOC=$(PANDOC) python3 src/formats.py --dump
 
 results/matrix.json:
 	@echo "starting pandoc server on port $(PORT)"
@@ -44,7 +49,7 @@ carve: results/probes.json
 results/probes.json:
 	python3 src/dump_probes.py
 
-report:
+report: results/formats.json
 	python3 src/gen_report.py
 	python3 src/gen_overview.py
 	@command -v google-chrome >/dev/null && $(MAKE) docs/report.pdf docs/overview.png || \
@@ -58,6 +63,14 @@ docs/overview.png: resources/overview.html
 	google-chrome --headless --disable-gpu --no-sandbox --hide-scrollbars \
 	  --force-device-scale-factor=2 --window-size=1080,1180 \
 	  --screenshot=$(CURDIR)/$@ "file://$(CURDIR)/resources/overview.html"
+
+# Not part of the grid: they check that the writer lane's comparison means what
+# the report says it means. See src/controls.py.
+controls:
+	@echo "starting pandoc server on port $(PORT)"
+	@$(PANDOC) server --port $(PORT) & echo $$! > .server.pid; sleep 3; \
+	  PANDOC=$(PANDOC) PANDOC_SERVER=$(SERVER_URL) python3 src/controls.py; \
+	  st=$$?; kill `cat .server.pid` 2>/dev/null; rm -f .server.pid; exit $$st
 
 check:
 	PYTHONPATH=src python3 -c "import probes; print(len(probes.PROBES), 'probes load')"

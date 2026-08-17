@@ -143,7 +143,7 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <div><b>{{NREAD}}</b><span>input formats</span></div>
     <div><b>{{NPROBE}}</b><span>element probes</span></div>
     <div><b>{{NBOTH}}</b><span>round&#8209;trippable</span></div>
-    <div><b>3</b><span>lossless writers</span></div>
+    <div><b>{{NLOSSLESS}}</b><span>lossless writers</span></div>
   </div>
 </header>
 
@@ -165,7 +165,7 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <code>--auto_identifiers</code>. Counting those as loss overstates pandoc's markdown by eleven probes, so they get their own column instead of being folded either way.</p>
     <p>Every writer runs with <code>--wrap=preserve</code>. Without it a wrapping
     writer turns a SoftBreak into a space, and the probe reads as "cannot express" for
-    a distinction the format handles fine - that alone moved 46 writers.</p>
+    a distinction the format handles fine - that alone moved 45 writers.</p>
     <p>All figures are the released pandoc 3.10.2. On the 2026-08-17 nightly the djot writer gained raw-content passthrough: its four raw probes (inline and block, html and latex) go from inexpressible to expressed and read back cleanly, taking djot to 56 expressed, 56 round-trip and 35 exact. No other format differs between the two builds.</p>
     <p>Expressiveness is the ceiling; exact round-trip is the floor. Between them sits
     everything that renders correctly but cannot be parsed back - which is most of it.</p>
@@ -205,14 +205,15 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
       <h3>Only HTML and JATS do the whole table model</h3>
       <p>Pandoc's table type has row groups, a row-head-column count, a foot, and
       attributes on the table, each row and each cell. Only the HTML family and JATS
-      express all eleven table probes. LaTeX, typst, docx, ODT and asciidoc manage
-      nine; djot and markua six; org five.</p>
+      express all eleven table probes in their own markup - commonmark and
+      markdown_strict also reach eleven, by falling back to a raw HTML block. LaTeX,
+      typst, docx, ODT and asciidoc manage nine; djot and markua six; org five.</p>
     </div>
     <div class="finding">
       <span class="num">46/{{NPROBE}}</span>
       <h3>Pandoc markdown is the best interchange text</h3>
-      <p>It is the only text format that keeps <i>both</i> html and latex raw
-      passthrough (4/4 raw), and it wins the exact round-trip at 46, ahead of html 42 and commonmark_x 39. Everything below that loses more than half.</p>
+      <p>It keeps <i>both</i> html and latex raw passthrough - 4/4 raw, matched only by
+      commonmark_x, markdown_mmd and muse - and it wins the exact round-trip at 46, ahead of html 42 and commonmark_x 39. Only one other format keeps more than half of the 66 - epub, at 34.</p>
     </div>
     <div class="finding">
       <span class="num">10/10</span>
@@ -226,7 +227,8 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
       <h3>pptx and rtf are one-way doors</h3>
       <p>The pptx writer expresses 40 features; its reader recovers none of them
       exactly - it is a text extractor with slide headers. rtf writes 40 and
-      round-trips 26, dropping code, notes, blockquotes and every list style.</p>
+      round-trips 26, dropping code, notes, blockquotes and every ordered-list style;
+      bullets and nesting do come back.</p>
     </div>
   </div>
 </section>
@@ -251,8 +253,7 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <p>Against the formats it is usually compared with, Carve is ahead on both counts:
     markdown 59 expressed / 46 exact, commonmark_x 57 / 39, djot 52 / 33, gfm 50 / 24.
     On expressiveness the source lane now ties the HTML family at 63, and the AST lane
-    passes it at 64 - which makes Carve the most expressive non-AST format in the
-    matrix.</p>
+    passes it at 64.</p>
     <h3>What Carve does not carry, and why</h3>
     <ul class="notes">
       <li><b>Column widths</b> are dropped deliberately. Pandoc <i>derives</i> a
@@ -275,9 +276,11 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
       the move.</li>
       <li><b>Citations come back as citations, without their definitions.</b> Quoted
       text, citations and block cells used to change AST shape on the way back and now
-      return unchanged. What a citation still cannot carry is the bibliography: entries
-      live in pandoc metadata, so no <code>[@key]:</code> definitions are emitted and an
-      undefined key renders verbatim.</li>
+      return unchanged. What a citation still cannot carry is the bibliography - the
+      bridge's own warning says entries live in pandoc metadata, so it emits no
+      <code>[@key]:</code> definitions and an undefined key renders verbatim. The probe
+      carries no bibliography, so that part is the bridge's account, not a measurement
+      here.</li>
     </ul>
   </section>
 
@@ -299,17 +302,19 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
   using a format as storage rather than as output. The last column lists features the
   writer emits correctly but the matching reader cannot recover.</p>
   <div class="scroll">{{T2}}</div>
-  <p class="col dim small">ipynb's round-trip column is not meaningful: its reader stamps a
-  fresh UUID on every cell, so any two conversions differ. Its exact column is measured
-  after that wrapper is stripped and is trustworthy.</p>
+  <p class="col dim small">ipynb's round-trip column is not meaningful: its <i>writer</i>
+  stamps a fresh UUID on every cell and the reader hands it back as a Div id, so two
+  conversions of the same document differ. Its exact column is measured after that
+  wrapper is stripped and is trustworthy.</p>
 </section>
 
 <section>
   <p class="eyebrow">Table 3</p>
   <h2>Which elements are hard</h2>
   <p class="col dim">Sorted by how rarely a feature makes it through a round-trip intact.
-  Emphasis and bullet lists are universal; table row groups, cell alignment, example
-  lists and citations effectively are not.</p>
+  Nothing is universal - opml's reader rejects almost every probe - but emphasis returns
+  exactly in 32 of the 34 readers and bullet lists in 31, where example lists and cell
+  alignment manage one each and citations two.</p>
   <div class="scroll">{{T3}}</div>
 </section>
 
@@ -372,7 +377,8 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     it. Treat that one row as noise.</li>
     <li><b>Dropping foreign raw is correct.</b> An html writer discarding
     <code>RawBlock "latex"</code> is target routing working as designed, not a coverage
-    gap. Only formats that host both (markdown, commonmark_x, muse) reach 4/4.</li>
+    gap. Only formats that host both (markdown, commonmark_x, markdown_mmd, muse)
+    reach 4/4.</li>
     <li><b>Defaults only.</b> No extension tuning, no <code>--columns</code>, no custom
     templates. Turning on <code>markdown_strict+raw_html</code> or similar moves these
     numbers.</li>
@@ -384,13 +390,19 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     written against the Pandoc AST has an easier job than a writer constrained by an
     existing file format's syntax. Read the comparison as "what a user gets", not as
     a like-for-like implementation contest.</li>
-    <li><b>pdf is excluded</b> because the writer shells out to an external TeX engine
-    that is not present here. Its fidelity is LaTeX's, minus everything the engine
-    rasterizes away.</li>
+    <li><b>pdf scores zero because its engine is missing</b>, not because the format is
+    poor. The writer shells out to an external TeX binary that is not installed here, so
+    every pdf conversion errors and the row reads 0. Its real fidelity is LaTeX's, minus
+    whatever the engine rasterizes away.</li>
     <li><b>Binary formats</b> (docx, odt, pptx, epub, chunkedhtml) are compared after
-    unzipping and dropping the timestamp-bearing members, with
-    <code>SOURCE_DATE_EPOCH=0</code>. A determinism control confirmed every format
-    except ipynb produces byte-identical output for identical input.</li>
+    unzipping and dropping the members that carry a timestamp -
+    <code>core.xml</code>, <code>app.xml</code>, <code>meta.xml</code>. On the path the
+    writer lane actually uses - pandoc's server with <code>standalone</code> off - all
+    75 checkable writers re-emit byte-identical output for identical input, pdf excepted
+    because it errors; <code>make controls</code> reruns that check. Standalone output is
+    not reproducible in the same way: a CLI epub embeds a
+    random <code>urn:uuid</code> in <code>content.opf</code> and <code>toc.ncx</code>,
+    and ipynb a random cell id.</li>
   </ul>
 </section>
 
