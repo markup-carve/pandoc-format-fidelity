@@ -252,28 +252,22 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <code>native</code> also manage.</p>
     <p>Against the formats it is usually compared with, Carve is ahead on both counts:
     markdown 59 expressed / 46 exact, commonmark_x 57 / 39, djot 52 / 33, gfm 50 / 24.
-    On expressiveness the source lane now ties the HTML family at 63, and the AST lane
-    passes it at 64.</p>
+    On expressiveness the source lane reaches 64, and the AST lane 65.</p>
     <h3>What Carve does not carry, and why</h3>
     <ul class="notes">
-      <li><b>Column widths</b> are dropped deliberately. Pandoc <i>derives</i> a
-      ColWidth for every grid and multiline table from the ASCII column widths, so the
-      value is usually not the author's and a diagnostic would fire on the ordinary
-      case. Documented policy, not an omission.</li>
+      <li><b>Column widths now cross exactly.</b> Carve's positional
+      <code>widths</code> metadata maps to Pandoc <code>ColWidth</code>, in both
+      source and AST lanes.</li>
       <li><b>Example-list numbering</b> (<code>(@)</code>) has no Carve form. The list
       is emitted as a decimal list, so the resolved numbers survive but the
       document-wide counter that makes separate lists renumber each other does not.
-      Neither lane returns it - it joins column widths and header-less column
-      alignment as the three probes both lanes miss.</li>
-      <li><b>A foot and multiple row groups</b> have no pipe-table spelling. They
-      survive whole through <code>pandocToCarveAst</code>; only the pipe source
-      flattens them into body rows, and it reports the flattening. Row-head columns
-      used to flatten the same way and now do not - they reach the source as a
-      <code>::: list-table</code> with <code>header-cols</code>.</li>
-      <li><b>Column alignment without a header row</b> has no column-level spelling.
-      <code>docs/extensions.md</code> already lists an <code>aligns=</code> attribute as
-      the follow-up; the per-cell fallback carries it in the meantime, and reports
-      the move.</li>
+      Neither lane returns it; it is now the AST lane's only non-exact probe.</li>
+      <li><b>Multiple row groups remain source-only loss.</b> They survive whole
+      through <code>pandocToCarveAst</code>, while source merges body boundaries and
+      reports that flattening. A table foot now crosses through ListTable's
+      <code>footer-rows</code>.</li>
+      <li><b>Column alignment now has a column-level spelling.</b> Positional
+      <code>aligns</code> metadata preserves it even without a header row.</li>
       <li><b>Citations come back as citations, without their definitions.</b> Quoted
       text, citations and block cells used to change AST shape on the way back and now
       return unchanged. What a citation still cannot carry is the bibliography - the
@@ -339,8 +333,8 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <code>xml</code> are the AST itself and score {{NPROBE}}/{{NPROBE}} by construction. For anything
     that has to render, <code>html5</code> and <code>epub3</code> are the practical
     maximum.</p>
-    <p><b>Need it back later.</b> <code>carve</code> through pandoc-carve leads at 61
-    exact (63 via its AST), then <code>markdown</code> 46 and <code>commonmark_x</code> 39.
+    <p><b>Need it back later.</b> <code>carve</code> through pandoc-carve leads at 64
+    exact (65 via its AST), then <code>markdown</code> 46 and <code>commonmark_x</code> 39.
     Metadata no longer separates them: markdown and Carve both return all ten meta
     values.</p>
     <p><b>Print and typesetting.</b> <code>latex</code> 54 and <code>beamer</code> 55 lead,
