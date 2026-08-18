@@ -53,11 +53,11 @@
   "table": "exact",
   "table_head": "exact",
   "table_caption": "exact",
-  "table_foot": "diff",
+  "table_foot": "exact",
   "table_colspan": "exact",
   "table_rowspan": "exact",
-  "table_align": "diff",
-  "table_colwidth": "same",
+  "table_align": "exact",
+  "table_colwidth": "exact",
   "table_attrs": "exact",
   "table_attrs_nocaption": "exact",
   "table_cell_attrs": "exact",
@@ -124,8 +124,8 @@
   "table_foot": "exact",
   "table_colspan": "exact",
   "table_rowspan": "exact",
-  "table_align": "diff",
-  "table_colwidth": "same",
+  "table_align": "exact",
+  "table_colwidth": "exact",
   "table_attrs": "exact",
   "table_attrs_nocaption": "exact",
   "table_cell_attrs": "exact",
@@ -196,7 +196,8 @@
   "table_head": [],
   "table_caption": [],
   "table_foot": [
-   "table: a foot of 1 row(s) - preserved in the Carve AST as `rowGroups`, but a pipe table spells only a leading run of header rows, so the emitted source flattens them into body rows"
+   "table: row-head columns, which a pipe table cannot spell - emitted as a `::: list-table` with `header-cols` (structure preserved)",
+   "list-table: the table's 1 foot row(s) become ordinary body rows - the extension has head rows only"
   ],
   "table_colspan": [],
   "table_rowspan": [],
@@ -213,7 +214,7 @@
    "table: a cell holds block content, which a pipe table cannot spell - emitted as a `::: list-table` (structure preserved)"
   ],
   "table_rowheadcols": [
-   "table: row-head columns, which a pipe table cannot spell - emitted as a `::: list-table` with `header-cols` (structure preserved)"
+   "table: row-head columns - preserved in the Carve AST as `rowGroups`, but a pipe table spells only a leading run of header rows, so the emitted source flattens them into body rows"
   ],
   "table_multibody": [
    "table: 2 body groups - preserved in the Carve AST as `rowGroups`, but a pipe table spells only a leading run of header rows, so the emitted source flattens them into body rows"
@@ -273,18 +274,18 @@
   "table": "| a | b |\n| c | d |\n",
   "table_head": "|= H1 |= H2 |\n| a | b |\n| c | d |\n",
   "table_caption": "| a | b |\n| c | d |\n^ cap\n",
-  "table_foot": "| a | b |\n| c | d |\n| F1 | F2 |\n",
+  "table_foot": "{footer-rows=1}\n::: list-table\n- - a\n  - b\n- - c\n  - d\n- - F1\n  - F2\n:::\n",
   "table_colspan": "| a | < |\n| c | d |\n",
   "table_rowspan": "| a | b |\n| ^ | d |\n",
-  "table_align": "|> a |~ b |\n|> c |~ d |\n",
-  "table_colwidth": "| a | b |\n| c | d |\n",
+  "table_align": "{aligns=right,center}\n| a | b |\n| c | d |\n",
+  "table_colwidth": "{widths=25,75}\n| a | b |\n| c | d |\n",
   "table_attrs": "{#tid .c1 k=v}\n| a | b |\n| c | d |\n^ cap\n",
   "table_attrs_nocaption": "{#tid .c1 k=v}\n| a | b |\n| c | d |\n",
   "table_cell_attrs": "|{#cid .c1} a | b |\n| c | d |\n",
   "table_cell_align": "|> a | b |\n| c | d |\n",
   "table_row_attrs": "| a | b |{#rid .c1}\n| c | d |\n",
   "table_block_cell": "::: list-table\n- - alpha\n\n    beta\n\n  - b\n- - c\n  - d\n:::\n",
-  "table_rowheadcols": "{header-cols=1}\n::: list-table\n- - a\n  - b\n- - c\n  - d\n:::\n",
+  "table_rowheadcols": "|= a | b |\n|= c | d |\n",
   "table_multibody": "| a | b |\n| c | d |\n"
  },
  "rt": {
@@ -346,7 +347,7 @@
    "table_colspan": "diff",
    "table_rowspan": "diff",
    "table_align": "diff",
-   "table_colwidth": "same",
+   "table_colwidth": "diff",
    "table_attrs": "diff",
    "table_attrs_nocaption": "diff",
    "table_cell_attrs": "diff",
@@ -414,7 +415,7 @@
    "table_colspan": "diff",
    "table_rowspan": "diff",
    "table_align": "diff",
-   "table_colwidth": "same",
+   "table_colwidth": "diff",
    "table_attrs": "diff",
    "table_attrs_nocaption": "diff",
    "table_cell_attrs": "diff",
