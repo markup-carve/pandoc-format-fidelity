@@ -13,15 +13,48 @@ FORMATS    := $(shell $(PANDOC) --list-output-formats 2>/dev/null | tr '\n' ',' 
 #                              chart as the reference row
 READABLE   := $(shell python3 src/formats.py 2>/dev/null)
 
-.PHONY: all pandoc lanes report carve clean check controls
+.PHONY: all pandoc lanes stamp report dashboard delta carve carve-rt clean check controls
+
+# The lanes are I/O bound on pandoc itself and gain nothing from -j, and the
+# stamp has to be written before the run it describes. Serial by declaration
+# rather than by luck.
+.NOTPARALLEL:
+
+# A lane writes through `> $@`, so a crash leaves a truncated file behind that
+# the next make reads as a finished measurement. Delete it instead.
+.DELETE_ON_ERROR:
+
+# Which results set a delta is judged against, and under which threshold
+# profile. The defaults are the pair CI uses: this checkout's committed results
+# against a fresh run of the same pinned pandoc, where nothing may move.
+BASELINE  ?= results-baseline
+CANDIDATE ?= results
+PROFILE   ?= pin
 
 all: pandoc lanes report
 
 pandoc:
 	./scripts/fetch-pandoc.sh
 
-lanes: results/formats.json results/matrix.json results/roundtrip.json \
-       results/exact.json results/meta.json
+LANE_FILES := results/formats.json results/matrix.json results/roundtrip.json \
+              results/exact.json results/meta.json
+
+# -B, because the lane files are committed. A checkout has all of them, so make
+# reads every measurement as up to date and `make lanes` does nothing but
+# rewrite the stamp - which is how the nightly watch came to label the pinned
+# results as a nightly run, and how the staleness gate came to compare a file
+# against itself. Asking for `lanes` means measure, not "measure if the file is
+# missing"; `report` still depends on the files themselves, so it stays
+# runnable from an existing results/ with no pandoc in hand.
+#
+# `stamp` is phony and runs first: every measurement records which pandoc
+# produced it, and a stamp make skipped as up to date would date the results to
+# whenever the file was last written.
+lanes: stamp
+	$(MAKE) -B $(LANE_FILES)
+
+stamp:
+	PANDOC=$(PANDOC) python3 src/run_env.py
 
 # The format inventory the report quotes, captured while pandoc is still in hand.
 results/formats.json:
@@ -46,14 +79,29 @@ results/meta.json:
 carve: results/probes.json
 	CARVE_BRIDGE=$(CARVE_BRIDGE) node src/run_carve.mjs
 
+# The other direction: Carve source in, Carve source out. Also opt-in.
+carve-rt:
+	CARVE_BRIDGE=$(CARVE_BRIDGE) node src/run_carve_rt.mjs
+
 results/probes.json:
 	python3 src/dump_probes.py
 
-report: results/formats.json
+report: results/formats.json dashboard
 	python3 src/gen_report.py
 	python3 src/gen_overview.py
 	@command -v google-chrome >/dev/null && $(MAKE) docs/report.pdf docs/overview.png || \
 	  echo "(no chrome found - skipped the pdf and png)"
+
+# The dated page: which pandoc, measured when, what moved since the baseline.
+# Reads results/ only, so it needs no pandoc and no network.
+dashboard:
+	python3 src/gen_dashboard.py
+
+# What moved between two results sets, gated by thresholds.json. Fails the
+# build on a breach; add --exit-zero through DELTA_ARGS for a report-only run.
+delta:
+	python3 src/delta.py --baseline $(BASELINE) --candidate $(CANDIDATE) \
+	  --profile $(PROFILE) --json results/delta.json $(DELTA_ARGS)
 
 docs/report.pdf: docs/index.html
 	google-chrome --headless --disable-gpu --no-sandbox --no-pdf-header-footer \
@@ -75,6 +123,8 @@ controls:
 check:
 	PYTHONPATH=src python3 -c "import probes; print(len(probes.PROBES), 'probes load')"
 	python3 -m json.tool results/matrix.json > /dev/null && echo "matrix.json valid"
+	PYTHONPATH=src python3 src/severity.py
+	PYTHONPATH=src python3 -m unittest discover -s tests -t .
 
 clean:
-	rm -f results/*.json docs/index.html
+	rm -f results/*.json docs/index.html docs/dashboard.html

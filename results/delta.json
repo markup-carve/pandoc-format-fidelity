@@ -1,0 +1,82 @@
+{
+ "generated": "2026-09-07T12:27:51Z",
+ "baseline": {
+  "dir": "results-baseline",
+  "run": {
+   "date": "2026-09-07T12:16:16Z",
+   "pandoc": {
+    "version": "3.10.2",
+    "banner": "pandoc 3.10.2",
+    "binary": "pandoc",
+    "pinned": "3.10.2",
+    "is_pin": true,
+    "api": [
+     1,
+     23,
+     1,
+     2
+    ]
+   },
+   "probes": 66,
+   "commit": "97aef18",
+   "dirty": true,
+   "python": "3.12.3",
+   "platform": "Linux-x86_64"
+  }
+ },
+ "candidate": {
+  "dir": "results",
+  "run": {
+   "date": "2026-09-07T12:25:48Z",
+   "pandoc": {
+    "version": "3.10.2",
+    "banner": "pandoc 3.10.2",
+    "binary": "pandoc",
+    "pinned": "3.10.2",
+    "is_pin": true,
+    "api": [
+     1,
+     23,
+     1,
+     2
+    ]
+   },
+   "probes": 66,
+   "commit": "97aef18",
+   "dirty": true,
+   "python": "3.12.3",
+   "platform": "Linux-x86_64"
+  }
+ },
+ "thresholds": {
+  "description": "the repo's own results against the pinned pandoc: nothing may move without a human deciding it should",
+  "max_regressions": {
+   "total": 0
+  },
+  "max_regression_weight": 0,
+  "fail_on_unknown_verdict": true,
+  "fail_on_missing_coverage": true,
+  "allow": [
+   {
+    "lane": "matrix",
+    "format": "pdf",
+    "probe": "*",
+    "reason": "the pdf writer needs an external TeX engine, so this row measures whether the runner has one"
+   }
+  ],
+  "profile": "pin"
+ },
+ "changes": [],
+ "exempt": [],
+ "structural": [],
+ "tally": {
+  "regressions": 0,
+  "improvements": 0,
+  "unknown": 0,
+  "regression_weight": 0,
+  "regressions_by_lane": {},
+  "regressions_by_class": {}
+ },
+ "breaches": [],
+ "status": "ok"
+}

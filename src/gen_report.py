@@ -175,7 +175,15 @@ for key, fn in [("T1", table1), ("T2", table2), ("T3", table3), ("T4", table4),
 # counts of pandoc's own writers and readers. Every count quoted in the prose goes
 # through here - a hand-typed one drifts silently on the next rerun.
 FMT = json.load(open("results/formats.json"))
+# Which pandoc, measured when. Read from the stamp the lanes leave, never typed
+# into the page: the version in the heading used to be a literal, so a rerun
+# against a different build published the old number over the new figures.
+RUN = json.load(open("results/run.json"))
 stats = {
+    "PANDOCV": RUN["pandoc"]["version"] or "unknown",
+    "RUNDATE": RUN["date"][:10],
+    "PLATFORM": RUN["platform"].replace("_", "-"),
+    "STYLE": open("resources/theme.css", encoding="utf-8").read(),
     "NWRITE": str(len(W) - len(CARVE)),
     "NREAD": str(len(FMT["inputs"])),
     "NPROBE": str(N),

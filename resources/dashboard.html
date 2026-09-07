@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<title>Pandoc Format Fidelity - Dashboard</title>
+<style>{{STYLE}}
+.badge{
+  display:inline-block; padding:2px 9px; border-radius:2px; font-family:var(--mono);
+  font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; font-weight:600;
+}
+.badge.ok{background:var(--accent-soft); color:var(--accent)}
+.badge.warn{background:var(--warn-soft); color:var(--warn)}
+.badge.bad{background:var(--bad-soft); color:var(--bad)}
+.stack{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.spark{display:block; width:100%; max-width:640px; height:64px}
+.sev{display:inline-block; min-width:52px; font-family:var(--mono); font-size:.78rem}
+.sev.content{color:var(--bad)}
+.sev.structure{color:var(--warn)}
+.sev.presentation{color:var(--muted)}
+.empty{color:var(--muted); font-size:.9rem; font-style:italic}
+table.grid td.wrap{white-space:normal; max-width:52ch; line-height:1.4}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">Run {{RUNDATE}} &middot; pandoc {{PANDOCV}}</p>
+  <h1>Fidelity dashboard</h1>
+  <p class="lede">One dated reading of <a href="index.html">the grid</a>: which pandoc
+  produced these numbers, what moved since the baseline, and how much of the movement
+  a reader would actually notice. Every figure is read from <code>results/</code>;
+  nothing on this page is typed by hand.</p>
+  <div class="facts">
+    <div><b>{{PANDOCV}}</b><span>pandoc {{PINNOTE}}</span></div>
+    <div><b>{{RUNDATE}}</b><span>measured (UTC)</span></div>
+    <div><b>{{NPROBE}}</b><span>element probes</span></div>
+    <div><b>{{NFORMATS}}</b><span>formats scored</span></div>
+    <div><b>{{SEMMEDIAN}}%</b><span>median semantic fidelity</span></div>
+  </div>
+  <div class="stack">{{DELTASTATUS}}</div>
+</header>
+
+<section>
+  <p class="eyebrow">Deltas</p>
+  <h2>What moved since the baseline</h2>
+  <div class="col">
+    <p>A cell moved when its verdict changed between two runs. The direction is not a
+    matter of taste: every lane declares an order over its verdicts in
+    <code>src/verdicts.py</code>, and a cell that drops rank is a regression. Thresholds
+    live in <code>thresholds.json</code> and the exit code of <code>make delta</code> is
+    the gate, so a regression stops a build rather than scrolling past in a diffstat.</p>
+  </div>
+  {{TDELTA}}
+</section>
+
+<section>
+  <p class="eyebrow">Severity</p>
+  <h2>Not every lost probe costs the same</h2>
+  <div class="col">
+    <p>Counting probes treats a dropped footnote body and a dropped column width as one
+    event each. They are not. Each probe is classified by what is missing from the page
+    when it does not survive: <b class="sev content">content</b> means text or a referent
+    is gone with nothing left saying so, <b class="sev structure">structure</b> means every
+    character survived but the document's shape did not, and
+    <b class="sev presentation">presentation</b> means styling or a measurement is gone
+    while the words and the shape are intact. The rubric, and the calls that are arguable,
+    are in <code>src/severity.py</code>.</p>
+    <p>The weighted score below forgives the <i>canonical</i> verdict, because the question
+    it asks is whether the content came home, not whether the writer restyled it on the
+    way. The three per-class columns are the point: two formats reach the same percentage
+    by losing very different things.</p>
+  </div>
+  <div class="scroll">{{TSCORE}}</div>
+  <div class="legend">
+    <span><b class="dot ok"></b> kept</span>
+    <span><b class="dot mid"></b> partly kept</span>
+    <span><b class="dot low"></b> lost</span>
+    <span class="dim">weights: content 3, structure 2, presentation 1</span>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Carve</p>
+  <h2>The other direction: Carve source in, Carve source out</h2>
+  <div class="col">
+    <p>Every lane above starts from a pandoc AST, which answers how much of a
+    <i>pandoc</i> document a format can hold. It cannot answer the question a Carve
+    author has, because the pandoc AST has no node for an admonition, a task list, a
+    highlight or an editorial mark, so those never appear in the probe set at all.</p>
+    <p>This lane starts from Carve instead: {{NCARVE}} source files, one construct each,
+    written out through the
+    <a href="https://github.com/markup-carve/pandoc-carve">pandoc-carve</a> bridge and read
+    straight back, and again through each of {{NCARVEFMT}} export formats. <b>exact</b> is character for character,
+    <b>equivalent</b> is a formatter restyling, <b>respelled</b> means the source is
+    spelled differently and renders identically (a <code>[^1]</code> reference footnote
+    coming back as an inline one), and <b>lossy</b> means a reader would see the
+    difference. The three left-hand verdicts are the ones where nothing was lost.</p>
+  </div>
+  {{TCARVERT}}
+</section>
+
+<section>
+  <p class="eyebrow">History</p>
+  <h2>The same probes over time</h2>
+  <div class="col">
+    <p>One line per recorded run, appended by <code>src/delta.py --record</code>. Medians
+    rather than means: a handful of formats cannot be measured on a runner without a TeX
+    engine, and a mean would report the machine instead of pandoc.</p>
+  </div>
+  {{THISTORY}}
+</section>
+
+<section>
+  <p class="eyebrow">Gate</p>
+  <h2>What would fail this build</h2>
+  <div class="col">
+    <p>Two profiles, because the two comparisons are not the same question. Against the
+    pinned pandoc nothing may move without someone deciding it should. Against pandoc's
+    nightly, upstream restyles writers routinely, so presentation-class movement is
+    expected and content-class movement is not.</p>
+  </div>
+  <div class="scroll">{{TTHRESH}}</div>
+</section>
+
+<footer>
+  pandoc {{PANDOCV}} &middot; {{NPROBE}} probes &middot; {{NFORMATS}} formats &middot;
+  measured {{RUNTIME}} on {{PLATFORM}} &middot; repo at {{COMMIT}}
+  &middot; <a href="index.html">Full report</a>
+</footer>
+
+</div>
+</html>
