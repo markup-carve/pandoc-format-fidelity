@@ -1,0 +1,39 @@
+{
+ "about": "Regression thresholds for src/delta.py. A regression is a cell that dropped rank between two runs (see src/verdicts.py); weight is what a reader loses (see src/severity.py). Pick a profile with --profile; `allow` is shared by both and exempts cells whose verdict depends on the machine rather than on pandoc.",
+ "allow": [
+  {
+   "lane": "matrix",
+   "format": "pdf",
+   "probe": "*",
+   "reason": "the pdf writer needs an external TeX engine, so this row measures whether the runner has one"
+  }
+ ],
+ "profiles": {
+  "pin": {
+   "description": "the repo's own results against the pinned pandoc: nothing may move without a human deciding it should",
+   "max_regressions": {
+    "total": 0
+   },
+   "max_regression_weight": 0,
+   "fail_on_unknown_verdict": true,
+   "fail_on_missing_coverage": true
+  },
+  "nightly": {
+   "description": "the watch on pandoc's nightly build: upstream restyles writers all the time, so presentation may move; content may not",
+   "max_regressions": {
+    "total": 12,
+    "exact": 12,
+    "matrix": 6,
+    "roundtrip": 6,
+    "meta": 2
+   },
+   "max_regressions_by_class": {
+    "content": 0,
+    "structure": 4
+   },
+   "max_regression_weight": 24,
+   "fail_on_unknown_verdict": true,
+   "fail_on_missing_coverage": true
+  }
+ }
+}

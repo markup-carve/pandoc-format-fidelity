@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<title>Pandoc Format Fidelity - Dashboard</title>
+<style>:root{
+  --paper:#F4F6F7; --surface:#FFFFFF; --surface-2:#EDF1F2;
+  --ink:#111A20; --muted:#5B6B75; --line:#D6DDE1;
+  --accent:#0E6B70; --accent-soft:#D6E9E8;
+  --warn:#8E6410; --warn-soft:#F0E5CE;
+  --bad:#8E3A31; --bad-soft:#F0DEDA;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --serif:Charter,"Bitstream Charter","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1418; --surface:#131C21; --surface-2:#18242A;
+    --ink:#DDE6EA; --muted:#8798A2; --line:#243138;
+    --accent:#57B7B6; --accent-soft:#0F2F31;
+    --warn:#CFA057; --warn-soft:#2E2512;
+    --bad:#DE8B80; --bad-soft:#331A17;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1418; --surface:#131C21; --surface-2:#18242A;
+  --ink:#DDE6EA; --muted:#8798A2; --line:#243138;
+  --accent:#57B7B6; --accent-soft:#0F2F31;
+  --warn:#CFA057; --warn-soft:#2E2512;
+  --bad:#DE8B80; --bad-soft:#331A17;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px 96px}
+.col{max-width:70ch}
+h1,h2,h3{font-family:var(--serif); font-weight:600; text-wrap:balance; margin:0}
+h1{font-size:clamp(2.1rem,5vw,3.1rem); line-height:1.08; letter-spacing:-.015em}
+h2{font-size:1.65rem; line-height:1.2; margin-top:.2em}
+h3{font-size:1.12rem; line-height:1.3}
+p{margin:0}
+a{color:var(--accent)}
+code,.fmt,.mono{font-family:var(--mono); font-size:.86em}
+.eyebrow{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--accent); margin:0;
+}
+.dim{color:var(--muted)}
+.small{font-size:.8rem}
+
+header.top{
+  border-bottom:1px solid var(--line); padding:64px 0 32px; margin-bottom:8px;
+  display:flex; flex-direction:column; gap:18px;
+}
+header.top .lede{font-size:1.08rem; color:var(--muted); max-width:62ch}
+.facts{
+  display:flex; flex-wrap:wrap; gap:0; margin-top:10px;
+  border:1px solid var(--line); border-radius:2px; background:var(--surface);
+}
+.facts div{
+  flex:1 1 150px; padding:12px 16px; border-right:1px solid var(--line);
+}
+.facts div:last-child{border-right:0}
+.facts b{
+  display:block; font-family:var(--mono); font-size:1.35rem;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+}
+.facts span{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+
+section{padding:44px 0 0; display:flex; flex-direction:column; gap:16px}
+section + section{border-top:1px solid var(--line); margin-top:36px}
+
+.findings{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); margin-top:6px}
+.finding{
+  background:var(--surface); border:1px solid var(--line); border-radius:2px;
+  padding:16px 18px; display:flex; flex-direction:column; gap:6px;
+}
+.finding h3{font-family:var(--sans); font-size:.95rem; font-weight:650}
+.finding p{font-size:.9rem; color:var(--muted)}
+.finding .num{
+  font-family:var(--mono); font-size:1.5rem; color:var(--accent);
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+}
+
+.scroll{overflow-x:auto; border:1px solid var(--line); background:var(--surface); border-radius:2px}
+table.grid{border-collapse:collapse; width:100%; font-size:.82rem}
+table.grid th,table.grid td{
+  padding:5px 10px; text-align:right; white-space:nowrap;
+  border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums;
+}
+table.grid th{
+  position:sticky; top:0; background:var(--surface-2); z-index:2;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.08em;
+  text-transform:uppercase; font-weight:600; color:var(--muted);
+}
+table.grid th span{opacity:.6; font-weight:400}
+table.grid td.l,table.grid th.l{text-align:left}
+table.grid tbody tr:hover td{background:var(--surface-2)}
+table.grid tbody tr.hi td{background:var(--accent-soft); font-weight:600}
+table.grid tbody tr.hi td.fmt{box-shadow:inset 3px 0 0 var(--accent)}
+table.grid td.fmt{font-family:var(--mono); font-size:.8rem}
+th.vert{writing-mode:vertical-rl; transform:rotate(180deg); height:104px; padding:8px 3px; text-align:left}
+th.vert span{display:inline-block}
+
+.cell-bar{position:relative; display:inline-block; min-width:44px; padding:1px 5px; border-radius:2px}
+.cell-bar i{position:absolute; inset:0; width:var(--p); background:var(--accent-soft); border-radius:2px}
+.cell-bar.mid i{background:var(--warn-soft)}
+.cell-bar.low i{background:var(--bad-soft)}
+.cell-bar b{position:relative; font-family:var(--mono); font-weight:500}
+.cell-bar.low b{color:var(--bad)}
+.dot{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--accent)}
+.dot.mid{background:var(--warn)}
+.dot.low{background:var(--line); box-shadow:inset 0 0 0 1px var(--muted)}
+
+ul.notes{margin:0; padding-left:1.1em; display:flex; flex-direction:column; gap:8px}
+ul.notes li{color:var(--muted); font-size:.93rem}
+ul.notes b{color:var(--ink); font-weight:600}
+pre{
+  margin:0; padding:14px 16px; background:var(--surface); border:1px solid var(--line);
+  border-radius:2px; overflow-x:auto; font-family:var(--mono); font-size:.8rem; line-height:1.5;
+}
+.legend{display:flex; gap:18px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); align-items:center}
+.legend span{display:flex; gap:6px; align-items:center}
+footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.82rem}
+
+.badge{
+  display:inline-block; padding:2px 9px; border-radius:2px; font-family:var(--mono);
+  font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; font-weight:600;
+}
+.badge.ok{background:var(--accent-soft); color:var(--accent)}
+.badge.warn{background:var(--warn-soft); color:var(--warn)}
+.badge.bad{background:var(--bad-soft); color:var(--bad)}
+.stack{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.spark{display:block; width:100%; max-width:640px; height:64px}
+.sev{display:inline-block; min-width:52px; font-family:var(--mono); font-size:.78rem}
+.sev.content{color:var(--bad)}
+.sev.structure{color:var(--warn)}
+.sev.presentation{color:var(--muted)}
+.empty{color:var(--muted); font-size:.9rem; font-style:italic}
+table.grid td.wrap{white-space:normal; max-width:52ch; line-height:1.4}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">Run 2026-09-07 &middot; pandoc 3.10.2</p>
+  <h1>Fidelity dashboard</h1>
+  <p class="lede">One dated reading of <a href="index.html">the grid</a>: which pandoc
+  produced these numbers, what moved since the baseline, and how much of the movement
+  a reader would actually notice. Every figure is read from <code>results/</code>;
+  nothing on this page is typed by hand.</p>
+  <div class="facts">
+    <div><b>3.10.2</b><span>pandoc (the pin)</span></div>
+    <div><b>2026-09-07</b><span>measured (UTC)</span></div>
+    <div><b>66</b><span>element probes</span></div>
+    <div><b>34</b><span>formats scored</span></div>
+    <div><b>37.6%</b><span>median semantic fidelity</span></div>
+  </div>
+  <div class="stack"><span class="badge warn">measured from a dirty checkout</span><span class="badge ok">within thresholds</span><span class="badge ok">0 regressions</span></div>
+</header>
+
+<section>
+  <p class="eyebrow">Deltas</p>
+  <h2>What moved since the baseline</h2>
+  <div class="col">
+    <p>A cell moved when its verdict changed between two runs. The direction is not a
+    matter of taste: every lane declares an order over its verdicts in
+    <code>src/verdicts.py</code>, and a cell that drops rank is a regression. Thresholds
+    live in <code>thresholds.json</code> and the exit code of <code>make delta</code> is
+    the gate, so a regression stops a build rather than scrolling past in a diffstat.</p>
+  </div>
+  <p class="small dim">pandoc 3.10.2 of 2026-09-07T12:25:48Z against pandoc 3.10.2 of 2026-09-07T12:16:16Z, profile <code>pin</code>.</p><p class="empty">Every cell held its verdict.</p>
+</section>
+
+<section>
+  <p class="eyebrow">Severity</p>
+  <h2>Not every lost probe costs the same</h2>
+  <div class="col">
+    <p>Counting probes treats a dropped footnote body and a dropped column width as one
+    event each. They are not. Each probe is classified by what is missing from the page
+    when it does not survive: <b class="sev content">content</b> means text or a referent
+    is gone with nothing left saying so, <b class="sev structure">structure</b> means every
+    character survived but the document's shape did not, and
+    <b class="sev presentation">presentation</b> means styling or a measurement is gone
+    while the words and the shape are intact. The rubric, and the calls that are arguable,
+    are in <code>src/severity.py</code>.</p>
+    <p>The weighted score below forgives the <i>canonical</i> verdict, because the question
+    it asks is whether the content came home, not whether the writer restyled it on the
+    way. The three per-class columns are the point: two formats reach the same percentage
+    by losing very different things.</p>
+  </div>
+  <div class="scroll"><table class="grid"><thead><tr><th class="l">format</th><th>expressed<span>/66</span></th><th>round&#8209;trip<span>/66</span></th><th>exact<span>/66</span></th><th>canon.<span>/66</span></th><th>meta<span>/10</span></th><th>semantic</th><th>content<span>/12</span></th><th>structure<span>/27</span></th><th>presentation<span>/27</span></th></tr></thead><tbody><tr><td class="l fmt">native</td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>66</b></span></td><td><span class="cell-bar mid" style="--p:100%"><i></i><b>66</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>66</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>10</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>100</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>12</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>27</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>27</b></span></td></tr><tr><td class="l fmt">markdown</td><td><span class="cell-bar ok" style="--p:89%"><i></i><b>59</b></span></td><td><span class="cell-bar mid" style="--p:89%"><i></i><b>59</b></span></td><td><span class="cell-bar ok" style="--p:70%"><i></i><b>46</b></span></td><td><span class="cell-bar mid" style="--p:17%"><i></i><b>11</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>10</b></span></td><td><span class="cell-bar ok" style="--p:89%"><i></i><b>88.9</b></span></td><td><span class="cell-bar mid" style="--p:92%"><i></i><b>11</b></span></td><td><span class="cell-bar mid" style="--p:93%"><i></i><b>25</b></span></td><td><span class="cell-bar mid" style="--p:78%"><i></i><b>21</b></span></td></tr><tr><td class="l fmt">html</td><td><span class="cell-bar ok" style="--p:95%"><i></i><b>63</b></span></td><td><span class="cell-bar mid" style="--p:94%"><i></i><b>62</b></span></td><td><span class="cell-bar ok" style="--p:64%"><i></i><b>42</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:35%"><i></i><b>3.5</b></span></td><td><span class="cell-bar mid" style="--p:68%"><i></i><b>67.5</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>6</b></span></td><td><span class="cell-bar mid" style="--p:81%"><i></i><b>22</b></span></td><td><span class="cell-bar mid" style="--p:63%"><i></i><b>17</b></span></td></tr><tr><td class="l fmt">commonmark_x</td><td><span class="cell-bar ok" style="--p:86%"><i></i><b>57</b></span></td><td><span class="cell-bar mid" style="--p:86%"><i></i><b>57</b></span></td><td><span class="cell-bar mid" style="--p:59%"><i></i><b>39</b></span></td><td><span class="cell-bar mid" style="--p:3%"><i></i><b>2</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>10</b></span></td><td><span class="cell-bar mid" style="--p:62%"><i></i><b>62.4</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>6</b></span></td><td><span class="cell-bar mid" style="--p:74%"><i></i><b>20</b></span></td><td><span class="cell-bar mid" style="--p:56%"><i></i><b>15</b></span></td></tr><tr><td class="l fmt">muse</td><td><span class="cell-bar mid" style="--p:68%"><i></i><b>45</b></span></td><td><span class="cell-bar mid" style="--p:65%"><i></i><b>43</b></span></td><td><span class="cell-bar mid" style="--p:48%"><i></i><b>32</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:45%"><i></i><b>4.5</b></span></td><td><span class="cell-bar mid" style="--p:59%"><i></i><b>59</b></span></td><td><span class="cell-bar mid" style="--p:67%"><i></i><b>8</b></span></td><td><span class="cell-bar mid" style="--p:67%"><i></i><b>18</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>9</b></span></td></tr><tr><td class="l fmt">rst</td><td><span class="cell-bar mid" style="--p:71%"><i></i><b>47</b></span></td><td><span class="cell-bar mid" style="--p:68%"><i></i><b>45</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>33</b></span></td><td><span class="cell-bar mid" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar mid" style="--p:56%"><i></i><b>56.4</b></span></td><td><span class="cell-bar mid" style="--p:67%"><i></i><b>8</b></span></td><td><span class="cell-bar mid" style="--p:59%"><i></i><b>16</b></span></td><td><span class="cell-bar low" style="--p:37%"><i></i><b>10</b></span></td></tr><tr><td class="l fmt">epub</td><td><span class="cell-bar ok" style="--p:94%"><i></i><b>62</b></span></td><td><span class="cell-bar mid" style="--p:92%"><i></i><b>61</b></span></td><td><span class="cell-bar mid" style="--p:52%"><i></i><b>34</b></span></td><td><span class="cell-bar mid" style="--p:3%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>2.5</b></span></td><td><span class="cell-bar mid" style="--p:54%"><i></i><b>53.8</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>4</b></span></td><td><span class="cell-bar mid" style="--p:70%"><i></i><b>19</b></span></td><td><span class="cell-bar low" style="--p:48%"><i></i><b>13</b></span></td></tr><tr><td class="l fmt">latex</td><td><span class="cell-bar ok" style="--p:82%"><i></i><b>54</b></span></td><td><span class="cell-bar mid" style="--p:71%"><i></i><b>47</b></span></td><td><span class="cell-bar mid" style="--p:36%"><i></i><b>24</b></span></td><td><span class="cell-bar mid" style="--p:11%"><i></i><b>7</b></span></td><td><span class="cell-bar low" style="--p:40%"><i></i><b>4</b></span></td><td><span class="cell-bar mid" style="--p:51%"><i></i><b>51.3</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>6</b></span></td><td><span class="cell-bar mid" style="--p:63%"><i></i><b>17</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td></tr><tr><td class="l fmt">djot</td><td><span class="cell-bar mid" style="--p:79%"><i></i><b>52</b></span></td><td><span class="cell-bar mid" style="--p:79%"><i></i><b>52</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>33</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>50.4</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>4</b></span></td><td><span class="cell-bar mid" style="--p:67%"><i></i><b>18</b></span></td><td><span class="cell-bar low" style="--p:41%"><i></i><b>11</b></span></td></tr><tr><td class="l fmt">markdown_mmd</td><td><span class="cell-bar mid" style="--p:76%"><i></i><b>50</b></span></td><td><span class="cell-bar mid" style="--p:76%"><i></i><b>50</b></span></td><td><span class="cell-bar mid" style="--p:42%"><i></i><b>28</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar mid" style="--p:65%"><i></i><b>6.5</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>50.4</b></span></td><td><span class="cell-bar mid" style="--p:58%"><i></i><b>7</b></span></td><td><span class="cell-bar mid" style="--p:52%"><i></i><b>14</b></span></td><td><span class="cell-bar low" style="--p:37%"><i></i><b>10</b></span></td></tr><tr><td class="l fmt">docx</td><td><span class="cell-bar ok" style="--p:80%"><i></i><b>53</b></span></td><td><span class="cell-bar mid" style="--p:65%"><i></i><b>43</b></span></td><td><span class="cell-bar low" style="--p:35%"><i></i><b>23</b></span></td><td><span class="cell-bar mid" style="--p:14%"><i></i><b>9</b></span></td><td><span class="cell-bar low" style="--p:40%"><i></i><b>4</b></span></td><td><span class="cell-bar mid" style="--p:49%"><i></i><b>48.7</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>3</b></span></td><td><span class="cell-bar mid" style="--p:70%"><i></i><b>19</b></span></td><td><span class="cell-bar low" style="--p:37%"><i></i><b>10</b></span></td></tr><tr><td class="l fmt">mediawiki</td><td><span class="cell-bar mid" style="--p:77%"><i></i><b>51</b></span></td><td><span class="cell-bar mid" style="--p:67%"><i></i><b>44</b></span></td><td><span class="cell-bar mid" style="--p:38%"><i></i><b>25</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:44%"><i></i><b>44.4</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>4</b></span></td><td><span class="cell-bar mid" style="--p:59%"><i></i><b>16</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td></tr><tr><td class="l fmt">docbook</td><td><span class="cell-bar mid" style="--p:64%"><i></i><b>42</b></span></td><td><span class="cell-bar mid" style="--p:62%"><i></i><b>41</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>22</b></span></td><td><span class="cell-bar mid" style="--p:8%"><i></i><b>5</b></span></td><td><span class="cell-bar low" style="--p:40%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:44%"><i></i><b>43.6</b></span></td><td><span class="cell-bar low" style="--p:42%"><i></i><b>5</b></span></td><td><span class="cell-bar mid" style="--p:52%"><i></i><b>14</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td></tr><tr><td class="l fmt">gfm</td><td><span class="cell-bar mid" style="--p:76%"><i></i><b>50</b></span></td><td><span class="cell-bar mid" style="--p:76%"><i></i><b>50</b></span></td><td><span class="cell-bar mid" style="--p:36%"><i></i><b>24</b></span></td><td><span class="cell-bar mid" style="--p:3%"><i></i><b>2</b></span></td><td><span class="cell-bar ok" style="--p:100%"><i></i><b>10</b></span></td><td><span class="cell-bar low" style="--p:40%"><i></i><b>40.2</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:48%"><i></i><b>13</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>9</b></span></td></tr><tr><td class="l fmt">odt</td><td><span class="cell-bar mid" style="--p:71%"><i></i><b>47</b></span></td><td><span class="cell-bar mid" style="--p:56%"><i></i><b>37</b></span></td><td><span class="cell-bar low" style="--p:35%"><i></i><b>23</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:40%"><i></i><b>40.2</b></span></td><td><span class="cell-bar low" style="--p:17%"><i></i><b>2</b></span></td><td><span class="cell-bar mid" style="--p:63%"><i></i><b>17</b></span></td><td><span class="cell-bar low" style="--p:26%"><i></i><b>7</b></span></td></tr><tr><td class="l fmt">markdown_github</td><td><span class="cell-bar mid" style="--p:70%"><i></i><b>46</b></span></td><td><span class="cell-bar mid" style="--p:70%"><i></i><b>46</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>22</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:38%"><i></i><b>37.6</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:41%"><i></i><b>11</b></span></td><td><span class="cell-bar low" style="--p:37%"><i></i><b>10</b></span></td></tr><tr><td class="l fmt">markdown_phpextra</td><td><span class="cell-bar mid" style="--p:73%"><i></i><b>48</b></span></td><td><span class="cell-bar mid" style="--p:73%"><i></i><b>48</b></span></td><td><span class="cell-bar mid" style="--p:39%"><i></i><b>26</b></span></td><td><span class="cell-bar mid" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:38%"><i></i><b>37.6</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:41%"><i></i><b>11</b></span></td><td><span class="cell-bar low" style="--p:48%"><i></i><b>13</b></span></td></tr><tr><td class="l fmt">org</td><td><span class="cell-bar mid" style="--p:67%"><i></i><b>44</b></span></td><td><span class="cell-bar mid" style="--p:65%"><i></i><b>43</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>21</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:35%"><i></i><b>3.5</b></span></td><td><span class="cell-bar low" style="--p:38%"><i></i><b>37.6</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:44%"><i></i><b>12</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td></tr><tr><td class="l fmt">textile</td><td><span class="cell-bar mid" style="--p:70%"><i></i><b>46</b></span></td><td><span class="cell-bar mid" style="--p:67%"><i></i><b>44</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>21</b></span></td><td><span class="cell-bar mid" style="--p:3%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:38%"><i></i><b>37.6</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>3</b></span></td><td><span class="cell-bar mid" style="--p:56%"><i></i><b>15</b></span></td><td><span class="cell-bar low" style="--p:19%"><i></i><b>5</b></span></td></tr><tr><td class="l fmt">asciidoc</td><td><span class="cell-bar mid" style="--p:73%"><i></i><b>48</b></span></td><td><span class="cell-bar mid" style="--p:71%"><i></i><b>47</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>21</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:36%"><i></i><b>35.9</b></span></td><td><span class="cell-bar low" style="--p:42%"><i></i><b>5</b></span></td><td><span class="cell-bar low" style="--p:41%"><i></i><b>11</b></span></td><td><span class="cell-bar low" style="--p:19%"><i></i><b>5</b></span></td></tr><tr><td class="l fmt">ipynb</td><td><span class="cell-bar mid" style="--p:71%"><i></i><b>47</b></span></td><td><span class="cell-bar mid" style="--p:100%"><i></i><b>66</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>21</b></span></td><td><span class="cell-bar mid" style="--p:5%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:36%"><i></i><b>35.9</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:44%"><i></i><b>12</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>9</b></span></td></tr><tr><td class="l fmt">typst</td><td><span class="cell-bar ok" style="--p:80%"><i></i><b>53</b></span></td><td><span class="cell-bar mid" style="--p:73%"><i></i><b>48</b></span></td><td><span class="cell-bar mid" style="--p:38%"><i></i><b>25</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:36%"><i></i><b>35.9</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:41%"><i></i><b>11</b></span></td><td><span class="cell-bar low" style="--p:41%"><i></i><b>11</b></span></td></tr><tr><td class="l fmt">dokuwiki</td><td><span class="cell-bar mid" style="--p:58%"><i></i><b>38</b></span></td><td><span class="cell-bar mid" style="--p:53%"><i></i><b>35</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>21</b></span></td><td><span class="cell-bar mid" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>32.5</b></span></td><td><span class="cell-bar low" style="--p:17%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:44%"><i></i><b>12</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td></tr><tr><td class="l fmt">jats</td><td><span class="cell-bar ok" style="--p:82%"><i></i><b>54</b></span></td><td><span class="cell-bar mid" style="--p:65%"><i></i><b>43</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>21</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:40%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>31.6</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:37%"><i></i><b>10</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td></tr><tr><td class="l fmt">commonmark</td><td><span class="cell-bar ok" style="--p:85%"><i></i><b>56</b></span></td><td><span class="cell-bar mid" style="--p:85%"><i></i><b>56</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>21</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>29.9</b></span></td><td><span class="cell-bar low" style="--p:17%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:37%"><i></i><b>10</b></span></td><td><span class="cell-bar low" style="--p:33%"><i></i><b>9</b></span></td></tr><tr><td class="l fmt">man</td><td><span class="cell-bar mid" style="--p:55%"><i></i><b>36</b></span></td><td><span class="cell-bar mid" style="--p:53%"><i></i><b>35</b></span></td><td><span class="cell-bar low" style="--p:23%"><i></i><b>15</b></span></td><td><span class="cell-bar mid" style="--p:8%"><i></i><b>5</b></span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:29%"><i></i><b>29.1</b></span></td><td><span class="cell-bar low" style="--p:8%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:44%"><i></i><b>12</b></span></td><td><span class="cell-bar low" style="--p:26%"><i></i><b>7</b></span></td></tr><tr><td class="l fmt">markdown_strict</td><td><span class="cell-bar mid" style="--p:79%"><i></i><b>52</b></span></td><td><span class="cell-bar mid" style="--p:79%"><i></i><b>52</b></span></td><td><span class="cell-bar low" style="--p:27%"><i></i><b>18</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:27%"><i></i><b>27.4</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>3</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td><td><span class="cell-bar low" style="--p:26%"><i></i><b>7</b></span></td></tr><tr><td class="l fmt">jira</td><td><span class="cell-bar mid" style="--p:56%"><i></i><b>37</b></span></td><td><span class="cell-bar mid" style="--p:55%"><i></i><b>36</b></span></td><td><span class="cell-bar low" style="--p:26%"><i></i><b>17</b></span></td><td><span class="cell-bar mid" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:26%"><i></i><b>26.5</b></span></td><td><span class="cell-bar low" style="--p:8%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:41%"><i></i><b>11</b></span></td><td><span class="cell-bar low" style="--p:22%"><i></i><b>6</b></span></td></tr><tr><td class="l fmt">rtf</td><td><span class="cell-bar mid" style="--p:61%"><i></i><b>40</b></span></td><td><span class="cell-bar mid" style="--p:39%"><i></i><b>26</b></span></td><td><span class="cell-bar low" style="--p:23%"><i></i><b>15</b></span></td><td><span class="cell-bar mid" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:22%"><i></i><b>22.2</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:37%"><i></i><b>10</b></span></td><td><span class="cell-bar low" style="--p:22%"><i></i><b>6</b></span></td></tr><tr><td class="l fmt">fb2</td><td><span class="cell-bar mid" style="--p:59%"><i></i><b>39</b></span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>33</b></span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>13</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:40%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>20.5</b></span></td><td><span class="cell-bar low" style="--p:17%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:26%"><i></i><b>7</b></span></td><td><span class="cell-bar low" style="--p:15%"><i></i><b>4</b></span></td></tr><tr><td class="l fmt">haddock</td><td><span class="cell-bar mid" style="--p:53%"><i></i><b>35</b></span></td><td><span class="cell-bar mid" style="--p:48%"><i></i><b>32</b></span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>13</b></span></td><td><span class="cell-bar mid" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>20.5</b></span></td><td><span class="cell-bar low" style="--p:8%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>8</b></span></td><td><span class="cell-bar low" style="--p:19%"><i></i><b>5</b></span></td></tr><tr><td class="l fmt">t2t</td><td><span class="cell-bar mid" style="--p:56%"><i></i><b>37</b></span></td><td><span class="cell-bar mid" style="--p:53%"><i></i><b>35</b></span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>13</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:18%"><i></i><b>17.9</b></span></td><td><span class="cell-bar low" style="--p:8%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:22%"><i></i><b>6</b></span></td><td><span class="cell-bar low" style="--p:22%"><i></i><b>6</b></span></td></tr><tr><td class="l fmt">pptx</td><td><span class="cell-bar mid" style="--p:61%"><i></i><b>40</b></span></td><td><span class="cell-bar mid" style="--p:21%"><i></i><b>14</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar mid" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:2%"><i></i><b>1.7</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:4%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td></tr><tr><td class="l fmt">opml</td><td><span class="cell-bar low" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar mid" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:20%"><i></i><b>2</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td><td><span class="cell-bar low" style="--p:0%"><i></i><b>0</b></span></td></tr></tbody></table></div>
+  <div class="legend">
+    <span><b class="dot ok"></b> kept</span>
+    <span><b class="dot mid"></b> partly kept</span>
+    <span><b class="dot low"></b> lost</span>
+    <span class="dim">weights: content 3, structure 2, presentation 1</span>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Carve</p>
+  <h2>The other direction: Carve source in, Carve source out</h2>
+  <div class="col">
+    <p>Every lane above starts from a pandoc AST, which answers how much of a
+    <i>pandoc</i> document a format can hold. It cannot answer the question a Carve
+    author has, because the pandoc AST has no node for an admonition, a task list, a
+    highlight or an editorial mark, so those never appear in the probe set at all.</p>
+    <p>This lane starts from Carve instead: 40 source files, one construct each,
+    written out through the
+    <a href="https://github.com/markup-carve/pandoc-carve">pandoc-carve</a> bridge and read
+    straight back, and again through each of 13 export formats. <b>exact</b> is character for character,
+    <b>equivalent</b> is a formatter restyling, <b>respelled</b> means the source is
+    spelled differently and renders identically (a <code>[^1]</code> reference footnote
+    coming back as an inline one), and <b>lossy</b> means a reader would see the
+    difference. The three left-hand verdicts are the ones where nothing was lost.</p>
+  </div>
+  <p class="small dim">40 Carve fixtures &middot; renderer @markup-carve/carve 0.1.5 &middot; pandoc 3.10.2</p><div class="scroll"><table class="grid"><thead><tr><th class="l">export</th><th>exact</th><th>equivalent</th><th>respelled</th><th>lossy</th><th>unparsable</th><th>err</th><th>came back readable<span>/40</span></th></tr></thead><tbody><tr class="hi"><td class="l fmt">bridge</td><td><span class="cell-bar ok" style="--p:80%"><i></i><b>32</b></span></td><td><span class="cell-bar ok" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar mid" style="--p:15%"><i></i><b>6</b></span></td><td><span class="cell-bar low" style="--p:2%"><i></i><b>1</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar ok" style="--p:98%"><i></i><b>39</b></span></td></tr><tr><td class="l fmt">markdown</td><td><span class="cell-bar ok" style="--p:70%"><i></i><b>28</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:18%"><i></i><b>7</b></span></td><td><span class="cell-bar low" style="--p:12%"><i></i><b>5</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar ok" style="--p:88%"><i></i><b>35</b></span></td></tr><tr><td class="l fmt">gfm</td><td><span class="cell-bar ok" style="--p:40%"><i></i><b>16</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:25%"><i></i><b>10</b></span></td><td><span class="cell-bar low" style="--p:35%"><i></i><b>14</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:65%"><i></i><b>26</b></span></td></tr><tr><td class="l fmt">commonmark_x</td><td><span class="cell-bar ok" style="--p:65%"><i></i><b>26</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:18%"><i></i><b>7</b></span></td><td><span class="cell-bar low" style="--p:18%"><i></i><b>7</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar ok" style="--p:82%"><i></i><b>33</b></span></td></tr><tr><td class="l fmt">djot</td><td><span class="cell-bar ok" style="--p:55%"><i></i><b>22</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:20%"><i></i><b>8</b></span></td><td><span class="cell-bar low" style="--p:25%"><i></i><b>10</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:75%"><i></i><b>30</b></span></td></tr><tr><td class="l fmt">html</td><td><span class="cell-bar ok" style="--p:65%"><i></i><b>26</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:18%"><i></i><b>7</b></span></td><td><span class="cell-bar low" style="--p:18%"><i></i><b>7</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar ok" style="--p:82%"><i></i><b>33</b></span></td></tr><tr><td class="l fmt">latex</td><td><span class="cell-bar ok" style="--p:32%"><i></i><b>13</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:18%"><i></i><b>7</b></span></td><td><span class="cell-bar low" style="--p:50%"><i></i><b>20</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:50%"><i></i><b>20</b></span></td></tr><tr><td class="l fmt">typst</td><td><span class="cell-bar ok" style="--p:25%"><i></i><b>10</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:18%"><i></i><b>7</b></span></td><td><span class="cell-bar low" style="--p:48%"><i></i><b>19</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:10%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:42%"><i></i><b>17</b></span></td></tr><tr><td class="l fmt">docx</td><td><span class="cell-bar ok" style="--p:32%"><i></i><b>13</b></span></td><td><span class="cell-bar ok" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar mid" style="--p:12%"><i></i><b>5</b></span></td><td><span class="cell-bar low" style="--p:52%"><i></i><b>21</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:48%"><i></i><b>19</b></span></td></tr><tr><td class="l fmt">odt</td><td><span class="cell-bar ok" style="--p:25%"><i></i><b>10</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:12%"><i></i><b>5</b></span></td><td><span class="cell-bar low" style="--p:62%"><i></i><b>25</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:38%"><i></i><b>15</b></span></td></tr><tr><td class="l fmt">rst</td><td><span class="cell-bar ok" style="--p:42%"><i></i><b>17</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:15%"><i></i><b>6</b></span></td><td><span class="cell-bar low" style="--p:42%"><i></i><b>17</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:58%"><i></i><b>23</b></span></td></tr><tr><td class="l fmt">org</td><td><span class="cell-bar ok" style="--p:38%"><i></i><b>15</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:20%"><i></i><b>8</b></span></td><td><span class="cell-bar low" style="--p:42%"><i></i><b>17</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:58%"><i></i><b>23</b></span></td></tr><tr><td class="l fmt">jats</td><td><span class="cell-bar ok" style="--p:22%"><i></i><b>9</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:10%"><i></i><b>4</b></span></td><td><span class="cell-bar low" style="--p:65%"><i></i><b>26</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar low" style="--p:2%"><i></i><b>1</b></span></td><td><span class="cell-bar low" style="--p:32%"><i></i><b>13</b></span></td></tr><tr><td class="l fmt">epub</td><td><span class="cell-bar ok" style="--p:55%"><i></i><b>22</b></span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:15%"><i></i><b>6</b></span></td><td><span class="cell-bar low" style="--p:30%"><i></i><b>12</b></span></td><td><span class="dim">-</span></td><td><span class="dim">-</span></td><td><span class="cell-bar mid" style="--p:70%"><i></i><b>28</b></span></td></tr></tbody></table></div><p class="small dim">The bridge alone changes 8 of them: <code>bold-italic</code> (respelled), <code>comment</code> (respelled), <code>footnote</code> (respelled), <code>frontmatter</code> (equivalent), <code>ordered-list</code> (respelled), <code>quote-container</code> (respelled), <code>table-align</code> (respelled), <code>table-span</code> (lossy).</p><p class="small dim">The bridge says out loud what it dropped on <code>comment</code>, <code>table-span</code>.</p>
+</section>
+
+<section>
+  <p class="eyebrow">History</p>
+  <h2>The same probes over time</h2>
+  <div class="col">
+    <p>One line per recorded run, appended by <code>src/delta.py --record</code>. Medians
+    rather than means: a handful of formats cannot be measured on a runner without a TeX
+    engine, and a mean would report the machine instead of pandoc.</p>
+  </div>
+  <div class="scroll"><table class="grid"><thead><tr><th class="l">date</th><th class="l">pandoc</th><th>expressed</th><th>exact</th><th>meta</th><th>semantic</th><th>regressions</th><th class="l">status</th></tr></thead><tbody><tr><td class="l fmt">2026-09-07T12:16:16Z</td><td class="l dim">3.10.2</td><td>47.0</td><td>22.0</td><td>2.0</td><td>37.6</td><td>0</td><td class="l"><span class="badge ok">ok</span></td></tr></tbody></table></div>
+</section>
+
+<section>
+  <p class="eyebrow">Gate</p>
+  <h2>What would fail this build</h2>
+  <div class="col">
+    <p>Two profiles, because the two comparisons are not the same question. Against the
+    pinned pandoc nothing may move without someone deciding it should. Against pandoc's
+    nightly, upstream restyles writers routinely, so presentation-class movement is
+    expected and content-class movement is not.</p>
+  </div>
+  <div class="scroll"><table class="grid"><thead><tr><th class="l">profile</th><th>max regressions</th><th>per lane</th><th>per class</th><th>max weight</th><th class="l">what it is for</th></tr></thead><tbody><tr><td class="l fmt">pin</td><td>0</td><td class="l dim small">-</td><td class="l dim small">-</td><td>0</td><td class="l dim small wrap">the repo's own results against the pinned pandoc: nothing may move without a human deciding it should</td></tr><tr><td class="l fmt">nightly</td><td>12</td><td class="l dim small">exact 12, matrix 6, meta 2, roundtrip 6</td><td class="l dim small">content 0, structure 4</td><td>24</td><td class="l dim small wrap">the watch on pandoc's nightly build: upstream restyles writers all the time, so presentation may move; content may not</td></tr></tbody></table><p class="small dim">exempt: <code>pdf</code> on the matrix lane - the pdf writer needs an external TeX engine, so this row measures whether the runner has one</p></div>
+</section>
+
+<footer>
+  pandoc 3.10.2 &middot; 66 probes &middot; 34 formats &middot;
+  measured 2026-09-07T12:25:48Z on Linux-x86_64 &middot; repo at 97aef18 + uncommitted changes
+  &middot; <a href="index.html">Full report</a>
+</footer>
+
+</div>
+</html>

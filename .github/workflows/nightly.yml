@@ -3,6 +3,15 @@ name: nightly-pandoc
 # A regression watch on pandoc itself: run the same probes against the pandoc
 # nightly and report any cell that moved. This has already caught real writer
 # changes, in both directions.
+#
+# What "report" means changed with the delta: the job used to end in
+# `git diff --stat results/`, which says a one-line JSON file changed by one
+# line and nothing about whether pandoc got better or worse. It now reads both
+# sides as verdicts, writes a `format · probe · from -> to` table into the job
+# summary, and fails on the thresholds in thresholds.json. The `nightly`
+# profile is deliberately looser than the one the repo gates itself with:
+# upstream restyles writers routinely, so presentation-class movement is
+# expected, and content-class movement is not.
 on:
   schedule:
     - cron: '0 6 * * *'
@@ -27,7 +36,34 @@ jobs:
           gh run download "$run_id" -R jgm/pandoc -n nightly-linux -D nightly
           chmod +x nightly/*/pandoc
           echo "NIGHTLY=$(echo nightly/*/pandoc)" >> "$GITHUB_ENV"
+      # The committed results are the baseline: they are the pinned release,
+      # measured and reviewed. The nightly run overwrites results/ in place.
+      - name: Keep the committed results as a baseline
+        run: cp -r results results-baseline
       - name: Measure the nightly
         run: PANDOC=$NIGHTLY make lanes
+      # No --record here: results/history.jsonl is the repo's own trend line,
+      # and a line appended on a runner would only ever live in an artifact.
+      # History gets a line when a rerun is committed.
       - name: Report what moved
-        run: git --no-pager diff --stat results/ || true
+        run: |
+          make delta BASELINE=results-baseline CANDIDATE=results PROFILE=nightly \
+            DELTA_ARGS="--markdown delta.md" || echo "BREACH=1" >> "$GITHUB_ENV"
+          cat delta.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Rebuild the dashboard against the nightly
+        run: make dashboard
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nightly-delta
+          path: |
+            delta.md
+            docs/dashboard.html
+            results/delta.json
+            results/run.json
+      # Failed last, so the summary and the artifact exist to look at. A red
+      # nightly with no attached evidence is a red nightly nobody diagnoses.
+      - name: Fail on a threshold breach
+        if: env.BREACH == '1'
+        run: |
+          echo "::error::the nightly moved cells past the thresholds in thresholds.json"
+          exit 1

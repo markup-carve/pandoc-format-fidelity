@@ -15,13 +15,37 @@ jobs:
           python-version: '3.12'
       - name: Fetch pinned pandoc
         run: ./scripts/fetch-pandoc.sh
+      - name: Unit tests and the severity rubric
+        run: make check
+      # The committed results are the baseline the fresh run is judged against.
+      # Copied before the run, because the run overwrites them in place.
+      - name: Keep the committed results as a baseline
+        run: cp -r results results-baseline
       - name: Run every lane
         run: make lanes
       - name: Fail if the committed results are stale
         run: |
-          if ! git diff --exit-code --stat results/; then
+          # run.json carries the date and is expected to differ on every run;
+          # everything else has to reproduce exactly.
+          if ! git diff --exit-code --stat -- results/ ':!results/run.json'; then
             echo "::error::results/ differs from a fresh run - commit the rerun"
             exit 1
           fi
-      - name: Rebuild the report
+      # Reads as `format · probe · from -> to` rather than as a diffstat, and
+      # fails the build if anything moved. On this job that is belt and braces:
+      # the staleness check above already caught it. It is here so the delta
+      # itself is exercised on every push, rather than only on the nightly.
+      - name: Report what moved against the committed results
+        run: make delta BASELINE=results-baseline CANDIDATE=results PROFILE=pin
+      # Not gated on being unchanged, unlike results/. Both pages quote the run
+      # date and the commit, so they differ on every build by design; the
+      # committed copies are the snapshot of the last committed measurement.
+      - name: Rebuild the report and the dashboard
         run: make report
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard
+          path: |
+            docs/dashboard.html
+            docs/index.html
+            results/delta.json
