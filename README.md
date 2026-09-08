@@ -58,7 +58,20 @@ Two settings are load-bearing and were both bugs before they were settings:
 
 Every lane run writes `results/run.json` first: the pandoc version, whether it
 is the version `scripts/fetch-pandoc.sh` pins, the UTC date, the commit, and the
-platform. Nothing quotes those by hand any more - the report's heading and
+platform.
+
+A release identifies itself well enough; a nightly does not. When the caller
+knows which upstream build it fetched, it says so through `PANDOC_SOURCE_RUN`,
+`PANDOC_SOURCE_DATE`, `PANDOC_SOURCE_REF` and `PANDOC_SOURCE_URL`, and the stamp
+records it alongside the banner. If the build names itself after a different day
+than the run it came from, the stamp says `stale_banner`, the dashboard leads
+with it, and the nightly job fails: a night measured against a build whose
+identity is not settled is worse than a night not measured, because the delta
+reads as authoritative either way. That is not hypothetical - on 2026-09-08 the
+watch measured a build calling itself `3.10.2-nightly-2026-08-16` pulled from an
+upstream run created that morning, whose artifact holds a `2026-09-08` build.
+Where the selection went wrong is not established; the job recorded nothing but
+the banner, which is the hole this closes. Nothing quotes those by hand any more - the report's heading and
 footer, and every figure on the dashboard, are substituted from that file. The
 version in the heading used to be a literal, so a rerun against a different
 build published the old number over the new figures.
