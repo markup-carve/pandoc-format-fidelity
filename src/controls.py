@@ -27,7 +27,7 @@ from common import BINARY, PANDOC, RESOURCE, WRITE_OPTS, zip_normalize
 from probes import API, PROBES
 
 URL = os.environ.get("PANDOC_SERVER", "http://localhost:3033/")
-# What the report currently states, against the pinned pandoc 3.10.2. A different
+# What the report currently states, against the pinned pandoc. A different
 # pandoc may well move these; the point is that it cannot do so quietly - change
 # the number here and in the report together.
 EXPECT_MOVED = 45

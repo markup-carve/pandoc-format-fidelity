@@ -1,9 +1,9 @@
 {
- "generated": "2026-09-07T12:27:51Z",
+ "generated": "2026-09-08T22:10:18Z",
  "baseline": {
   "dir": "results-baseline",
   "run": {
-   "date": "2026-09-07T12:16:16Z",
+   "date": "2026-09-07T12:25:48Z",
    "pandoc": {
     "version": "3.10.2",
     "banner": "pandoc 3.10.2",
@@ -27,12 +27,12 @@
  "candidate": {
   "dir": "results",
   "run": {
-   "date": "2026-09-07T12:25:48Z",
+   "date": "2026-09-08T22:04:55Z",
    "pandoc": {
-    "version": "3.10.2",
-    "banner": "pandoc 3.10.2",
+    "version": "3.11",
+    "banner": "pandoc 3.11",
     "binary": "pandoc",
-    "pinned": "3.10.2",
+    "pinned": "3.11",
     "is_pin": true,
     "api": [
      1,
@@ -42,7 +42,7 @@
     ]
    },
    "probes": 66,
-   "commit": "97aef18",
+   "commit": "46736f9",
    "dirty": true,
    "python": "3.12.3",
    "platform": "Linux-x86_64"
@@ -66,12 +66,243 @@
   ],
   "profile": "pin"
  },
- "changes": [],
+ "changes": [
+  {
+   "lane": "matrix",
+   "format": "context",
+   "probe": "code_inline_attrs",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "matrix",
+   "format": "djot",
+   "probe": "rawblock_html",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "matrix",
+   "format": "djot",
+   "probe": "rawblock_tex",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "matrix",
+   "format": "djot",
+   "probe": "rawinline_html",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "matrix",
+   "format": "djot",
+   "probe": "rawinline_tex",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "matrix",
+   "format": "docbook",
+   "probe": "math_display",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "matrix",
+   "format": "docbook4",
+   "probe": "math_display",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "matrix",
+   "format": "docbook5",
+   "probe": "math_display",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "matrix",
+   "format": "odt",
+   "probe": "code_inline_attrs",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "matrix",
+   "format": "odt",
+   "probe": "codeblock_lang",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "matrix",
+   "format": "opendocument",
+   "probe": "code_inline_attrs",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "matrix",
+   "format": "opendocument",
+   "probe": "codeblock_lang",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "djot",
+   "probe": "rawblock_html",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "djot",
+   "probe": "rawblock_tex",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "djot",
+   "probe": "rawinline_html",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "djot",
+   "probe": "rawinline_tex",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "odt",
+   "probe": "codeblock_lang",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "djot",
+   "probe": "rawinline_html",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "djot",
+   "probe": "rawinline_tex",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "epub",
+   "probe": "math_display",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "epub",
+   "probe": "math_inline",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "html",
+   "probe": "math_display",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "html",
+   "probe": "math_inline",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  }
+ ],
  "exempt": [],
  "structural": [],
  "tally": {
   "regressions": 0,
-  "improvements": 0,
+  "improvements": 23,
   "unknown": 0,
   "regression_weight": 0,
   "regressions_by_lane": {},

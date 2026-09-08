@@ -82,10 +82,12 @@ src = re.sub(r'<div class="axis">.*?</div>', '<div class="axis">%s</div>' % tick
 src = re.sub(r"shown as the \d+/\d+\s*reference", "shown as the %d/%d reference" % (N, N), src)
 src = re.sub(r"all \d+ pandoc writers \(\d+ of them also readers\)",
              "all %d pandoc writers (%d of them also readers)" % (len(W), len(EX)), src)
-src = re.sub(r"moves djot from \d+ to \d+ expressed and \d+ to \d+\s*unchanged",
-             "moves djot from %d to %d expressed and %d to %d unchanged"
-             % (expressed("djot"), expressed("djot") + 4, unchanged("djot"), unchanged("djot") + 2),
-             src)
+# Which pandoc, in the two places the chart says it out loud. A literal here is
+# how the published chart came to name a build it was no longer measuring.
+version = json.load(open("results/run.json"))["pandoc"]["version"] or "unknown"
+src = re.sub(r"pandoc \d+(\.\d+)*</div>", "pandoc %s</div>" % version, src, count=1)
+src = re.sub(r"Measured against the released pandoc \d+(\.\d+)*\.",
+             "Measured against the released pandoc %s." % version, src, count=1)
 src = src.replace("pandoc-format-fidelity.pdf", "docs/report.pdf")
 open(OVERVIEW, "w", encoding="utf-8").write(src)
 print("overview rows regenerated:", len(out))
