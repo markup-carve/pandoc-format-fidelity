@@ -306,7 +306,19 @@ def table_carve_rt(data):
 
 def delta_status(delta, run):
     out = []
-    if run and not (run.get("pandoc") or {}).get("is_pin", True):
+    pandoc = (run or {}).get("pandoc") or {}
+    src = pandoc.get("source") or {}
+    if src.get("stale_banner"):
+        # The loudest thing on the page when it happens: every number below
+        # describes a build whose identity is not settled.
+        out.append('<span class="badge bad">build identity unsettled</span>')
+        out.append('<span class="small dim">calls itself %s, came from a run '
+                   'created %s</span>'
+                   % (esc(src.get("names_itself", "?")), esc(src.get("date", "?"))))
+    elif src:
+        out.append('<span class="badge warn">from upstream run %s</span>'
+                   % esc(src.get("run", "?")))
+    if run and not pandoc.get("is_pin", True):
         out.append('<span class="badge warn">not the pinned pandoc</span>')
     if run and run.get("dirty"):
         out.append('<span class="badge warn">measured from a dirty checkout</span>')

@@ -43,7 +43,7 @@
     <p>Every writer runs with <code>--wrap=preserve</code>. Without it a wrapping
     writer turns a SoftBreak into a space, and the probe reads as "cannot express" for
     a distinction the format handles fine - that alone moved 45 writers.</p>
-    <p>All figures are the released pandoc {{PANDOCV}}. On the 2026-08-17 nightly the djot writer gained raw-content passthrough: its four raw probes (inline and block, html and latex) go from inexpressible to expressed and read back cleanly, taking djot to 56 expressed, 56 round-trip and 35 exact. No other format differs between the two builds.</p>
+    <p>All figures are the released pandoc {{PANDOCV}}, which moved 23 cells against 3.10.2 and every one of them upward. The djot writer gained raw-content passthrough: its four raw probes (inline and block, html and latex) go from inexpressible to expressed and read back cleanly, taking djot to 56 expressed, 56 round-trip and 35 exact. html and epub now round-trip both math probes exactly; the three docbook writers can express display math; odt, opendocument and context express a code span's attributes, and odt and opendocument a code block's language. Nothing moved down. The full list is in <code>results/delta.json</code>.</p>
     <p>Expressiveness is the ceiling; exact round-trip is the floor. Between them sits
     everything that renders correctly but cannot be parsed back - which is most of it.</p>
   </div>

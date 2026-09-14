@@ -23,6 +23,16 @@ from probes import API, PROBES
 OUT = ROOT / "results" / "run.json"
 FETCH = ROOT / "scripts" / "fetch-pandoc.sh"
 
+# Where a build came from, when the caller knows and the binary does not. A
+# release identifies itself well enough; a nightly does not. On 2026-09-08 the
+# watch downloaded the artifact of a pandoc nightly run created that morning and
+# recorded it as "3.10.2-nightly-2026-08-16", because that is the name the build
+# carries - three weeks off, in the one file whose job is provenance. The
+# workflow knows the upstream run it pulled, so it says so here rather than
+# leaving the banner as the only answer.
+SOURCE_ENV = {"run": "PANDOC_SOURCE_RUN", "date": "PANDOC_SOURCE_DATE",
+              "ref": "PANDOC_SOURCE_REF", "url": "PANDOC_SOURCE_URL"}
+
 
 def sh(*cmd, cwd=None):
     try:
@@ -51,6 +61,19 @@ def git(*args):
     return sh("git", *args, cwd=str(ROOT))
 
 
+def source():
+    """The upstream build the caller says this binary came from, if any."""
+    got = {k: os.environ[v] for k, v in SOURCE_ENV.items()
+           if os.environ.get(v, "").strip()}
+    return got or None
+
+
+def banner_date(banner):
+    """The date a nightly names itself after, which is not always its own."""
+    m = re.search(r"nightly-(\d{4}-\d{2}-\d{2})", banner or "")
+    return m.group(1) if m else None
+
+
 def main():
     banner = pandoc_banner()
     version = banner.split()[1] if banner and len(banner.split()) > 1 else None
@@ -74,6 +97,16 @@ def main():
         "python": platform.python_version(),
         "platform": "%s-%s" % (platform.system(), platform.machine()),
     }
+    src = source()
+    if src:
+        stamp["pandoc"]["source"] = src
+        # Recorded, not enforced: the mismatch is upstream's to explain, and a
+        # measurement taken from a build that misnames itself is still a valid
+        # measurement - it just must not be filed under the wrong date.
+        named, built = banner_date(banner), (src.get("date") or "")[:10]
+        if named and built and named != built:
+            stamp["pandoc"]["source"]["names_itself"] = named
+            stamp["pandoc"]["source"]["stale_banner"] = True
     if banner is None:
         stamp["pandoc"]["error"] = "pandoc did not answer --version"
     OUT.parent.mkdir(exist_ok=True)
