@@ -98,8 +98,8 @@ the gate. Two profiles, because the two comparisons are not the same question:
 rather than on pandoc - the `pdf` row needs a TeX engine - with the reason
 written down rather than quietly subtracted.
 
-A cell that **disappeared** is not a regression - there is no verdict to rank -
-but it is not nothing either, so lost coverage breaches on its own. A lane file
+A cell that **disappeared** is not a regression (there is no verdict to rank),
+but lost coverage still breaches on its own. A lane file
 that failed to be written, a `BASELINE` that points at nothing, or a format the
 candidate no longer measures all leave the gate comparing less than it thinks,
 and all three used to report a clean run. Opt-in lanes are exempt: not running
