@@ -31,8 +31,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          run_id=$(gh run list -R jgm/pandoc --workflow nightly.yml \
-                    --status success --limit 1 --json databaseId -q '.[0].databaseId')
+          # The list is not reliably newest-first: on 2026-09-17 and 09-21 its
+          # first entry was the 2026-08-16 run, which the provenance check below
+          # cannot see (banner and run agree, both are just old). Sort by date
+          # here and refuse a build too old to be tonight's.
+          read -r run_id created < <(gh run list -R jgm/pandoc --workflow nightly.yml \
+                    --status success --limit 20 --json databaseId,createdAt \
+                    -q 'sort_by(.createdAt) | last | "\(.databaseId) \(.createdAt)"')
+          age=$(( ($(date +%s) - $(date -d "$created" +%s)) / 86400 ))
+          if [ "$age" -gt 3 ]; then
+            echo "::error::newest successful upstream nightly is run $run_id from $created, $age days old"
+            exit 1
+          fi
           gh run download "$run_id" -R jgm/pandoc -n nightly-linux -D nightly
           chmod +x nightly/*/pandoc
           echo "NIGHTLY=$(echo nightly/*/pandoc)" >> "$GITHUB_ENV"
