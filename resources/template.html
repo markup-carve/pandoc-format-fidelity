@@ -80,13 +80,13 @@
       pandoc's AST is beyond them.</p>
     </div>
     <div class="finding">
-      <span class="num">16 / 16</span>
+      <span class="num">{{HTML_ATTRS}} / {{NATTR}}</span>
       <h3>Attributes are the real divider</h3>
       <p>Ids, classes and key-value pairs are where formats fall apart. HTML and EPUB
       express {{HTML_ATTRS}} and {{EPUB_ATTRS}} of {{NATTR}} attribute probes,
       JATS {{JATS_ATTRS}}, djot {{DJOT_ATTRS}}, pandoc markdown {{MARKDOWN_ATTRS}},
       latex {{LATEX_ATTRS}}, docx {{DOCX_ATTRS}}, typst {{TYPST_ATTRS}},
-      ODT {{ODT_ATTRS}} - and fb2, rtf, man, texinfo and haddock zero.</p>
+      ODT {{ODT_ATTRS}}. The attribute grid shows each format and probe.</p>
     </div>
     <div class="finding">
       <span class="num">2</span>
@@ -106,11 +106,11 @@
       epub {{EPUB_EXACT}}, and djot {{DJOT_EXACT}}.</p>
     </div>
     <div class="finding">
-      <span class="num">{{MARKDOWN_META}}/10</span>
-      <h3>Metadata survives in exactly one family</h3>
-      <p>markdown, gfm and commonmark_x round-trip arbitrary YAML metadata - nested
-      maps, booleans, custom keys, all of it. markdown_mmd manages 6.5, LaTeX / JATS /
-      docx / docbook about 4, and djot, rst, mediawiki, ODT, ipynb, rtf and pptx zero.</p>
+      <span class="num">{{MARKDOWN_META}}</span>
+      <h3>Metadata scores out of ten</h3>
+      <p>markdown {{MARKDOWN_META}}, gfm {{GFM_META}}, and commonmark_x
+      {{COMMONMARK_X_META}}. These probes cover nested maps, booleans, custom keys,
+      and the usual document metadata. The metadata grid gives each key's result.</p>
     </div>
     <div class="finding">
       <span class="num">0</span>
@@ -229,8 +229,8 @@
     <p><b>Need it back later.</b> <code>carve</code> through pandoc-carve returns {{CARVE_SOURCE_EXACT}} probes
     exactly ({{CARVE_AST_EXACT}} via its AST); <code>markdown</code> returns
     {{MARKDOWN_EXACT}} and <code>commonmark_x</code> {{COMMONMARK_X_EXACT}}.
-    For metadata, markdown returns {{MARKDOWN_META}} of ten values and Carve
-    source returns {{CARVE_SOURCE_META}}.</p>
+    For metadata, scores out of ten are: markdown {{MARKDOWN_META}} and
+    Carve source {{CARVE_SOURCE_META}}.</p>
     <p><b>Print and typesetting.</b> <code>latex</code> 54 and <code>beamer</code> 55 lead,
     <code>typst</code> 53 is close and loses mostly attributes, <code>context</code> 50
     has the better table story but no raw passthrough at all.</p>

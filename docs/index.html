@@ -208,7 +208,7 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
       express 16 and 16 of 16 attribute probes,
       JATS 14, djot 13, pandoc markdown 12,
       latex 10, docx 10, typst 9,
-      ODT 7 - and fb2, rtf, man, texinfo and haddock zero.</p>
+      ODT 7. The attribute grid shows each format and probe.</p>
     </div>
     <div class="finding">
       <span class="num">2</span>
@@ -228,11 +228,11 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
       epub 36, and djot 35.</p>
     </div>
     <div class="finding">
-      <span class="num">10/10</span>
-      <h3>Metadata survives in exactly one family</h3>
-      <p>markdown, gfm and commonmark_x round-trip arbitrary YAML metadata - nested
-      maps, booleans, custom keys, all of it. markdown_mmd manages 6.5, LaTeX / JATS /
-      docx / docbook about 4, and djot, rst, mediawiki, ODT, ipynb, rtf and pptx zero.</p>
+      <span class="num">10</span>
+      <h3>Metadata scores out of ten</h3>
+      <p>markdown 10, gfm 10, and commonmark_x
+      10. These probes cover nested maps, booleans, custom keys,
+      and the usual document metadata. The metadata grid gives each key's result.</p>
     </div>
     <div class="finding">
       <span class="num">0</span>
@@ -358,8 +358,8 @@ unexpected Elt {eltName = Identifier "heading", eltPos = Just (line 1, column 1)
     <p><b>Need it back later.</b> <code>carve</code> through pandoc-carve returns 64 probes
     exactly (65 via its AST); <code>markdown</code> returns
     46 and <code>commonmark_x</code> 39.
-    For metadata, markdown returns 10 of ten values and Carve
-    source returns 10.</p>
+    For metadata, scores out of ten are: markdown 10 and
+    Carve source 10.</p>
     <p><b>Print and typesetting.</b> <code>latex</code> 54 and <code>beamer</code> 55 lead,
     <code>typst</code> 53 is close and loses mostly attributes, <code>context</code> 50
     has the better table story but no raw passthrough at all.</p>
