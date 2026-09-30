@@ -105,6 +105,14 @@ def compare(baseline_dir, candidate_dir, thresholds):
                                "format": k[0], "probe": k[1], "from": old[k]})
 
         for k in sorted(set(old) & set(new)):
+            if lane == "carve_rt":
+                before = a.get("fixtures", {}).get(k[1], {}).get("source")
+                after = b.get("fixtures", {}).get(k[1], {}).get("source")
+                if before is not None and after is not None and before != after:
+                    structural.append({"lane": lane, "what": "changed-input",
+                                       "format": k[0], "probe": k[1],
+                                       "from": old[k], "to": new[k]})
+                    continue
             if old[k] == new[k]:
                 continue
             fmt, probe = k

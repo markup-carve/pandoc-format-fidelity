@@ -12,9 +12,10 @@
  * never appear in the probe set at all. The inputs here are Carve source
  * files, one construct each, under fixtures/carve/.
  *
- * Two lanes:
+ * Three paths:
  *
  *   bridge      carve -> pandoc AST -> carve. What the bridge alone keeps.
+ *   bridge-preserve  the same path with roundtrip metadata enabled.
  *   via FORMAT  carve -> pandoc AST -> FORMAT -> pandoc AST -> carve. What
  *               survives an actual export and re-import.
  *
@@ -221,8 +222,12 @@ const res = {
     rendererRevision,
     formats: FORMATS,
     fixtures: {},
-    lanes: { bridge: {} },
+    lanes: { bridge: {}, "bridge-preserve": {} },
+    laneOptions: { bridge: {}, "bridge-preserve": { roundtrip: true } },
+    preserveWarnings: {},
+    preserveOutput: {},
     warnings: {},
+    errors: {},
     output: {},
 };
 for (const fmt of FORMATS) res.lanes[fmt] = {};
@@ -232,6 +237,22 @@ for (const file of files) {
     const source = readFileSync(join(FIXTURES, file), 'utf8');
     res.fixtures[name] = { bytes: Buffer.byteLength(source), source };
 
+    let preserveStep = 'carveToPandoc';
+    try {
+        const forward = carveToPandoc(source, { roundtrip: true });
+        if (forward.warnings?.length) res.preserveWarnings[name] = forward.warnings;
+        preserveStep = 'pandocToCarve';
+        const back = pandocToCarve(forward.doc);
+        res.lanes['bridge-preserve'][name] = verdict(source, back.carve);
+        res.preserveOutput[name] = back.carve;
+        const warnings = [...(forward.warnings ?? []), ...(back.warnings ?? [])];
+        if (warnings.length) res.preserveWarnings[name] = warnings;
+    } catch (e) {
+        res.lanes['bridge-preserve'][name] = 'err';
+        res.preserveOutput[name] = `${preserveStep}: ${String(e.message).slice(0, 140)}`;
+        (res.errors['bridge-preserve'] ??= {})[name] = { stage: preserveStep, message: String(e.message).slice(0, 800) };
+    }
+
     let doc;
     try {
         const forward = carveToPandoc(source);
@@ -240,7 +261,11 @@ for (const file of files) {
     } catch (e) {
         res.lanes.bridge[name] = 'err';
         res.output[name] = `carveToPandoc: ${String(e.message).slice(0, 140)}`;
-        for (const fmt of FORMATS) res.lanes[fmt][name] = 'err';
+        (res.errors.bridge ??= {})[name] = { stage: 'carveToPandoc', message: String(e.message).slice(0, 800) };
+        for (const fmt of FORMATS) {
+            res.lanes[fmt][name] = 'err';
+            (res.errors[fmt] ??= {})[name] = res.errors.bridge[name];
+        }
         continue;
     }
 
@@ -248,17 +273,22 @@ for (const file of files) {
         const back = pandocToCarve(doc);
         res.lanes.bridge[name] = verdict(source, back.carve);
         res.output[name] = back.carve;
+        if (back.warnings?.length) res.warnings[name] = [...(res.warnings[name] ?? []), ...back.warnings];
     } catch (e) {
         res.lanes.bridge[name] = 'err';
         res.output[name] = `pandocToCarve: ${String(e.message).slice(0, 140)}`;
+        (res.errors.bridge ??= {})[name] = { stage: 'pandocToCarve', message: String(e.message).slice(0, 800) };
     }
 
     for (const fmt of FORMATS) {
+        let stage = 'pandoc export/import';
         try {
             const round = throughFormat(doc, fmt);
+            stage = 'pandocToCarve';
             res.lanes[fmt][name] = verdict(source, pandocToCarve(round).carve);
         } catch (e) {
             res.lanes[fmt][name] = 'err';
+            (res.errors[fmt] ??= {})[name] = { stage, message: String(e.message).slice(0, 800) };
         }
     }
 }
@@ -272,7 +302,7 @@ const tally = (lane) => {
 };
 console.log(`results/carve-rt.json: ${files.length} Carve fixtures`);
 console.log(`  renderer: ${rendererNote}`);
-for (const lane of ['bridge', ...FORMATS]) {
+for (const lane of ['bridge', 'bridge-preserve', ...FORMATS]) {
     const c = tally(lane);
     console.log(
         `  ${lane.padEnd(13)} exact ${String(c.exact).padStart(2)}  ` +
