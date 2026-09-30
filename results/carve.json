@@ -1,5 +1,6 @@
 {
- "bridgeRevision": "d7238109485f7e7e89081944eaa145bcf930d416",
+ "generated": "2026-09-30T22:21:03Z",
+ "bridgeRevision": "c3d85783623c2498370941e09d757b68b34fb839",
  "source": {
   "emph": "exact",
   "strong": "exact",
@@ -282,6 +283,8 @@
   "table_rowheadcols": "|= a | b |\n|= c | d |\n",
   "table_multibody": "| a | b |\n| c | d |\n"
  },
+ "renderer": "@markup-carve/carve 0.1.9",
+ "rendererRevision": "04845b7fc31610e17e53ab64bdf7dc5d00a81b39",
  "rt": {
   "source": {
    "emph": "diff",

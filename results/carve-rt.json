@@ -1,10 +1,10 @@
 {
- "generated": "2026-09-30T01:21:04Z",
+ "generated": "2026-09-30T22:12:39Z",
  "pandoc": "pandoc 3.11",
- "bridge": "/tmp/pandoc-carve-fidelity-dev/dist/index.js",
- "bridgeRevision": "d7238109485f7e7e89081944eaa145bcf930d416",
- "renderer": "@markup-carve/carve 0.1.9 (revision 6d02fa7062dd)",
- "rendererRevision": "6d02fa7062dd03024e7c092016459602e9a7aeec",
+ "bridge": "/tmp/pandoc-bridge-measurement/dist/index.js",
+ "bridgeRevision": "c3d85783623c2498370941e09d757b68b34fb839",
+ "renderer": "@markup-carve/carve 0.1.9 (revision 04845b7fc316)",
+ "rendererRevision": "04845b7fc31610e17e53ab64bdf7dc5d00a81b39",
  "formats": [
   "markdown",
   "gfm",
@@ -919,7 +919,7 @@
   "typst": {
    "heading": {
     "stage": "pandoc export/import",
-    "message": "Command failed: /media/mark/data/work/git/pandoc-format-fidelity/vendor/pandoc/bin/pandoc -f typst -t json\n(line 1, column 1):\nunexpected Elt {eltName = Identifier \"heading\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"document\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"text\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Txt \"A second-level heading\"]))]}])),(Identifier \"level\",VInteger 2)]}]))]}\n"
+    "message": "Command failed: /home/mark/.local/bin/pandoc -f typst -t json\n(line 1, column 1):\nunexpected Elt {eltName = Identifier \"heading\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"document\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"text\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Txt \"A second-level heading\"]))]}])),(Identifier \"level\",VInteger 2)]}]))]}\n"
    },
    "table-align": {
     "stage": "pandocToCarve",
@@ -945,7 +945,7 @@
   "jats": {
    "raw-html": {
     "stage": "pandoc export/import",
-    "message": "Command failed: /media/mark/data/work/git/pandoc-format-fidelity/vendor/pandoc/bin/pandoc -f jats -t json\nInvalid XML:\nMissing root element\n\n"
+    "message": "Command failed: /home/mark/.local/bin/pandoc -f jats -t json\nInvalid XML:\nMissing root element\n\n"
    }
   },
   "latex": {

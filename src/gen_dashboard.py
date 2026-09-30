@@ -270,7 +270,7 @@ def table_carve_rt(data):
            % (total, esc(data.get("renderer", "unreported")),
               esc(data.get("pandoc") or "pandoc unreported"), bridge),
            '<div class="scroll"><table class="grid"><thead><tr>'
-           '<th class="l">export</th>']
+           '<th class="l">conversion path</th>']
     for v in CARVE_VERDICTS:
         out.append("<th>%s</th>" % v)
     out.append('<th>came back readable<span>/%d</span></th></tr></thead><tbody>' % total)
@@ -291,6 +291,12 @@ def table_carve_rt(data):
         out.append("<td>%s</td></tr>" % bar(kept, total, band(kept, total)))
     out.append("</tbody></table></div>")
 
+    out.append('<p class="small dim">These verdicts compare rendered content. '
+               'A dropped comment can count as respelled because it renders to nothing; '
+               'warnings record that source loss. Each format row covers writing, reading, '
+               'bridge conversion, and Carve source serialization. An error may occur at '
+               'any of those steps; the failure details identify the step.</p>')
+
     if "bridge-preserve" in lanes:
         out.append('<p class="small dim"><code>bridge-preserve</code> enables '
                    '<code>roundtrip: true</code> metadata on the direct bridge path. '
@@ -310,7 +316,7 @@ def table_carve_rt(data):
     changed = [(n, v) for n, v in sorted(lanes.get("bridge", {}).items())
                if v != "exact"]
     if changed:
-        out.append('<p class="small dim">The bridge alone changes %d of them: %s.</p>'
+        out.append('<p class="small dim">The default bridge lane changes %d of them: %s.</p>'
                    % (len(changed),
                       ", ".join("<code>%s</code> (%s)" % (esc(n), esc(v))
                                 for n, v in changed)))
