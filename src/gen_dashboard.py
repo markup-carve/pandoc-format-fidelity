@@ -263,10 +263,12 @@ def table_carve_rt(data):
     lanes = data.get("lanes", {})
     total = len(data.get("fixtures", {}))
     order = ["bridge"] + [f for f in data.get("formats", []) if f in lanes]
+    bridge = (" &middot; bridge revision " + esc(data["bridgeRevision"][:12])
+              if data.get("bridgeRevision") else "")
 
-    out = ['<p class="small dim">%d Carve fixtures &middot; renderer %s &middot; %s</p>'
+    out = ['<p class="small dim">%d Carve fixtures &middot; renderer %s &middot; %s%s</p>'
            % (total, esc(data.get("renderer", "unreported")),
-              esc(data.get("pandoc") or "pandoc unreported")),
+              esc(data.get("pandoc") or "pandoc unreported"), bridge),
            '<div class="scroll"><table class="grid"><thead><tr>'
            '<th class="l">export</th>']
     for v in CARVE_VERDICTS:

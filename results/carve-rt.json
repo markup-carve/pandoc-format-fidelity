@@ -1,8 +1,10 @@
 {
- "generated": "2026-09-30T00:54:06Z",
+ "generated": "2026-09-30T01:00:23Z",
  "pandoc": "pandoc 3.11",
  "bridge": "/tmp/pandoc-carve-fidelity-dev/dist/index.js",
- "renderer": "@markup-carve/carve 0.1.9",
+ "bridgeRevision": "d7238109485f7e7e89081944eaa145bcf930d416",
+ "renderer": "@markup-carve/carve 0.1.9 (revision 6d02fa7062dd)",
+ "rendererRevision": "6d02fa7062dd03024e7c092016459602e9a7aeec",
  "formats": [
   "markdown",
   "gfm",
