@@ -1,5 +1,5 @@
 {
- "date": "2026-09-08T22:04:55Z",
+ "date": "2026-09-30T00:53:45Z",
  "pandoc": {
   "version": "3.11",
   "banner": "pandoc 3.11",
@@ -14,8 +14,21 @@
   ]
  },
  "probes": 66,
- "commit": "46736f9",
+ "commit": "dc52f36",
  "dirty": true,
  "python": "3.12.3",
- "platform": "Linux-x86_64"
+ "platform": "Linux-x86_64",
+ "carve": {
+  "bridge": {
+   "repository": "https://github.com/markup-carve/pandoc-carve",
+   "revision": "d7238109485f7e7e89081944eaa145bcf930d416",
+   "version": "0.1.5"
+  },
+  "renderer": {
+   "repository": "https://github.com/markup-carve/carve-js",
+   "revision": "6d02fa7062dd03024e7c092016459602e9a7aeec",
+   "version": "0.1.9"
+  },
+  "node": "v22.22.2"
+ }
 }

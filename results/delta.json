@@ -1,31 +1,7 @@
 {
- "generated": "2026-09-08T22:10:18Z",
+ "generated": "2026-09-30T00:55:42Z",
  "baseline": {
   "dir": "results-baseline",
-  "run": {
-   "date": "2026-09-07T12:25:48Z",
-   "pandoc": {
-    "version": "3.10.2",
-    "banner": "pandoc 3.10.2",
-    "binary": "pandoc",
-    "pinned": "3.10.2",
-    "is_pin": true,
-    "api": [
-     1,
-     23,
-     1,
-     2
-    ]
-   },
-   "probes": 66,
-   "commit": "97aef18",
-   "dirty": true,
-   "python": "3.12.3",
-   "platform": "Linux-x86_64"
-  }
- },
- "candidate": {
-  "dir": "results",
   "run": {
    "date": "2026-09-08T22:04:55Z",
    "pandoc": {
@@ -48,6 +24,43 @@
    "platform": "Linux-x86_64"
   }
  },
+ "candidate": {
+  "dir": "results",
+  "run": {
+   "date": "2026-09-30T00:53:45Z",
+   "pandoc": {
+    "version": "3.11",
+    "banner": "pandoc 3.11",
+    "binary": "pandoc",
+    "pinned": "3.11",
+    "is_pin": true,
+    "api": [
+     1,
+     23,
+     1,
+     2
+    ]
+   },
+   "probes": 66,
+   "commit": "dc52f36",
+   "dirty": true,
+   "python": "3.12.3",
+   "platform": "Linux-x86_64",
+   "carve": {
+    "bridge": {
+     "repository": "https://github.com/markup-carve/pandoc-carve",
+     "revision": "d7238109485f7e7e89081944eaa145bcf930d416",
+     "version": "0.1.5"
+    },
+    "renderer": {
+     "repository": "https://github.com/markup-carve/carve-js",
+     "revision": "6d02fa7062dd03024e7c092016459602e9a7aeec",
+     "version": "0.1.9"
+    },
+    "node": "v22.22.2"
+   }
+  }
+ },
  "thresholds": {
   "description": "the repo's own results against the pinned pandoc: nothing may move without a human deciding it should",
   "max_regressions": {
@@ -66,243 +79,12 @@
   ],
   "profile": "pin"
  },
- "changes": [
-  {
-   "lane": "matrix",
-   "format": "context",
-   "probe": "code_inline_attrs",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "presentation",
-   "weight": 1
-  },
-  {
-   "lane": "matrix",
-   "format": "djot",
-   "probe": "rawblock_html",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "matrix",
-   "format": "djot",
-   "probe": "rawblock_tex",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "matrix",
-   "format": "djot",
-   "probe": "rawinline_html",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "matrix",
-   "format": "djot",
-   "probe": "rawinline_tex",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "matrix",
-   "format": "docbook",
-   "probe": "math_display",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "structure",
-   "weight": 2
-  },
-  {
-   "lane": "matrix",
-   "format": "docbook4",
-   "probe": "math_display",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "structure",
-   "weight": 2
-  },
-  {
-   "lane": "matrix",
-   "format": "docbook5",
-   "probe": "math_display",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "structure",
-   "weight": 2
-  },
-  {
-   "lane": "matrix",
-   "format": "odt",
-   "probe": "code_inline_attrs",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "presentation",
-   "weight": 1
-  },
-  {
-   "lane": "matrix",
-   "format": "odt",
-   "probe": "codeblock_lang",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "presentation",
-   "weight": 1
-  },
-  {
-   "lane": "matrix",
-   "format": "opendocument",
-   "probe": "code_inline_attrs",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "presentation",
-   "weight": 1
-  },
-  {
-   "lane": "matrix",
-   "format": "opendocument",
-   "probe": "codeblock_lang",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "presentation",
-   "weight": 1
-  },
-  {
-   "lane": "roundtrip",
-   "format": "djot",
-   "probe": "rawblock_html",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "roundtrip",
-   "format": "djot",
-   "probe": "rawblock_tex",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "roundtrip",
-   "format": "djot",
-   "probe": "rawinline_html",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "roundtrip",
-   "format": "djot",
-   "probe": "rawinline_tex",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "roundtrip",
-   "format": "odt",
-   "probe": "codeblock_lang",
-   "from": "same",
-   "to": "diff",
-   "direction": "better",
-   "class": "presentation",
-   "weight": 1
-  },
-  {
-   "lane": "exact",
-   "format": "djot",
-   "probe": "rawinline_html",
-   "from": "lossy",
-   "to": "exact",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "exact",
-   "format": "djot",
-   "probe": "rawinline_tex",
-   "from": "lossy",
-   "to": "exact",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "exact",
-   "format": "epub",
-   "probe": "math_display",
-   "from": "lossy",
-   "to": "exact",
-   "direction": "better",
-   "class": "structure",
-   "weight": 2
-  },
-  {
-   "lane": "exact",
-   "format": "epub",
-   "probe": "math_inline",
-   "from": "lossy",
-   "to": "exact",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  },
-  {
-   "lane": "exact",
-   "format": "html",
-   "probe": "math_display",
-   "from": "lossy",
-   "to": "exact",
-   "direction": "better",
-   "class": "structure",
-   "weight": 2
-  },
-  {
-   "lane": "exact",
-   "format": "html",
-   "probe": "math_inline",
-   "from": "lossy",
-   "to": "exact",
-   "direction": "better",
-   "class": "content",
-   "weight": 3
-  }
- ],
+ "changes": [],
  "exempt": [],
  "structural": [],
  "tally": {
   "regressions": 0,
-  "improvements": 23,
+  "improvements": 0,
   "unknown": 0,
   "regression_weight": 0,
   "regressions_by_lane": {},

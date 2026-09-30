@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-25T20:01:27Z",
+ "generated": "2026-09-30T00:54:06Z",
  "pandoc": "pandoc 3.11",
- "bridge": "/tmp/pff-bridge-main/dist/index.js",
- "renderer": "@markup-carve/carve 0.1.7",
+ "bridge": "/tmp/pandoc-carve-fidelity-dev/dist/index.js",
+ "renderer": "@markup-carve/carve 0.1.9",
  "formats": [
   "markdown",
   "gfm",
