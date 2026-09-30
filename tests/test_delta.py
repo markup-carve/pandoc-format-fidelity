@@ -143,6 +143,26 @@ class TestCompare(DeltaCase):
         self.assertEqual(changes[0]["direction"], "worse")
         self.assertEqual(changes[0]["class"], "carve")
 
+    def test_changed_carve_input_is_not_an_engine_improvement(self):
+        self.both("exact.json", {"html": {"emph": "exact"}}, {"html": {"emph": "exact"}})
+        write(self.a, "carve-rt.json", {"fixtures": {"span": {"source": "| a < |"}},
+                                      "lanes": {"bridge": {"span": "lossy"}}})
+        write(self.b, "carve-rt.json", {"fixtures": {"span": {"source": "| a | < |"}},
+                                      "lanes": {"bridge": {"span": "exact"}}})
+        _, changes, _, structural = self.run_compare()
+        self.assertEqual(changes, [])
+        self.assertEqual(structural[0]["what"], "changed-input")
+        self.assertEqual(structural[0]["probe"], "span")
+
+    def test_unchanged_carve_input_still_detects_regressions(self):
+        self.both("exact.json", {"html": {"emph": "exact"}}, {"html": {"emph": "exact"}})
+        for root, verdict in ((self.a, "exact"), (self.b, "lossy")):
+            write(root, "carve-rt.json", {"fixtures": {"span": {"source": "| a | < |"}},
+                                         "lanes": {"bridge": {"span": verdict}}})
+        _, changes, _, structural = self.run_compare()
+        self.assertEqual(changes[0]["direction"], "worse")
+        self.assertEqual(structural, [])
+
     def test_respelled_beats_lossy(self):
         self.both("exact.json", {"html": {"emph": "exact"}}, {"html": {"emph": "exact"}})
         write(self.a, "carve-rt.json", {"lanes": {"bridge": {"footnote": "lossy"}}})

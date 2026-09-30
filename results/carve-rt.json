@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-30T01:04:27Z",
+ "generated": "2026-09-30T01:21:04Z",
  "pandoc": "pandoc 3.11",
  "bridge": "/tmp/pandoc-carve-fidelity-dev/dist/index.js",
  "bridgeRevision": "d7238109485f7e7e89081944eaa145bcf930d416",
@@ -165,9 +165,17 @@
    "bytes": 44,
    "source": "|= Head A |= Head B |\n| a | b |\n^ A caption\n"
   },
-  "table-span": {
+  "table-ragged": {
    "bytes": 40,
    "source": "|= Head A |= Head B |\n| a < |\n| c | d |\n"
+  },
+  "table-rowspan": {
+   "bytes": 42,
+   "source": "|= Head A |= Head B |\n| a | b |\n| ^ | d |\n"
+  },
+  "table-span": {
+   "bytes": 42,
+   "source": "|= Head A |= Head B |\n| a | < |\n| c | d |\n"
   },
   "table": {
    "bytes": 42,
@@ -220,7 +228,53 @@
    "sup-sub": "exact",
    "table-align": "respelled",
    "table-caption": "exact",
-   "table-span": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "exact",
+   "table-span": "exact",
+   "table": "exact",
+   "task-list": "exact",
+   "thematic-break": "exact"
+  },
+  "bridge-preserve": {
+   "admonition": "exact",
+   "autolink": "exact",
+   "blockquote": "exact",
+   "bold-italic": "exact",
+   "bullet-list": "exact",
+   "caption-image": "exact",
+   "code-block-header": "exact",
+   "code-block": "exact",
+   "code-inline": "exact",
+   "comment": "exact",
+   "crossref": "exact",
+   "definition-list": "exact",
+   "editorial-delete": "exact",
+   "editorial-insert": "exact",
+   "editorial-substitute": "exact",
+   "emphasis": "exact",
+   "footnote": "respelled",
+   "frontmatter": "equivalent",
+   "hard-break": "exact",
+   "heading-attrs": "exact",
+   "heading": "exact",
+   "image": "exact",
+   "inline-footnote": "exact",
+   "link-title": "exact",
+   "link": "exact",
+   "math-display": "exact",
+   "math-inline": "exact",
+   "nested-list": "exact",
+   "ordered-list": "respelled",
+   "quote-container": "respelled",
+   "raw-html": "exact",
+   "span-attrs": "exact",
+   "strike-highlight": "exact",
+   "sup-sub": "exact",
+   "table-align": "respelled",
+   "table-caption": "exact",
+   "table-ragged": "lossy",
+   "table-rowspan": "exact",
+   "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
    "thematic-break": "exact"
@@ -262,6 +316,8 @@
    "sup-sub": "exact",
    "table-align": "respelled",
    "table-caption": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "lossy",
    "task-list": "exact",
@@ -304,6 +360,8 @@
    "sup-sub": "respelled",
    "table-align": "respelled",
    "table-caption": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "exact",
    "task-list": "exact",
@@ -346,6 +404,8 @@
    "sup-sub": "exact",
    "table-align": "respelled",
    "table-caption": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "exact",
    "task-list": "lossy",
@@ -388,6 +448,8 @@
    "sup-sub": "exact",
    "table-align": "respelled",
    "table-caption": "exact",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "exact",
    "task-list": "exact",
@@ -430,7 +492,9 @@
    "sup-sub": "exact",
    "table-align": "respelled",
    "table-caption": "exact",
-   "table-span": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "exact",
+   "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
    "thematic-break": "exact"
@@ -472,7 +536,9 @@
    "sup-sub": "exact",
    "table-align": "respelled",
    "table-caption": "lossy",
-   "table-span": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
+   "table-span": "err",
    "table": "lossy",
    "task-list": "lossy",
    "thematic-break": "lossy"
@@ -514,6 +580,8 @@
    "sup-sub": "exact",
    "table-align": "err",
    "table-caption": "lossy",
+   "table-ragged": "err",
+   "table-rowspan": "err",
    "table-span": "err",
    "table": "err",
    "task-list": "lossy",
@@ -556,6 +624,8 @@
    "sup-sub": "exact",
    "table-align": "lossy",
    "table-caption": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "lossy",
    "task-list": "exact",
@@ -598,7 +668,9 @@
    "sup-sub": "exact",
    "table-align": "lossy",
    "table-caption": "lossy",
-   "table-span": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "exact",
+   "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
    "thematic-break": "lossy"
@@ -640,7 +712,9 @@
    "sup-sub": "exact",
    "table-align": "lossy",
    "table-caption": "exact",
-   "table-span": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
+   "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
    "thematic-break": "exact"
@@ -682,6 +756,8 @@
    "sup-sub": "exact",
    "table-align": "lossy",
    "table-caption": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "exact",
    "task-list": "exact",
@@ -724,6 +800,8 @@
    "sup-sub": "exact",
    "table-align": "lossy",
    "table-caption": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "lossy",
    "task-list": "lossy",
@@ -766,19 +844,116 @@
    "sup-sub": "exact",
    "table-align": "respelled",
    "table-caption": "exact",
-   "table-span": "lossy",
+   "table-ragged": "lossy",
+   "table-rowspan": "exact",
+   "table-span": "exact",
    "table": "exact",
    "task-list": "lossy",
    "thematic-break": "exact"
   }
  },
+ "laneOptions": {
+  "bridge": {},
+  "bridge-preserve": {
+   "roundtrip": true
+  }
+ },
+ "preserveWarnings": {
+  "table-ragged": [
+   "table: 1 row(s) shorter than the widest (2 cells) are padded with empty cells - a pandoc table is rectangular, and PART 9 §16 keeps each row's own cell count"
+  ]
+ },
+ "preserveOutput": {
+  "admonition": "::: note \"Take note\"\nBody of the note.\n:::\n",
+  "autolink": "Bare <https://example.com> in prose.\n",
+  "blockquote": "> quoted prose\n",
+  "bold-italic": "A /*bold italic*/ run.\n",
+  "bullet-list": "- first\n- second\n",
+  "caption-image": "![A grey square](i.png)\n^ A caption\n",
+  "code-block-header": "```python \"config.py\"\nx = 1\n```\n",
+  "code-block": "```python\nx = 1\n```\n",
+  "code-inline": "Call `render()` on it.\n",
+  "comment": "Visible prose. %% a comment\n",
+  "crossref": "{#target}\n## A target heading\n\nSee </#target>.\n",
+  "definition-list": ":: term\n: the definition\n",
+  "editorial-delete": "A {-deleted-} word.\n",
+  "editorial-insert": "An {+inserted+} word.\n",
+  "editorial-substitute": "A {~old~>new~} word.\n",
+  "emphasis": "/italic/ and *bold* and _underline_ in a line.\n",
+  "footnote": "Text with a marker.^[The footnote body.]\n",
+  "frontmatter": "---yaml\ntitle: A title\n---\n\nBody prose.\n",
+  "hard-break": "first line\\\nsecond line\n",
+  "heading-attrs": "{#anchor .lead}\n## A second-level heading\n",
+  "heading": "## A second-level heading\n",
+  "image": "![A grey square](i.png)\n",
+  "inline-footnote": "Text with a marker.^[The footnote body.]\n",
+  "link-title": "A [labelled link](https://example.com \"Tooltip\") in prose.\n",
+  "link": "A [labelled link](https://example.com) in prose.\n",
+  "math-display": "$$`\\int_0^1 x\\,dx`\n",
+  "math-inline": "Euler: $`e^{i\\pi}+1=0`\n",
+  "nested-list": "- first\n  - nested\n- second\n",
+  "ordered-list": "1. first\n2. second\n",
+  "quote-container": "> quoted prose\n",
+  "raw-html": "```=html\n<hr class=rule>\n```\n",
+  "span-attrs": "A [marked run]{.highlight} in prose.\n",
+  "strike-highlight": "~struck~ and =highlighted= in a line.\n",
+  "sup-sub": "H{,2,}O and mc{^2^}.\n",
+  "table-align": "{aligns=right,center}\n|= Right |= Center |\n| a | b |\n",
+  "table-caption": "|= Head A |= Head B |\n| a | b |\n^ A caption\n",
+  "table-ragged": "|= Head A |= Head B |\n| a < | |\n| c | d |\n",
+  "table-rowspan": "|= Head A |= Head B |\n| a | b |\n| ^ | d |\n",
+  "table-span": "|= Head A |= Head B |\n| a | < |\n| c | d |\n",
+  "table": "|= Head A |= Head B |\n| a | b |\n| c | d |\n",
+  "task-list": "- [ ] open\n- [x] done\n",
+  "thematic-break": "before\n\n---\n\nafter\n"
+ },
  "warnings": {
   "comment": [
    "comment: dropped - Pandoc's AST has no comment node: a comment"
   ],
-  "table-span": [
+  "table-ragged": [
    "table: 1 row(s) shorter than the widest (2 cells) are padded with empty cells - a pandoc table is rectangular, and PART 9 §16 keeps each row's own cell count"
   ]
+ },
+ "errors": {
+  "typst": {
+   "heading": {
+    "stage": "pandoc export/import",
+    "message": "Command failed: /media/mark/data/work/git/pandoc-format-fidelity/vendor/pandoc/bin/pandoc -f typst -t json\n(line 1, column 1):\nunexpected Elt {eltName = Identifier \"heading\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"document\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"text\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Txt \"A second-level heading\"]))]}])),(Identifier \"level\",VInteger 2)]}]))]}\n"
+   },
+   "table-align": {
+    "stage": "pandocToCarve",
+    "message": "Cannot read properties of undefined (reading 'flatMap')"
+   },
+   "table-ragged": {
+    "stage": "pandocToCarve",
+    "message": "Cannot read properties of undefined (reading 'flatMap')"
+   },
+   "table-rowspan": {
+    "stage": "pandocToCarve",
+    "message": "Cannot read properties of undefined (reading 'flatMap')"
+   },
+   "table-span": {
+    "stage": "pandocToCarve",
+    "message": "Cannot read properties of undefined (reading 'flatMap')"
+   },
+   "table": {
+    "stage": "pandocToCarve",
+    "message": "Cannot read properties of undefined (reading 'flatMap')"
+   }
+  },
+  "jats": {
+   "raw-html": {
+    "stage": "pandoc export/import",
+    "message": "Command failed: /media/mark/data/work/git/pandoc-format-fidelity/vendor/pandoc/bin/pandoc -f jats -t json\nInvalid XML:\nMissing root element\n\n"
+   }
+  },
+  "latex": {
+   "table-span": {
+    "stage": "pandocToCarve",
+    "message": "renderCarve cannot spell table_row: a table row whose every cell is blank has no Carve source spelling"
+   }
+  }
  },
  "output": {
   "admonition": "::: note \"Take note\"\nBody of the note.\n:::\n",
@@ -817,7 +992,9 @@
   "sup-sub": "H{,2,}O and mc{^2^}.\n",
   "table-align": "{aligns=right,center}\n|= Right |= Center |\n| a | b |\n",
   "table-caption": "|= Head A |= Head B |\n| a | b |\n^ A caption\n",
-  "table-span": "|= Head A |= Head B |\n| a < | |\n| c | d |\n",
+  "table-ragged": "|= Head A |= Head B |\n| a < | |\n| c | d |\n",
+  "table-rowspan": "|= Head A |= Head B |\n| a | b |\n| ^ | d |\n",
+  "table-span": "|= Head A |= Head B |\n| a | < |\n| c | d |\n",
   "table": "|= Head A |= Head B |\n| a | b |\n| c | d |\n",
   "task-list": "- [ ] open\n- [x] done\n",
   "thematic-break": "before\n\n---\n\nafter\n"

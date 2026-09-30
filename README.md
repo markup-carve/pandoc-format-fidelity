@@ -203,6 +203,16 @@ the lane lists (`CARVE_RT_FORMATS` overrides them):
 make carve-rt CARVE_BRIDGE=../pandoc-carve/dist/index.js
 ```
 
+The `bridge-preserve` row enables the bridge's `roundtrip: true` metadata on
+its direct AST round trip. Export-format rows use the default options. Both
+modes retain their own warnings and returned source in the results file.
+The `errors` map records the failing step and message; `err` includes bridge
+failures as well as Pandoc export/import failures.
+
+`table-span` and `table-rowspan` test actual continuation cells. The separate
+`table-ragged` fixture has a shorter row, which Pandoc pads to a rectangular
+grid. Its added empty cell remains a measured loss.
+
 It reports one verdict more than the pandoc side. Between `equivalent` (the bytes
 differ, the Carve AST does not) and `lossy` sits **`respelled`**: the AST differs
 and the rendered HTML is identical, so the document is spelled differently and

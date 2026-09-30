@@ -160,8 +160,8 @@ def table_delta(delta):
                    % (len(delta["exempt"]),
                       esc(", ".join(sorted({c["format"] for c in delta["exempt"]})))))
     if delta["structural"]:
-        out.append('<p class="small dim">%d structural change(s) - a probe or format '
-                   'appeared or disappeared, which is not scored as movement.</p>'
+        out.append('<p class="small dim">%d structural change(s) - a fixture, probe or format '
+                   'was added, removed or changed, which is not scored as movement.</p>'
                    % len(delta["structural"]))
     return "".join(out)
 
@@ -262,7 +262,7 @@ def table_carve_rt(data):
                 'measures it; the lane is opt-in because it needs the bridge.</p>')
     lanes = data.get("lanes", {})
     total = len(data.get("fixtures", {}))
-    order = ["bridge"] + [f for f in data.get("formats", []) if f in lanes]
+    order = [lane for lane in ("bridge", "bridge-preserve") if lane in lanes] + [f for f in data.get("formats", []) if f in lanes]
     bridge = (" &middot; bridge revision " + esc(data["bridgeRevision"][:12])
               if data.get("bridgeRevision") else "")
 
@@ -281,7 +281,7 @@ def table_carve_rt(data):
         # exact, equivalent and respelled all render the same document; only
         # lossy and worse changed something a reader would see.
         kept = counts["exact"] + counts["equivalent"] + counts["respelled"]
-        tr = '<tr class="hi">' if lane == "bridge" else "<tr>"
+        tr = '<tr class="hi">' if lane in ("bridge", "bridge-preserve") else "<tr>"
         out.append('%s<td class="l fmt">%s</td>' % (tr, esc(lane)))
         for v in CARVE_VERDICTS:
             cls = {"exact": "ok", "equivalent": "ok", "respelled": "mid"}.get(v, "low")
@@ -291,6 +291,22 @@ def table_carve_rt(data):
         out.append("<td>%s</td></tr>" % bar(kept, total, band(kept, total)))
     out.append("</tbody></table></div>")
 
+    if "bridge-preserve" in lanes:
+        out.append('<p class="small dim"><code>bridge-preserve</code> enables '
+                   '<code>roundtrip: true</code> metadata on the direct bridge path. '
+                   'Export-format rows use the default bridge options.</p>')
+        if {'table-span', 'table-rowspan', 'table-ragged'} <= set(data.get('fixtures', {})):
+            out.append('<p class="small dim">Table-span and table-rowspan test continuation cells; '
+                       'table-ragged tests a short row that Pandoc pads with an empty cell.</p>')
+        warnings = data.get("preserveWarnings", {})
+        if warnings:
+            out.append('<p class="small dim">Preservation-mode warnings: %s.</p>'
+                       % ", ".join("<code>%s</code>" % esc(n) for n in sorted(warnings)))
+
+    out.append('<p class="small dim">Carve round-trip measurement: %s; bridge revision %s.</p>'
+               % (esc(data.get("generated", "unreported")),
+                  esc(data.get("bridgeRevision") or "unreported")))
+
     changed = [(n, v) for n, v in sorted(lanes.get("bridge", {}).items())
                if v != "exact"]
     if changed:
@@ -298,6 +314,14 @@ def table_carve_rt(data):
                    % (len(changed),
                       ", ".join("<code>%s</code> (%s)" % (esc(n), esc(v))
                                 for n, v in changed)))
+    errors = data.get("errors", {})
+    if errors:
+        out.append('<details><summary>Failures by step (including bridge failures)</summary><ul>')
+        for lane, failures in sorted(errors.items()):
+            for name, failure in sorted(failures.items()):
+                out.append('<li><code>%s/%s</code>: %s: %s</li>'
+                           % (esc(lane), esc(name), esc(failure["stage"]), esc(failure["message"])))
+        out.append('</ul></details>')
     warnings = data.get("warnings", {})
     if warnings:
         out.append('<p class="small dim">The bridge says out loud what it dropped on '

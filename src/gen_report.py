@@ -1,6 +1,7 @@
 import json
 from html import escape
 from probes import PROBES
+from gen_dashboard import table_carve_rt
 
 W = json.load(open("results/matrix.json"))
 RT = json.load(open("results/roundtrip.json"))
@@ -171,9 +172,14 @@ def table4():
     out.append("</tbody></table>")
     return "".join(out)
 
+try:
+    CARVE_RT = json.load(open("results/carve-rt.json"))
+except FileNotFoundError:
+    CARVE_RT = None
+
 html = open("resources/template.html", encoding="utf-8").read()
 for key, fn in [("T1", table1), ("T2", table2), ("T3", table3), ("T4", table4),
-                ("TCARVE", tcarve)]:
+                ("TCARVE", tcarve), ("TCARVERT", lambda: table_carve_rt(CARVE_RT))]:
     html = html.replace("{{%s}}" % key, fn())
 # The Carve lanes were added to W and EX above, so they come back out: these are
 # counts of pandoc's own writers and readers. Every count quoted in the prose goes
@@ -198,7 +204,7 @@ stats = {
 }
 for k, v in stats.items():
     html = html.replace("{{%s}}" % k, v)
-left = [k for k in ("T1", "T2", "T3", "T4", "TCARVE", *stats) if "{{%s}}" % k in html]
+left = [k for k in ("T1", "T2", "T3", "T4", "TCARVE", "TCARVERT", *stats) if "{{%s}}" % k in html]
 if left:
     raise SystemExit("unsubstituted placeholders: %s" % ", ".join(left))
 open("docs/index.html", "w", encoding="utf-8").write(html)
