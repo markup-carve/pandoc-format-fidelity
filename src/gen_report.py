@@ -128,7 +128,7 @@ def table3():
     return "".join(out)
 
 def tcarve():
-    fs = ["carve-ast", "carve", "html5", "markdown", "commonmark_x", "djot", "gfm"]
+    fs = ["carve-ast", "carve", "html", "markdown", "commonmark_x", "djot", "gfm"]
     out = ['<table class="grid"><thead><tr><th class="l">format</th>'
            '<th>expressed<span>/%d</span></th><th>exact<span>/%d</span></th>'
            '<th>meta<span>/10</span></th>' % (N, N)]
@@ -152,6 +152,12 @@ def tcarve():
     if CV and CV.get("bridgeRevision"):
         out.append('<p class="small dim">Bridge revision %s.</p>'
                    % escape(CV["bridgeRevision"][:12]))
+    if CV and CV.get("renderer"):
+        revision = (" (revision " + escape(CV["rendererRevision"][:12]) + ")"
+                    if CV.get("rendererRevision") else "")
+        out.append('<p class="small dim">Renderer %s%s; measured %s.</p>'
+                   % (escape(CV["renderer"]), revision,
+                      escape(CV.get("generated", "unreported"))))
     return "".join(out)
 
 def table4():
@@ -202,6 +208,23 @@ stats = {
     "NLOSSLESS": str(sum(1 for f in W if f not in CARVE
                          and all(W[f].get(n) == "diff" for n in PROBES))),
 }
+for label, fmt in {
+    "CARVE_SOURCE": "carve", "CARVE_AST": "carve-ast", "MARKDOWN": "markdown",
+    "HTML": "html", "COMMONMARK_X": "commonmark_x", "EPUB": "epub",
+    "DJOT": "djot", "GFM": "gfm", "ODT": "odt", "DOCX": "docx",
+    "JATS": "jats", "LATEX": "latex", "TYPST": "typst",
+}.items():
+    if fmt not in W or fmt not in EX:
+        raise SystemExit(f"missing measurements for report narrative: {fmt}")
+    stats[label + "_EXPRESSED"] = str(wscore(fmt))
+    stats[label + "_EXACT"] = str(escore(fmt))
+    metadata = mscore(fmt)
+    stats[label + "_META"] = "%g" % metadata if metadata is not None else "not measured"
+    stats[label + "_ATTRS"] = str(gscore(fmt, "attrs"))
+for group in ["attrs", "raw", "inline"]:
+    stats["N" + ("ATTR" if group == "attrs" else group.upper())] = str(TOT[group])
+    stats["CARVE_SOURCE_" + group.upper() + "_EXACT"] = str(sum(
+        EX["carve"].get(name) == "exact" for name in BY[group]))
 for k, v in stats.items():
     html = html.replace("{{%s}}" % k, v)
 left = [k for k in ("T1", "T2", "T3", "T4", "TCARVE", "TCARVERT", *stats) if "{{%s}}" % k in html]

@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
 import { checkoutRevision } from './checkout_revision.mjs';
 const bridge = process.env.CARVE_BRIDGE;
 if (!bridge) {
@@ -50,9 +51,15 @@ function viaAst(blocks) {
 }
 
 const res = {
+    generated: new Date().toISOString().replace(/\.\d+Z$/, 'Z'),
     bridgeRevision: checkoutRevision(dirname(dirname(resolve(bridge)))),
     source: {}, ast: {}, warnings: {}, carveOut: {},
 };
+const rendererPackage = createRequire(pathToFileURL(resolve(bridge)))
+    .resolve('@markup-carve/carve/package.json');
+const renderer = JSON.parse(readFileSync(rendererPackage, 'utf8'));
+res.renderer = `@markup-carve/carve ${renderer.version}`;
+res.rendererRevision = checkoutRevision(dirname(rendererPackage));
 for (const [name, p] of Object.entries(probes)) {
     for (const [lane, fn] of [['source', viaSource], ['ast', viaAst]]) {
         let rich, deg;
