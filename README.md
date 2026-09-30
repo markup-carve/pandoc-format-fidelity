@@ -54,6 +54,16 @@ Two settings are load-bearing and were both bugs before they were settings:
   src untouched, which round-trips to a **false** `exact`; when it resolves, epub
   embeds it and rewrites the src to `media/file0.png`, which is the honest answer.
 
+## Reading-order correctness
+
+`make correctness` checks EPUB reading order separately from the fidelity grid.
+It runs 16 EPUB 2 and EPUB 3 cases with independently reversed spine, manifest,
+and ZIP entry orders. Plain-text output must be exactly the two chapter markers
+in spine order. The navigation order stays fixed so reversed-spine cases also
+detect readers that follow navigation instead. CI checks the pinned Pandoc 3.11
+and the nightly build. Run `./scripts/fetch-pandoc.sh` first on a fresh checkout.
+Use `make correctness PANDOC=/path/to/pandoc` for another build.
+
 ## Which pandoc, measured when
 
 Every lane run writes `results/run.json` first: the pandoc version, whether it
