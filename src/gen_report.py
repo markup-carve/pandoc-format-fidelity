@@ -1,4 +1,5 @@
 import json
+from html import escape
 from probes import PROBES
 
 W = json.load(open("results/matrix.json"))
@@ -147,6 +148,9 @@ def tcarve():
             out.append("<td>%s</td>" % bar(v, TOT[g], cls))
         out.append("</tr>")
     out.append("</tbody></table>")
+    if CV and CV.get("bridgeRevision"):
+        out.append('<p class="small dim">Bridge revision %s.</p>'
+                   % escape(CV["bridgeRevision"][:12]))
     return "".join(out)
 
 def table4():

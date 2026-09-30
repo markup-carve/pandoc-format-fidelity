@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { checkoutRevision } from './checkout_revision.mjs';
 const bridge = process.env.CARVE_BRIDGE;
 if (!bridge) {
     console.error('set CARVE_BRIDGE to a pandoc-carve dist/index.js to run this lane');
@@ -48,7 +49,10 @@ function viaAst(blocks) {
     return { text: JSON.stringify(ast), blocks: back.doc.blocks, meta: back.doc.meta ?? {}, warnings };
 }
 
-const res = { source: {}, ast: {}, warnings: {}, carveOut: {} };
+const res = {
+    bridgeRevision: checkoutRevision(dirname(dirname(resolve(bridge)))),
+    source: {}, ast: {}, warnings: {}, carveOut: {},
+};
 for (const [name, p] of Object.entries(probes)) {
     for (const [lane, fn] of [['source', viaSource], ['ast', viaAst]]) {
         let rich, deg;

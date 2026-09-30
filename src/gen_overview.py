@@ -5,6 +5,7 @@ that the lanes no longer produced. Everything below is derived.
 """
 import json
 import re
+from html import escape
 
 from probes import PROBES
 
@@ -66,6 +67,10 @@ if CV:
 out += [row(f, "", "", "#2a78d6", "#eb6834") for f in ROWS]
 
 src = open(OVERVIEW, encoding="utf-8").read()
+revision = (" (revision " + escape(CV["bridgeRevision"][:12]) + ")"
+            if CV and CV.get("bridgeRevision") else "")
+src = re.sub(r'(<span id="bridge-revision">).*?(</span>)',
+             lambda m: m[1] + revision + m[2], src)
 start = src.index('<div class="chart">') + len('<div class="chart">')
 end = src.index("</div>\n<div class=\"axis\"", start)
 src = src[:start] + "\n" + "\n".join(out) + "\n" + src[end:]
