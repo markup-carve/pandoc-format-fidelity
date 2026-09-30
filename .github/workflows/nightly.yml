@@ -65,6 +65,10 @@ jobs:
         run: cp -r results results-baseline
       - name: Measure the nightly
         run: PANDOC=$NIGHTLY make lanes
+      - name: EPUB reading order against nightly
+        run: |
+          make correctness PANDOC="$NIGHTLY" > epub-order.log 2>&1 || echo "ORDER=1" >> "$GITHUB_ENV"
+          cat epub-order.log
       # No --record here: results/history.jsonl is the repo's own trend line,
       # and a line appended on a runner would only ever live in an artifact.
       # History gets a line when a rerun is committed.
@@ -109,15 +113,19 @@ jobs:
             docs/dashboard.html
             results/delta.json
             results/run.json
+            epub-order.log
       # Failed last, so the summary and the artifact exist to look at. A red
       # nightly with no attached evidence is a red nightly nobody diagnoses.
       - name: Fail on a threshold breach or an unsettled build
-        if: env.BREACH == '1' || env.MISMATCH == '1'
+        if: env.BREACH == '1' || env.MISMATCH == '1' || env.ORDER == '1'
         run: |
           if [ "${BREACH:-}" = "1" ]; then
             echo "::error::the nightly moved cells past the thresholds in thresholds.json"
           fi
           if [ "${MISMATCH:-}" = "1" ]; then
             echo "::error::the measured build does not match the upstream run it came from"
+          fi
+          if [ "${ORDER:-}" = "1" ]; then
+            echo "::error::the nightly failed EPUB reading-order correctness"
           fi
           exit 1

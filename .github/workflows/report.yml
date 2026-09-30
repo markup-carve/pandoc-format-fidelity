@@ -17,6 +17,8 @@ jobs:
         run: ./scripts/fetch-pandoc.sh
       - name: Unit tests and the severity rubric
         run: make check
+      - name: EPUB reading order
+        run: make correctness
       # The committed results are the baseline the fresh run is judged against.
       # Copied before the run, because the run overwrites them in place.
       - name: Keep the committed results as a baseline

@@ -13,7 +13,7 @@ FORMATS    := $(shell $(PANDOC) --list-output-formats 2>/dev/null | tr '\n' ',' 
 #                              chart as the reference row
 READABLE   := $(shell python3 src/formats.py 2>/dev/null)
 
-.PHONY: all pandoc lanes stamp report dashboard delta carve carve-rt clean check controls
+.PHONY: all pandoc lanes stamp report dashboard delta carve carve-rt clean check controls correctness
 
 # The lanes are I/O bound on pandoc itself and gain nothing from -j, and the
 # stamp has to be written before the run it describes. Serial by declaration
@@ -119,6 +119,9 @@ controls:
 	@$(PANDOC) server --port $(PORT) & echo $$! > .server.pid; sleep 3; \
 	  PANDOC=$(PANDOC) PANDOC_SERVER=$(SERVER_URL) python3 src/controls.py; \
 	  st=$$?; kill `cat .server.pid` 2>/dev/null; rm -f .server.pid; exit $$st
+
+correctness:
+	PANDOC=$(PANDOC) python3 src/epub_order.py
 
 check:
 	PYTHONPATH=src python3 -c "import probes; print(len(probes.PROBES), 'probes load')"
