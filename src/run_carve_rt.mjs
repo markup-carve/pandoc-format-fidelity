@@ -56,6 +56,7 @@ import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, join, basename, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { checkoutRevision } from './checkout_revision.mjs';
 
 const ROOT = resolve(new URL('..', import.meta.url).pathname);
 const FIXTURES = join(ROOT, 'fixtures', 'carve');
@@ -81,6 +82,7 @@ const { carveToPandoc, pandocToCarve, carveToCarveAst } = await import(bridgeUrl
 // so a checkout and a published dist both find their own copy rather than some
 // other version that happens to be installed nearby.
 let carveToHtml = null;
+let rendererRevision = null;
 let rendererNote = 'not resolved: every respelling is reported as lossy';
 try {
     // Resolved through package.json rather than the package root: the package
@@ -93,7 +95,9 @@ try {
     const lib = await import(pathToFileURL(join(dirname(pkgPath), entry)).href);
     if (typeof lib.carveToHtml === 'function') {
         carveToHtml = lib.carveToHtml;
+        rendererRevision = checkoutRevision(dirname(pkgPath));
         rendererNote = `@markup-carve/carve ${lib.LIB_VERSION ?? 'version unreported'}`;
+        if (rendererRevision) rendererNote += ` (revision ${rendererRevision.slice(0, 12)})`;
     } else {
         rendererNote = 'resolved, but it exports no carveToHtml';
     }
@@ -212,7 +216,9 @@ const res = {
         } catch { return null; }
     })(),
     bridge: bridgePath,
+    bridgeRevision: checkoutRevision(dirname(dirname(resolve(bridgePath)))),
     renderer: rendererNote,
+    rendererRevision,
     formats: FORMATS,
     fixtures: {},
     lanes: { bridge: {} },
