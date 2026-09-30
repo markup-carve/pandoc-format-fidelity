@@ -3,6 +3,7 @@ import itertools
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import zipfile
 
@@ -62,7 +63,10 @@ def check(pandoc):
             fixture(path, version, spine, manifest, entries)
             try:
                 result = subprocess.run([pandoc, '-f', 'epub', '-t', 'plain', str(path)],
-                                        check=True, capture_output=True, text=True)
+                                        check=True, capture_output=True, text=True, timeout=30)
+            except subprocess.TimeoutExpired:
+                failures.append(f'{path.name}: reader timed out after 30 seconds')
+                continue
             except subprocess.CalledProcessError as error:
                 failures.append(f'{path.name}: reader exited {error.returncode}: {error.stderr}')
                 continue
@@ -79,4 +83,8 @@ def check(pandoc):
 
 if __name__ == '__main__':
     binary = os.environ.get('PANDOC', './vendor/pandoc/bin/pandoc')
-    print(f'EPUB spine order: {check(binary)}/{len(CASES)} passed')
+    try:
+        print(f'EPUB spine order: {check(binary)}/{len(CASES)} passed')
+    except (AssertionError, OSError) as error:
+        print(error, file=sys.stderr)
+        sys.exit(1)

@@ -52,3 +52,10 @@ class EpubOrderTests(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError, 'reader failure'):
                 check('test-pandoc')
             self.assertEqual(run.call_count, 16)
+
+    def test_reader_timeout_fails_without_skipping_later_cases(self):
+        with patch('epub_order.subprocess.run', side_effect=
+                   subprocess.TimeoutExpired('test-pandoc', 30)) as run:
+            with self.assertRaisesRegex(AssertionError, 'timed out after 30 seconds'):
+                check('test-pandoc')
+            self.assertEqual(run.call_count, 16)
