@@ -1,6 +1,7 @@
 import json
 from html import escape
 from probes import PROBES
+import scoreboard
 from gen_dashboard import table_carve_rt
 
 W = json.load(open("results/matrix.json"))
@@ -13,12 +14,9 @@ except FileNotFoundError:      # the Carve lane is opt-in; the grid works withou
     CV = None
 
 # Carve enters the matrix as two lanes of the pandoc-carve bridge.
-CARVE = {"carve": "source", "carve-ast": "ast"} if CV else {}
-for fmt, lane in CARVE.items():
-    W[fmt] = {n: ("diff" if v in ("diff", "exact") else v) for n, v in CV[lane].items()}
-    RT[fmt] = dict(CV["rt"][lane])
-    EX[fmt] = {n: ("exact" if v == "exact" else "lossy") for n, v in CV[lane].items()}
-    MT[fmt] = dict(CV["meta"][lane])
+CARVE = scoreboard.carve_lanes(CV) if CV else {}
+for fmt, lanes in CARVE.items():
+    W[fmt], RT[fmt], EX[fmt], MT[fmt] = (lanes[k] for k in ("matrix", "roundtrip", "exact", "meta"))
 
 GROUPS = ["inline", "block", "list", "table", "attrs", "raw"]
 BY = {}

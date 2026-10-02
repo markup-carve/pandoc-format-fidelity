@@ -34,6 +34,36 @@ class TestScoreboard(unittest.TestCase):
         self.assertEqual(row["meta"], 10)
         self.assertEqual(row["semantic_content"]["pct"], 100.0)
 
+    def test_carve_rows_score_the_bridge_and_stay_out_of_rows(self):
+        self.write("matrix.json", lane_for("html", "diff"))
+        lane = {n: "exact" for n in PROBES}
+        lane[next(iter(PROBES))] = "same"
+        self.write("carve.json", {
+            "source": lane, "ast": {n: "exact" for n in PROBES},
+            "rt": {"source": {n: "diff" for n in PROBES}, "ast": {n: "diff" for n in PROBES}},
+            "meta": {"source": {k: "exact" for k in scoreboard.MKEYS},
+                     "ast": {k: "exact" for k in scoreboard.MKEYS}}})
+        carve = scoreboard.carve_rows(self.d)
+        self.assertEqual(sorted(carve), ["carve", "carve-ast"])
+        self.assertEqual(carve["carve"]["exact"], len(PROBES) - 1)
+        self.assertEqual(carve["carve"]["lossy"], 1)
+        self.assertEqual(carve["carve-ast"]["semantic_content"]["pct"], 100.0)
+        self.assertEqual(sorted(scoreboard.rows(self.d)), ["html"])
+
+    def test_a_bridge_lane_with_no_successful_conversion_still_scores(self):
+        self.write("carve.json", {
+            "source": {n: "err" for n in PROBES}, "ast": {n: "exact" for n in PROBES},
+            "rt": {"ast": {n: "diff" for n in PROBES}},
+            "meta": {"source": {"_err": "bridge failed"},
+                     "ast": {k: "exact" for k in scoreboard.MKEYS}}})
+        carve = scoreboard.carve_rows(self.d)
+        self.assertEqual(carve["carve"]["roundtrip"], 0)
+        self.assertEqual(carve["carve"]["writer_err"], len(PROBES))
+        self.assertIsNone(carve["carve"]["meta"])
+
+    def test_carve_rows_are_empty_without_the_opt_in_lane(self):
+        self.assertEqual(scoreboard.carve_rows(self.d), {})
+
     def test_a_format_that_keeps_nothing_scores_zero(self):
         self.write("matrix.json", lane_for("hopeless", "same"))
         self.write("roundtrip.json", lane_for("hopeless", "same"))

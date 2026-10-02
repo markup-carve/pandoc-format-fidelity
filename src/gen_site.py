@@ -40,6 +40,16 @@ def clean_bridge(data):
     return {"measured": True, **data}
 
 
+def segments(w, rt, ex):
+    out = dict.fromkeys(["exact", "canonical", "survives", "expressed", "lost"], 0)
+    for probe in PROBES:
+        v = ex.get(probe)
+        out[v if v in ("exact", "canonical") else
+            "survives" if rt.get(probe) == "diff" else
+            "expressed" if w.get(probe) == "diff" else "lost"] += 1
+    return out
+
+
 def document(directory):
     run = load(directory, "run.json")
     lanes = {}
@@ -63,15 +73,17 @@ def document(directory):
     validate({"probes": ast["probes"]}, PROBES, "probes.json")
     rows = scoreboard.rows(directory)
     for fmt, row in rows.items():
-        segments = dict.fromkeys(["exact", "canonical", "survives", "expressed", "lost"], 0)
-        for probe in PROBES:
-            ex = lanes["exact"]["grid"].get(fmt, {}).get(probe)
-            rt = lanes["roundtrip"]["grid"].get(fmt, {}).get(probe)
-            wr = lanes["matrix"]["grid"][fmt][probe]
-            bucket = ex if ex in ("exact", "canonical") else (
-                "survives" if rt == "diff" else "expressed" if wr == "diff" else "lost")
-            segments[bucket] += 1
-        row["segments"] = segments
+        row["segments"] = segments(lanes["matrix"]["grid"][fmt],
+                                   lanes["roundtrip"]["grid"].get(fmt, {}),
+                                   lanes["exact"]["grid"].get(fmt, {}))
+    totals = scoreboard.aggregate(rows)
+    raw_carve = load(directory, "carve.json", True)
+    if raw_carve is not None:
+        bridge = scoreboard.carve_lanes(raw_carve)
+        for fmt, row in scoreboard.carve_rows(directory).items():
+            l = bridge[fmt]
+            rows[fmt] = {**row, "carve": True,
+                         "segments": segments(l["matrix"], l["roundtrip"], l["exact"])}
     carve = clean_bridge(load(directory, "carve.json", True))
     if carve["measured"]:
         grid = {key: carve[key] for key in ("source", "ast")}
@@ -89,7 +101,7 @@ def document(directory):
     history_path = directory / "history.jsonl"
     history = [json.loads(line) for line in history_path.read_text().splitlines() if line.strip()] if history_path.exists() else []
     delta = load(directory, "delta.json", True)
-    return {"run": run, "totals": scoreboard.aggregate(rows), "rows": rows,
+    return {"run": run, "totals": totals, "rows": rows,
             "probes": [{"name": name, "class": severity.SEVERITY[name],
                         "weight": severity.weight(name), **ast["probes"][name]} for name in PROBES],
             "lanes": lanes, "meta": lanes["meta"]["grid"], "carve": carve,

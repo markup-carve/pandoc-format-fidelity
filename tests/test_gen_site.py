@@ -20,7 +20,12 @@ class SiteTests(unittest.TestCase):
             data = gen_site.build(ROOT / "results", output)
             expected = scoreboard.read(ROOT / "results")
             self.assertEqual(data["totals"], expected["totals"])
-            self.assertEqual(set(data["rows"]), set(expected["rows"]))
+            carve = scoreboard.carve_rows(ROOT / "results")
+            self.assertEqual(set(data["rows"]), set(expected["rows"]) | set(carve))
+            for fmt, row in carve.items():
+                self.assertTrue(data["rows"][fmt]["carve"])
+                self.assertEqual(data["rows"][fmt]["semantic_content"], row["semantic_content"])
+                self.assertEqual(sum(data["rows"][fmt]["segments"].values()), len(PROBES))
             self.assertEqual([p["name"] for p in data["probes"]], list(PROBES))
             for key in ("matrix", "roundtrip", "exact"):
                 raw = json.loads((ROOT / "results" / gen_site.LANES[key]["file"]).read_text())

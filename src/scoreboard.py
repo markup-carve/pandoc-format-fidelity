@@ -56,6 +56,47 @@ def meta_score(row):
             + 0.5 * sum(1 for k in MKEYS if row.get(k) == "partial"))
 
 
+# The pandoc-carve bridge's two lanes, keyed by the lane name in carve.json.
+CARVE = {"carve": "source", "carve-ast": "ast"}
+
+
+def carve_lanes(cv):
+    """The bridge lanes in the shape of the pandoc lanes. A bridge verdict is
+    `exact` or a pandoc writer verdict, so `exact` counts as expressed and
+    anything short of it as lossy."""
+    out = {}
+    for fmt, lane in CARVE.items():
+        out[fmt] = {
+            "matrix": {n: ("diff" if v in ("diff", "exact") else v) for n, v in cv[lane].items()},
+            # run_carve.mjs records a round trip only after a conversion succeeds.
+            "roundtrip": dict(cv.get("rt", {}).get(lane, {})),
+            "exact": {n: ("exact" if v == "exact" else "lossy") for n, v in cv[lane].items()},
+            "meta": dict(cv.get("meta", {}).get(lane, {})),
+        }
+    return out
+
+
+def summary(w, rt, ex, mt, readable):
+    exact = {n for n in PROBES if ex.get(n) == "exact"}
+    canon = {n for n in PROBES if ex.get(n) == "canonical"}
+    return {
+        "expressed": count(w, "diff"),
+        "writer_err": count(w, "err"),
+        "readable": readable,
+        "roundtrip": count(rt, "diff") if readable else None,
+        "exact": len(exact),
+        "canonical": len(canon),
+        "lossy": count(ex, "lossy") if readable else None,
+        "exact_err": count(ex, "err") if readable else None,
+        "meta": meta_score(mt),
+        # Weighted by what a reader loses, not by probe count. The first
+        # is strict; the second forgives the writer's restyling, which is
+        # what "did the content come home" actually asks.
+        "semantic_exact": severity.score(exact) if readable else None,
+        "semantic_content": severity.score(exact | canon) if readable else None,
+    }
+
+
 def rows(d):
     """Per-format summary for every writer in the results set."""
     W = load_lane(d, "matrix") or {}
@@ -67,26 +108,20 @@ def rows(d):
     for fmt in sorted(W):
         if fmt in NOT_A_FORMAT:
             continue
-        w, rt, ex = W.get(fmt, {}), RT.get(fmt, {}), EX.get(fmt, {})
-        exact = {n for n in PROBES if ex.get(n) == "exact"}
-        canon = {n for n in PROBES if ex.get(n) == "canonical"}
-        out[fmt] = {
-            "expressed": count(w, "diff"),
-            "writer_err": count(w, "err"),
-            "readable": fmt in EX,
-            "roundtrip": count(rt, "diff") if fmt in RT else None,
-            "exact": len(exact),
-            "canonical": len(canon),
-            "lossy": count(ex, "lossy") if fmt in EX else None,
-            "exact_err": count(ex, "err") if fmt in EX else None,
-            "meta": meta_score(MT.get(fmt)),
-            # Weighted by what a reader loses, not by probe count. The first
-            # is strict; the second forgives the writer's restyling, which is
-            # what "did the content come home" actually asks.
-            "semantic_exact": severity.score(exact) if fmt in EX else None,
-            "semantic_content": severity.score(exact | canon) if fmt in EX else None,
-        }
+        out[fmt] = summary(W.get(fmt, {}), RT.get(fmt, {}), EX.get(fmt, {}),
+                           MT.get(fmt), fmt in EX)
     return out
+
+
+def carve_rows(d):
+    """The bridge lanes scored like formats. Kept apart from rows() so they
+    never enter the pandoc medians; empty when the opt-in lane was not run."""
+    p = pathlib.Path(d) / "carve.json"
+    if not p.exists():
+        return {}
+    lanes = carve_lanes(json.loads(p.read_text(encoding="utf-8")))
+    return {fmt: summary(l["matrix"], l["roundtrip"], l["exact"], l["meta"], True)
+            for fmt, l in lanes.items()}
 
 
 def aggregate(rws):
