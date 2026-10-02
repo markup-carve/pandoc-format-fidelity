@@ -7,6 +7,9 @@ on:
 
 # Every job below carries a timeout-minutes bound, so a hung step fails in
 # minutes instead of running to GitHub's 360-minute default.
+permissions:
+  contents: read
+
 jobs:
   measure:
     runs-on: ubuntu-latest
@@ -47,6 +50,18 @@ jobs:
       # committed copies are the snapshot of the last committed measurement.
       - name: Rebuild the report and the dashboard
         run: make report
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: make site
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:site
+      - uses: actions/upload-pages-artifact@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          path: dist
       - uses: actions/upload-artifact@v4
         with:
           name: dashboard
@@ -54,3 +69,19 @@ jobs:
             docs/dashboard.html
             docs/index.html
             results/delta.json
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: measure
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

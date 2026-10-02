@@ -13,7 +13,7 @@ FORMATS    := $(shell $(PANDOC) --list-output-formats 2>/dev/null | tr '\n' ',' 
 #                              chart as the reference row
 READABLE   := $(shell python3 src/formats.py 2>/dev/null)
 
-.PHONY: all pandoc lanes stamp report dashboard delta carve carve-rt clean check controls correctness
+.PHONY: all pandoc lanes stamp report dashboard delta carve carve-rt clean check controls correctness site
 
 # The lanes are I/O bound on pandoc itself and gain nothing from -j, and the
 # stamp has to be written before the run it describes. Serial by declaration
@@ -131,3 +131,6 @@ check:
 
 clean:
 	rm -f results/*.json docs/index.html docs/dashboard.html
+
+site:
+	python3 src/gen_site.py

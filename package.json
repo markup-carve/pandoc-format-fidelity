@@ -1,0 +1,15 @@
+{
+  "name": "@markup-carve/pandoc-format-fidelity-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "site:build": "python3 src/gen_site.py",
+    "site:preview": "python3 -m http.server 4174 --directory dist",
+    "test:site": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
