@@ -2,6 +2,8 @@
 
 How much of a document survives a pandoc conversion, measured rather than guessed.
 
+Website: [Explore format fidelity](https://markup-carve.github.io/pandoc-format-fidelity/).
+
 Each probe is a pair of pandoc ASTs differing in exactly one feature, run through
 every writer pandoc ships and read back by every reader. The output is a grid saying,
 per format and per feature, whether the format can express it at all and whether it
@@ -132,6 +134,8 @@ make lanes    # just the measurements
 make report   # the report and the dashboard from existing results/
 make dashboard# just the dashboard (reads results/ only, no pandoc needed)
 make delta    # what moved between two results sets, gated by thresholds.json
+make site     # build dist/ from existing results, without pandoc or network
+npm run test:site # browser checks of the built website
 make check    # unit tests, the severity rubric, JSON sanity
 make controls # the two controls the report quotes (see src/controls.py)
 ```
@@ -141,7 +145,9 @@ means what the report claims: every writer is asked to emit the same document tw
 (75 of 76 are byte-identical; `pdf` errors, so it cannot be checked), and the
 `--wrap=preserve` effect is counted on the `softbreak` probe.
 
-Requires python3, node (only for the Carve lanes) and curl. The pinned pandoc is
+The website browser checks require `npm ci` and Playwright Chromium.
+
+Requires python3, node (for the website checks and Carve lanes) and curl. The pinned pandoc is
 fetched into `vendor/` by `scripts/fetch-pandoc.sh`; nothing is installed globally.
 Results are committed under `results/`, so a rerun shows up as a reviewable diff.
 
