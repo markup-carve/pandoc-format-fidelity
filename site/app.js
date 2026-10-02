@@ -36,13 +36,15 @@ function listRows() {
     return value(y) - value(x) || a.localeCompare(b)
   })
 }
+const carveBadge = () => el('span', 'Carve', { class: 'carve-badge', title: 'pandoc-carve bridge lane, not a pandoc writer; left out of the medians' })
 function charts() {
+  $('carve-note').hidden = !Object.values(data.rows).some(row => row.carve)
   tooltip.hidden = true
   $('leaderboard-bars').replaceChildren()
   $('severity-bars').replaceChildren()
   const body = tableHead($('leaderboard-table'), ['Format', 'Semantic %', ...labels])
   for (const [name, row] of listRows()) {
-    const wrapper = el('div', undefined, { class: 'bar-row', 'data-format': name })
+    const wrapper = el('div', undefined, { class: row.carve ? 'bar-row is-carve' : 'bar-row', 'data-format': name })
     const summary = `${name}: ${buckets.map((key, i) => `${labels[i]} ${row.segments[key]}`).join(', ')}. Semantic fidelity ${row.semantic_content?.pct ?? 'unmeasured'}%.`
     const bar = svg('svg', { viewBox: '0 0 660 25', preserveAspectRatio: 'none', tabindex: '0', role: 'img', 'aria-label': summary, 'aria-describedby': 'bar-tooltip' })
     bar.append(svg('title', {}, summary))
@@ -66,14 +68,17 @@ function charts() {
     const nameLabel = el('span', undefined, { class: 'format-label' })
     nameLabel.append(el('span', name, { class: 'bar-name' }))
     if (name === 'native') nameLabel.append(el('span', 'reference', { class: 'reference-badge', title: "Pandoc's own AST" }))
+    if (row.carve) nameLabel.append(carveBadge())
     wrapper.append(nameLabel, bar, el('span', row.semantic_content ? `${row.semantic_content.pct}%` : 'n/a', { class: 'score' }))
     $('leaderboard-bars').append(wrapper)
     const tr = el('tr')
     tr.append(el('th', name, { scope: 'row' }), el('td', row.semantic_content?.pct ?? 'unmeasured'))
     buckets.forEach(key => tr.append(el('td', row.segments[key])))
     body.append(tr)
-    const severityRow = el('div', undefined, { class: 'severity-row' })
-    severityRow.append(el('span', name, { class: 'bar-name' }))
+    const severityRow = el('div', undefined, { class: row.carve ? 'severity-row is-carve' : 'severity-row' })
+    const severityName = el('span', name, { class: 'bar-name' })
+    if (row.carve) severityName.append(carveBadge())
+    severityRow.append(severityName)
     for (const cls of ['content', 'structure', 'presentation']) {
       const by = row.semantic_content?.by[cls]
       const mini = el('div', undefined, { class: 'mini-bar', 'aria-label': `${name}, ${cls}: ${by ? `${by.kept} of ${by.probes} probes kept` : 'not measured'}` })

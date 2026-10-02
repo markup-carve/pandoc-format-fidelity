@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 const data = JSON.parse(readFileSync('dist/data/site.json', 'utf8'))
+const carveRows = Object.keys(data.rows).filter(name => data.rows[name].carve)
 async function ready(page) { await page.goto('/'); await expect(page.locator('#results')).toBeVisible() }
 test('stats match recorded totals without page errors', async ({ page }) => {
   const errors = []
@@ -14,14 +15,26 @@ test('stats match recorded totals without page errors', async ({ page }) => {
 })
 test('leaderboard scope and alphabetical sort', async ({ page }) => {
   await ready(page)
-  await expect(page.locator('#leaderboard-bars .bar-row')).toHaveCount(data.totals.readable)
+  await expect(page.locator('#leaderboard-bars .bar-row')).toHaveCount(data.totals.readable + carveRows.length)
   await page.locator('#scope').selectOption('all')
-  await expect(page.locator('#leaderboard-bars .bar-row')).toHaveCount(data.totals.formats)
+  await expect(page.locator('#leaderboard-bars .bar-row')).toHaveCount(data.totals.formats + carveRows.length)
   await page.locator('#sort').selectOption('name')
   const names = await page.locator('#leaderboard-bars .bar-name').allTextContents()
   expect(names).toEqual(Object.keys(data.rows).sort((a, b) => a.localeCompare(b)))
   await page.locator('#leaderboard-bars svg').first().focus()
   await expect(page.locator('#bar-tooltip')).toBeVisible()
+})
+test('Carve bridge rows are ranked with a badge and stay out of the medians', async ({ page }) => {
+  test.skip(!carveRows.length, 'Carve lane not measured')
+  await ready(page)
+  for (const name of carveRows) {
+    const row = page.locator(`#leaderboard-bars .bar-row[data-format="${name}"]`)
+    await expect(row).toHaveClass(/is-carve/)
+    await expect(row.locator('.carve-badge')).toHaveText('Carve')
+    await expect(row.locator('.score')).toHaveText(`${data.rows[name].semantic_content.pct}%`)
+  }
+  await expect(page.locator('#severity-bars .is-carve')).toHaveCount(carveRows.length)
+  await expect(page.locator('#carve-note')).toBeVisible()
 })
 test('explorer filters and deep-linked AST detail', async ({ page }) => {
   await ready(page)
