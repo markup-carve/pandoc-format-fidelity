@@ -58,11 +58,15 @@ import { createRequire } from 'node:module';
 import { resolve, join, basename, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { checkoutRevision } from './checkout_revision.mjs';
+import { scrubPaths } from './scrub_paths.mjs';
 
 const ROOT = resolve(new URL('..', import.meta.url).pathname);
 const FIXTURES = join(ROOT, 'fixtures', 'carve');
 const OUT = join(ROOT, 'results', 'carve-rt.json');
 const PANDOC = process.env.PANDOC || join(ROOT, 'vendor', 'pandoc', 'bin', 'pandoc');
+
+/** Every recorded message goes through this. See src/scrub_paths.mjs. */
+const clean = (text) => scrubPaths(text, PANDOC);
 
 // Formats a Carve author would plausibly export to and read back. Deliberately
 // short: the axis that matters here is the fixture, not the format, and every
@@ -103,7 +107,7 @@ try {
         rendererNote = 'resolved, but it exports no carveToHtml';
     }
 } catch (e) {
-    rendererNote = `not resolved (${String(e.message).slice(0, 80)})`;
+    rendererNote = `not resolved (${clean(e.message).slice(0, 80)})`;
 }
 
 /** Source positions are not content: they move whenever the bytes move. */
@@ -216,7 +220,7 @@ const res = {
                 .split('\n')[0].trim();
         } catch { return null; }
     })(),
-    bridge: bridgePath,
+    bridge: clean(bridgePath),
     bridgeRevision: checkoutRevision(dirname(dirname(resolve(bridgePath)))),
     renderer: rendererNote,
     rendererRevision,
@@ -249,8 +253,8 @@ for (const file of files) {
         if (warnings.length) res.preserveWarnings[name] = warnings;
     } catch (e) {
         res.lanes['bridge-preserve'][name] = 'err';
-        res.preserveOutput[name] = `${preserveStep}: ${String(e.message).slice(0, 140)}`;
-        (res.errors['bridge-preserve'] ??= {})[name] = { stage: preserveStep, message: String(e.message).slice(0, 800) };
+        res.preserveOutput[name] = `${preserveStep}: ${clean(e.message).slice(0, 140)}`;
+        (res.errors['bridge-preserve'] ??= {})[name] = { stage: preserveStep, message: clean(e.message).slice(0, 800) };
     }
 
     let doc;
@@ -260,8 +264,8 @@ for (const file of files) {
         if (forward.warnings?.length) res.warnings[name] = forward.warnings;
     } catch (e) {
         res.lanes.bridge[name] = 'err';
-        res.output[name] = `carveToPandoc: ${String(e.message).slice(0, 140)}`;
-        (res.errors.bridge ??= {})[name] = { stage: 'carveToPandoc', message: String(e.message).slice(0, 800) };
+        res.output[name] = `carveToPandoc: ${clean(e.message).slice(0, 140)}`;
+        (res.errors.bridge ??= {})[name] = { stage: 'carveToPandoc', message: clean(e.message).slice(0, 800) };
         for (const fmt of FORMATS) {
             res.lanes[fmt][name] = 'err';
             (res.errors[fmt] ??= {})[name] = res.errors.bridge[name];
@@ -276,8 +280,8 @@ for (const file of files) {
         if (back.warnings?.length) res.warnings[name] = [...(res.warnings[name] ?? []), ...back.warnings];
     } catch (e) {
         res.lanes.bridge[name] = 'err';
-        res.output[name] = `pandocToCarve: ${String(e.message).slice(0, 140)}`;
-        (res.errors.bridge ??= {})[name] = { stage: 'pandocToCarve', message: String(e.message).slice(0, 800) };
+        res.output[name] = `pandocToCarve: ${clean(e.message).slice(0, 140)}`;
+        (res.errors.bridge ??= {})[name] = { stage: 'pandocToCarve', message: clean(e.message).slice(0, 800) };
     }
 
     for (const fmt of FORMATS) {
@@ -288,7 +292,7 @@ for (const file of files) {
             res.lanes[fmt][name] = verdict(source, pandocToCarve(round).carve);
         } catch (e) {
             res.lanes[fmt][name] = 'err';
-            (res.errors[fmt] ??= {})[name] = { stage, message: String(e.message).slice(0, 800) };
+            (res.errors[fmt] ??= {})[name] = { stage, message: clean(e.message).slice(0, 800) };
         }
     }
 }

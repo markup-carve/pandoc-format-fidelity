@@ -919,7 +919,7 @@
   "typst": {
    "heading": {
     "stage": "pandoc export/import",
-    "message": "Command failed: /home/mark/.local/bin/pandoc -f typst -t json\n(line 1, column 1):\nunexpected Elt {eltName = Identifier \"heading\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"document\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"text\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Txt \"A second-level heading\"]))]}])),(Identifier \"level\",VInteger 2)]}]))]}\n"
+    "message": "Command failed: pandoc -f typst -t json\n(line 1, column 1):\nunexpected Elt {eltName = Identifier \"heading\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"document\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"text\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Txt \"A second-level heading\"]))]}])),(Identifier \"level\",VInteger 2)]}]))]}\n"
    },
    "table-align": {
     "stage": "pandocToCarve",
@@ -945,7 +945,7 @@
   "jats": {
    "raw-html": {
     "stage": "pandoc export/import",
-    "message": "Command failed: /home/mark/.local/bin/pandoc -f jats -t json\nInvalid XML:\nMissing root element\n\n"
+    "message": "Command failed: pandoc -f jats -t json\nInvalid XML:\nMissing root element\n\n"
    }
   },
   "latex": {

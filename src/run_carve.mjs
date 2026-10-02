@@ -3,7 +3,10 @@ import { resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { checkoutRevision } from './checkout_revision.mjs';
+import { scrubPaths } from './scrub_paths.mjs';
+
 const bridge = process.env.CARVE_BRIDGE;
+const clean = (text) => scrubPaths(text);
 if (!bridge) {
     console.error('set CARVE_BRIDGE to a pandoc-carve dist/index.js to run this lane');
     process.exit(2);
@@ -66,13 +69,13 @@ for (const [name, p] of Object.entries(probes)) {
         try {
             rich = fn(p.rich);
         } catch (e) {
-            res[lane][name] = 'err:' + String(e.message).slice(0, 90);
+            res[lane][name] = 'err:' + clean(e.message).slice(0, 90);
             continue;
         }
         try {
             deg = fn(p.degraded);
         } catch (e) {
-            res[lane][name] = 'err:' + String(e.message).slice(0, 90);
+            res[lane][name] = 'err:' + clean(e.message).slice(0, 90);
             continue;
         }
         const expressed = rich.text !== deg.text;
@@ -101,7 +104,7 @@ for (const lane of ['source', 'ast']) {
         out = back.doc.meta ?? {};
         if (lane === 'source') res.carveMeta = carve;
     } catch (e) {
-        res.meta[lane] = { _err: String(e.message).slice(0, 120) };
+        res.meta[lane] = { _err: clean(e.message).slice(0, 120) };
         continue;
     }
     const row = {};
