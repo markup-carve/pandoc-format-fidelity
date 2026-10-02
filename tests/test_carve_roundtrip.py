@@ -25,7 +25,7 @@ class TestCarveRoundtrip(unittest.TestCase):
             (root / 'src').mkdir()
             (root / 'results').mkdir()
             (root / 'fixtures' / 'carve').mkdir(parents=True)
-            for name in ('run_carve_rt.mjs', 'checkout_revision.mjs'):
+            for name in ('run_carve_rt.mjs', 'checkout_revision.mjs', 'scrub_paths.mjs'):
                 shutil.copy(ROOT / 'src' / name, root / 'src' / name)
             source = 'Visible prose. %% a comment\n'
             (root / 'fixtures' / 'carve' / 'comment.crv').write_text(source)
@@ -75,6 +75,47 @@ else:
             self.assertIn('carveToPandoc:', data['preserveOutput']['failure'])
             self.assertEqual(data['errors']['html']['all-failure'],
                              {'stage': 'carveToPandoc', 'message': 'forward failure'})
+
+    @unittest.skipUnless(shutil.which('node'), 'Node is required for the Carve runner')
+    def test_a_failing_converter_is_recorded_without_the_host_path(self):
+        """The lane runs pandoc by absolute path; the message must not say where."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            (root / 'src').mkdir()
+            (root / 'results').mkdir()
+            (root / 'fixtures' / 'carve').mkdir(parents=True)
+            for name in ('run_carve_rt.mjs', 'checkout_revision.mjs', 'scrub_paths.mjs'):
+                shutil.copy(ROOT / 'src' / name, root / 'src' / name)
+            (root / 'fixtures' / 'carve' / 'probe.crv').write_text('Prose.\n')
+            bridge = root / 'bridge.mjs'
+            bridge.write_text("""
+export function carveToPandoc(source) { return {doc: {source, blocks: [], meta: {}}}; }
+export function pandocToCarve(doc) { return {carve: doc.source}; }
+export function carveToCarveAst(source) { return {source}; }
+""")
+            # A home-shaped directory, so a leak would read as one.
+            bindir = root / 'home' / 'someone' / 'bin'
+            bindir.mkdir(parents=True)
+            pandoc = bindir / 'pandoc'
+            pandoc.write_text("""#!/usr/bin/env python3
+import sys
+if '--version' in sys.argv:
+    print('pandoc test double')
+    sys.exit(0)
+sys.stderr.write('the converter refused this document\\n')
+sys.exit(3)
+""")
+            pandoc.chmod(0o755)
+            env = {**os.environ, 'CARVE_BRIDGE': str(bridge),
+                   'PANDOC': str(pandoc), 'CARVE_RT_FORMATS': 'html'}
+            subprocess.run(['node', str(root / 'src' / 'run_carve_rt.mjs')],
+                           env=env, check=True, capture_output=True, text=True)
+            data = json.loads((root / 'results' / 'carve-rt.json').read_text())
+            failure = data['errors']['html']['probe']
+            self.assertEqual(failure['stage'], 'pandoc export/import')
+            self.assertIn('Command failed: pandoc ', failure['message'])
+            self.assertNotIn(str(bindir), failure['message'])
+            self.assertNotIn('/home/someone', failure['message'])
 
     def test_dashboard_labels_preservation_and_ragged_rows(self):
         data = {'fixtures': {'comment': {}, 'table-ragged': {}, 'table-span': {}, 'table-rowspan': {}}, 'formats': [],
