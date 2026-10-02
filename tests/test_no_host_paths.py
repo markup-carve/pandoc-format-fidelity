@@ -28,9 +28,6 @@ HOST_PATH = re.compile(
 # runner path in full. Add a path here only with a reason.
 EXEMPT = {
     "tests/test_no_host_paths.py",  # the guard; its regex is the pattern
-    # Spells a home-shaped directory on purpose, to prove a failing converter
-    # is recorded without one.
-    "tests/test_carve_roundtrip.py",
 }
 
 

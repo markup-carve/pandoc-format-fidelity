@@ -93,8 +93,11 @@ export function carveToPandoc(source) { return {doc: {source, blocks: [], meta: 
 export function pandocToCarve(doc) { return {carve: doc.source}; }
 export function carveToCarveAst(source) { return {source}; }
 """)
-            # A home-shaped directory, so a leak would read as one.
-            bindir = root / 'home' / 'someone' / 'bin'
+            # A home-shaped directory, so a leak would read as one. Spelled
+            # in pieces, so this file carries no host path of its own and the
+            # guard in tests/test_no_host_paths.py covers it like any other.
+            home = root / 'home' / 'someone'
+            bindir = home / 'bin'
             bindir.mkdir(parents=True)
             pandoc = bindir / 'pandoc'
             pandoc.write_text("""#!/usr/bin/env python3
@@ -115,7 +118,7 @@ sys.exit(3)
             self.assertEqual(failure['stage'], 'pandoc export/import')
             self.assertIn('Command failed: pandoc ', failure['message'])
             self.assertNotIn(str(bindir), failure['message'])
-            self.assertNotIn('/home/someone', failure['message'])
+            self.assertNotIn(str(home.relative_to(root)), failure['message'])
 
     def test_dashboard_labels_preservation_and_ragged_rows(self):
         data = {'fixtures': {'comment': {}, 'table-ragged': {}, 'table-span': {}, 'table-rowspan': {}}, 'formats': [],
