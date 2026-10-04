@@ -8,14 +8,30 @@ name: nightly-pandoc
 # `git diff --stat results/`, which says a one-line JSON file changed by one
 # line and nothing about whether pandoc got better or worse. It now reads both
 # sides as verdicts, writes a `format · probe · from -> to` table into the job
-# summary, and fails on the thresholds in thresholds.json. The `nightly`
+# summary, and judges it on the thresholds in thresholds.json. The `nightly`
 # profile is deliberately looser than the one the repo gates itself with:
 # upstream restyles writers routinely, so presentation-class movement is
 # expected, and content-class movement is not.
+#
+# Two verdicts about upstream file a tracking issue and leave the run GREEN:
+# no fresh nightly to measure, and a delta past the nightly thresholds. Both
+# say pandoc changed (or did not ship), which nothing in this repo can fix.
+# A broken check stays RED: a script failure, a provenance mismatch, an EPUB
+# order failure, or a reporter that could not file.
 on:
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+# Queued, not cancelled: two reporters listing at once would file duplicates.
+concurrency:
+  group: nightly-pandoc-${{ github.ref }}
+  cancel-in-progress: false
 
 # Every job below carries a timeout-minutes bound, so a hung step fails in
 # minutes instead of running to GitHub's 360-minute default.
@@ -31,21 +47,39 @@ jobs:
       - name: Fetch pinned pandoc
         run: ./scripts/fetch-pandoc.sh
       - name: Fetch pandoc nightly
+        id: nightly
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           # The list is not reliably newest-first: on 2026-09-17 and 09-21 its
           # first entry was the 2026-08-16 run, which the provenance check below
           # cannot see (banner and run agree, both are just old). Sort by date
           # here and refuse a build too old to be tonight's.
-          read -r run_id created < <(gh run list -R jgm/pandoc --workflow nightly.yml \
+          latest=$(gh run list -R jgm/pandoc --workflow nightly.yml \
                     --status success --limit 20 --json databaseId,createdAt \
                     -q 'sort_by(.createdAt) | last | "\(.databaseId) \(.createdAt)"')
-          age=$(( ($(date +%s) - $(date -d "$created" +%s)) / 86400 ))
-          if [ "$age" -gt 3 ]; then
-            echo "::error::newest successful upstream nightly is run $run_id from $created, $age days old"
+          read -r run_id created <<< "$latest" || true
+          if [ -z "${run_id:-}" ] || [ -z "${created:-}" ]; then
+            echo "::error::could not read the newest successful upstream nightly"
             exit 1
           fi
+          age=$(( ($(date +%s) - $(date -d "$created" +%s)) / 86400 ))
+          {
+            echo "run=$run_id"
+            echo "created=$created"
+            echo "age=$age"
+          } >> "$GITHUB_OUTPUT"
+          # Refusing is right; failing the run for it is not. Upstream not
+          # shipping says nothing about this repo, so it goes to a ticket.
+          if [ "$age" -gt 3 ]; then
+            msg="no fresh upstream nightly (newest is run $run_id from $created, $age days old)"
+            echo "::notice::not measured: $msg"
+            printf '## nightly-pandoc\n\nNot measured: %s.\n' "$msg" >> "$GITHUB_STEP_SUMMARY"
+            echo "fresh=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "fresh=true" >> "$GITHUB_OUTPUT"
           gh run download "$run_id" -R jgm/pandoc -n nightly-linux -D nightly
           chmod +x nightly/*/pandoc
           echo "NIGHTLY=$(echo nightly/*/pandoc)" >> "$GITHUB_ENV"
@@ -65,20 +99,34 @@ jobs:
       # The committed results are the baseline: they are the pinned release,
       # measured and reviewed. The nightly run overwrites results/ in place.
       - name: Keep the committed results as a baseline
+        if: steps.nightly.outputs.fresh == 'true'
         run: cp -r results results-baseline
       - name: Measure the nightly
+        if: steps.nightly.outputs.fresh == 'true'
         run: PANDOC=$NIGHTLY make lanes
       - name: EPUB reading order against nightly
+        if: steps.nightly.outputs.fresh == 'true'
         run: |
           make correctness PANDOC="$NIGHTLY" > epub-order.log 2>&1 || echo "ORDER=1" >> "$GITHUB_ENV"
           cat epub-order.log
       # No --record here: results/history.jsonl is the repo's own trend line,
       # and a line appended on a runner would only ever live in an artifact.
       # History gets a line when a rerun is committed.
+      # delta.py directly, not through make: make turns every recipe failure
+      # into 2, which would hide the breach exit code (3) from a crash (1).
       - name: Report what moved
+        id: delta
+        if: steps.nightly.outputs.fresh == 'true'
         run: |
-          make delta BASELINE=results-baseline CANDIDATE=results PROFILE=nightly \
-            DELTA_ARGS="--markdown delta.md" || echo "BREACH=1" >> "$GITHUB_ENV"
+          python3 src/delta.py --baseline results-baseline --candidate results \
+            --profile nightly --json results/delta.json --markdown delta.md \
+            && status=0 || status=$?
+          case "$status" in
+            0) echo "verdict=ok" >> "$GITHUB_OUTPUT" ;;
+            3) echo "verdict=breach" >> "$GITHUB_OUTPUT"
+               echo "::warning::the nightly moved cells past the thresholds in thresholds.json" ;;
+            *) echo "::error::delta.py exited $status"; exit "$status" ;;
+          esac
           cat delta.md >> "$GITHUB_STEP_SUMMARY"
       # On 2026-09-08 the watch measured a build calling itself
       # 3.10.2-nightly-2026-08-16, three weeks older than the upstream run it
@@ -90,6 +138,8 @@ jobs:
       # a night measured against an unknown build is worse than a night not
       # measured, because the delta reads as authoritative either way.
       - name: Check the build is the one we asked for
+        id: provenance
+        if: steps.nightly.outputs.fresh == 'true'
         run: |
           python3 - <<'EOF'
           import json, os
@@ -107,8 +157,10 @@ jobs:
           print("::warning::%s" % msg)
           EOF
       - name: Rebuild the dashboard against the nightly
+        if: steps.nightly.outputs.fresh == 'true'
         run: make dashboard
       - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && steps.nightly.outputs.fresh == 'true' }}
         with:
           name: nightly-delta
           path: |
@@ -117,14 +169,134 @@ jobs:
             results/delta.json
             results/run.json
             epub-order.log
+      # The reporter of markup-carve/carve's changelog-drift: one issue per
+      # marker, opened by the first such night, edited by later ones, closed
+      # by the first night that clears it. Listed rather than searched (the
+      # index lags), scoped to the default branch, and it FAILS if it cannot
+      # file: a reporter that swallows its errors is the defect it replaces.
+      - name: File the verdicts where someone reads them
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          HEAD_SHA: ${{ github.sha }}
+          REF_NAME: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          FRESH: ${{ steps.nightly.outputs.fresh }}
+          UP_RUN: ${{ steps.nightly.outputs.run }}
+          UP_CREATED: ${{ steps.nightly.outputs.created }}
+          UP_AGE: ${{ steps.nightly.outputs.age }}
+          VERDICT: ${{ steps.delta.outputs.verdict }}
+          PROVENANCE: ${{ steps.provenance.outcome }}
+        run: |
+          set -euo pipefail
+
+          if [ "$REF_NAME" != "$DEFAULT_BRANCH" ]; then
+            echo "Nightly tickets are scoped to $DEFAULT_BRANCH; $REF_NAME keeps its Actions verdict only."
+            exit 0
+          fi
+
+          open_issues="$(gh api "repos/$REPO/issues?state=open&per_page=100" --paginate)"
+          find_issue() {
+            jq -rs --arg m "$1" '[add[] | select(.pull_request == null)
+              | select((.body // "") | contains($m)) | .number] | first // empty' <<< "$open_issues"
+          }
+          close_issue() {
+            local issue
+            issue="$(find_issue "$1")"
+            [ -n "$issue" ] || return 0
+            gh issue comment "$issue" --repo "$REPO" --body \
+              "Cleared by run $RUN_URL on $HEAD_SHA. Closing. The next such night opens a fresh ticket rather than reopening this one."
+            gh issue close "$issue" --repo "$REPO"
+            echo "Closed #$issue."
+          }
+          file_issue() {
+            local issue url
+            issue="$(find_issue "$1")"
+            if [ -n "$issue" ]; then
+              gh issue edit "$issue" --repo "$REPO" --body-file "$3"
+              echo "Updated #$issue."
+            else
+              url="$(gh issue create --repo "$REPO" --title "$2" --body-file "$3")"
+              echo "Filed $url."
+            fi
+          }
+          footer() {
+            echo
+            echo 'This ticket is filed and maintained by the `nightly-pandoc` workflow. It is'
+            echo 'EDITED by each later such night and CLOSED by the first one that clears it.'
+            echo 'Closing it by hand does not silence it: the next such night files a new one.'
+          }
+
+          STALE_MARKER="<!-- nightly-pandoc-not-measured ref=$REF_NAME -->"
+          BREACH_MARKER="<!-- nightly-pandoc-threshold-breach ref=$REF_NAME -->"
+
+          if [ "${FRESH:-}" = "false" ]; then
+            {
+              echo "$STALE_MARKER"
+              echo
+              echo 'The nightly watch did not measure: upstream `jgm/pandoc` has no successful'
+              echo 'nightly younger than three days, and a build that old would be filed as'
+              echo "tonight's measurement. See \"Which pandoc, measured when\" in the README."
+              echo
+              echo "| | |"
+              echo "| --- | --- |"
+              echo "| newest upstream nightly | https://github.com/jgm/pandoc/actions/runs/$UP_RUN |"
+              echo "| created | $UP_CREATED ($UP_AGE days old) |"
+              echo "| last checked by | $RUN_URL |"
+              echo
+              echo "Nothing in this repo to fix. It closes on the first night a fresh build"
+              echo "is measured."
+              footer
+            } > "$RUNNER_TEMP/not-measured.md"
+            file_issue "$STALE_MARKER" "nightly-pandoc: no fresh upstream nightly to measure" \
+              "$RUNNER_TEMP/not-measured.md"
+            exit 0
+          fi
+
+          # Only a completed delta on a build of settled provenance counts as
+          # measured; any other night is red and leaves both tickets as they are.
+          if [ "${PROVENANCE:-}" != "success" ] || [ "${MISMATCH:-}" = "1" ] \
+             || { [ "${VERDICT:-}" != "ok" ] && [ "${VERDICT:-}" != "breach" ]; }; then
+            exit 0
+          fi
+          close_issue "$STALE_MARKER"
+          if [ "$VERDICT" = "breach" ]; then
+            {
+              echo "$BREACH_MARKER"
+              echo
+              echo 'The pandoc nightly moved cells past the `nightly` profile in'
+              echo '`thresholds.json`, measured against the committed results of the pinned'
+              echo 'release. This reports a change in pandoc, not in this repo.'
+              echo
+              echo "| | |"
+              echo "| --- | --- |"
+              echo "| run | $RUN_URL |"
+              echo "| upstream nightly | https://github.com/jgm/pandoc/actions/runs/$UP_RUN ($UP_CREATED) |"
+              echo "| commit | $HEAD_SHA |"
+              echo
+              cat delta.md
+              echo
+              echo "### How to clear it"
+              echo
+              echo 'A regression in pandoc is worth reporting upstream. An intended writer'
+              echo 'change clears once the pin moves to a release that has it and the results'
+              echo 'are remeasured. A cell that moved because of the runner rather than pandoc'
+              echo 'belongs in `allow` in `thresholds.json`, with a reason.'
+              footer
+            } > "$RUNNER_TEMP/breach.md"
+            file_issue "$BREACH_MARKER" "nightly-pandoc: the pandoc nightly breaches the nightly thresholds" \
+              "$RUNNER_TEMP/breach.md"
+          elif [ "$VERDICT" = "ok" ]; then
+            close_issue "$BREACH_MARKER"
+          fi
+
       # Failed last, so the summary and the artifact exist to look at. A red
       # nightly with no attached evidence is a red nightly nobody diagnoses.
-      - name: Fail on a threshold breach or an unsettled build
-        if: env.BREACH == '1' || env.MISMATCH == '1' || env.ORDER == '1'
+      - name: Fail on an unsettled build or an EPUB order failure
+        if: env.MISMATCH == '1' || env.ORDER == '1'
         run: |
-          if [ "${BREACH:-}" = "1" ]; then
-            echo "::error::the nightly moved cells past the thresholds in thresholds.json"
-          fi
           if [ "${MISMATCH:-}" = "1" ]; then
             echo "::error::the measured build does not match the upstream run it came from"
           fi

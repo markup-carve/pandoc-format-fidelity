@@ -88,6 +88,11 @@ footer, and every figure on the dashboard, are substituted from that file. The
 version in the heading used to be a literal, so a rerun against a different
 build published the old number over the new figures.
 
+The nightly job also refuses an upstream build more than three days old, for
+the same reason. That night is recorded as not measured, in the job summary and
+in one tracking issue that the next measured night closes, and the run stays
+green: upstream not shipping a nightly is nothing this repo can fix.
+
 ## Deltas and thresholds
 
 `src/delta.py` compares two results directories as **verdicts**, not as text:
@@ -105,6 +110,8 @@ the gate. Two profiles, because the two comparisons are not the same question:
 - **`pin`** - the repo's own results against the pinned pandoc. Nothing may move.
 - **`nightly`** - the watch on pandoc's nightly build. Presentation-class
   movement is expected and tolerated up to a cap; content-class movement never is.
+  A breach reports a change in pandoc rather than in this repo, so the scheduled
+  job files it as a tracking issue and stays green; a delta that crashes is red.
 
 `allow` in the same file exempts cells whose verdict depends on the machine
 rather than on pandoc - the `pdf` row needs a TeX engine - with the reason

@@ -245,7 +245,7 @@ class TestMain(DeltaCase):
 
     def test_exit_code_is_the_gate(self):
         self.both("exact.json", {"html": {"emph": "exact"}}, {"html": {"emph": "lossy"}})
-        self.assertEqual(self.run_main([]), 1)
+        self.assertEqual(self.run_main([]), delta.EXIT_BREACH)
         self.assertEqual(self.run_main(["--exit-zero"]), 0)
 
     def test_comparing_a_directory_with_itself_is_refused(self):
