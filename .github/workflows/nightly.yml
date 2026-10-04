@@ -218,7 +218,8 @@ jobs:
               gh issue edit "$issue" --repo "$REPO" --body-file "$3"
               echo "Updated #$issue."
             else
-              url="$(gh issue create --repo "$REPO" --title "$2" --body-file "$3")"
+              url="$(gh issue create --repo "$REPO" --title "$2" --body-file "$3" \
+                --label chore --label area:tooling)"
               echo "Filed $url."
             fi
           }
