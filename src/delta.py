@@ -8,7 +8,8 @@ says whether pandoc got better or worse.
 This reads both sides as verdicts instead of as text. Every cell that moved is
 reported as `format · probe · from -> to`, classified against the ranking in
 verdicts.py, and weighted by what a reader loses (severity.py). Thresholds in
-thresholds.json then decide whether the run passes; the exit code is the gate.
+thresholds.json then decide whether the run passes; the exit code is the gate
+(3 on a breach, so a crash or a usage error never reads as one).
 
     python3 src/delta.py --baseline results --candidate /tmp/nightly --profile nightly
     python3 src/delta.py --baseline results-committed --json results/delta.json
@@ -38,6 +39,9 @@ from verdicts import LANES, cells, direction
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DEFAULT_THRESHOLDS = ROOT / "thresholds.json"
+# Distinct from 1 (an uncaught exception) and 2 (argparse), so a caller can
+# tell "pandoc moved past the thresholds" from "the comparison did not run".
+EXIT_BREACH = 3
 
 
 # Neither a metadata key nor a Carve fixture is a probe, so severity has no
@@ -404,7 +408,7 @@ def main(argv=None):
         with open(args.record, "a", encoding="utf-8") as fh:
             fh.write(json.dumps(history_record(rep, args.candidate),
                                 sort_keys=True) + "\n")
-    return 0 if (rep["status"] == "ok" or args.exit_zero) else 1
+    return 0 if (rep["status"] == "ok" or args.exit_zero) else EXIT_BREACH
 
 
 if __name__ == "__main__":
