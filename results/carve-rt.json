@@ -1,10 +1,10 @@
 {
- "generated": "2026-09-30T22:12:39Z",
+ "generated": "2026-10-15T00:23:24Z",
  "pandoc": "pandoc 3.11",
- "bridge": "/tmp/pandoc-bridge-measurement/dist/index.js",
- "bridgeRevision": "c3d85783623c2498370941e09d757b68b34fb839",
- "renderer": "@markup-carve/carve 0.1.9 (revision 04845b7fc316)",
- "rendererRevision": "04845b7fc31610e17e53ab64bdf7dc5d00a81b39",
+ "bridge": "/var/tmp/claude-lane-pcfix/dist/index.js",
+ "bridgeRevision": "cf9be6e5ad290294f9387126598a5e2a009b1136",
+ "renderer": "@markup-carve/carve 0.1.11",
+ "rendererRevision": null,
  "formats": [
   "markdown",
   "gfm",
@@ -300,7 +300,7 @@
    "frontmatter": "respelled",
    "hard-break": "exact",
    "heading-attrs": "exact",
-   "heading": "lossy",
+   "heading": "exact",
    "image": "lossy",
    "inline-footnote": "exact",
    "link-title": "exact",
@@ -354,7 +354,7 @@
    "nested-list": "exact",
    "ordered-list": "respelled",
    "quote-container": "respelled",
-   "raw-html": "lossy",
+   "raw-html": "exact",
    "span-attrs": "respelled",
    "strike-highlight": "lossy",
    "sup-sub": "respelled",
@@ -388,7 +388,7 @@
    "frontmatter": "respelled",
    "hard-break": "exact",
    "heading-attrs": "exact",
-   "heading": "lossy",
+   "heading": "exact",
    "image": "exact",
    "inline-footnote": "exact",
    "link-title": "exact",
@@ -398,7 +398,7 @@
    "nested-list": "exact",
    "ordered-list": "respelled",
    "quote-container": "respelled",
-   "raw-html": "lossy",
+   "raw-html": "exact",
    "span-attrs": "exact",
    "strike-highlight": "exact",
    "sup-sub": "exact",
@@ -442,7 +442,7 @@
    "nested-list": "exact",
    "ordered-list": "respelled",
    "quote-container": "respelled",
-   "raw-html": "lossy",
+   "raw-html": "exact",
    "span-attrs": "exact",
    "strike-highlight": "lossy",
    "sup-sub": "exact",
@@ -476,7 +476,7 @@
    "frontmatter": "respelled",
    "hard-break": "exact",
    "heading-attrs": "exact",
-   "heading": "lossy",
+   "heading": "exact",
    "image": "exact",
    "inline-footnote": "exact",
    "link-title": "exact",
@@ -520,7 +520,7 @@
    "frontmatter": "respelled",
    "hard-break": "exact",
    "heading-attrs": "lossy",
-   "heading": "lossy",
+   "heading": "exact",
    "image": "exact",
    "inline-footnote": "exact",
    "link-title": "lossy",
@@ -538,7 +538,7 @@
    "table-caption": "lossy",
    "table-ragged": "lossy",
    "table-rowspan": "lossy",
-   "table-span": "err",
+   "table-span": "lossy",
    "table": "lossy",
    "task-list": "lossy",
    "thematic-break": "lossy"
@@ -564,7 +564,7 @@
    "frontmatter": "respelled",
    "hard-break": "exact",
    "heading-attrs": "lossy",
-   "heading": "err",
+   "heading": "exact",
    "image": "lossy",
    "inline-footnote": "exact",
    "link-title": "lossy",
@@ -578,12 +578,12 @@
    "span-attrs": "lossy",
    "strike-highlight": "lossy",
    "sup-sub": "exact",
-   "table-align": "err",
+   "table-align": "lossy",
    "table-caption": "lossy",
-   "table-ragged": "err",
-   "table-rowspan": "err",
-   "table-span": "err",
-   "table": "err",
+   "table-ragged": "lossy",
+   "table-rowspan": "lossy",
+   "table-span": "lossy",
+   "table": "lossy",
    "task-list": "lossy",
    "thematic-break": "exact"
   },
@@ -740,7 +740,7 @@
    "frontmatter": "respelled",
    "hard-break": "exact",
    "heading-attrs": "exact",
-   "heading": "lossy",
+   "heading": "exact",
    "image": "lossy",
    "inline-footnote": "exact",
    "link-title": "lossy",
@@ -750,7 +750,7 @@
    "nested-list": "exact",
    "ordered-list": "respelled",
    "quote-container": "respelled",
-   "raw-html": "lossy",
+   "raw-html": "exact",
    "span-attrs": "lossy",
    "strike-highlight": "lossy",
    "sup-sub": "exact",
@@ -916,42 +916,10 @@
   ]
  },
  "errors": {
-  "typst": {
-   "heading": {
-    "stage": "pandoc export/import",
-    "message": "Command failed: pandoc -f typst -t json\n(line 1, column 1):\nunexpected Elt {eltName = Identifier \"heading\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"document\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Elt {eltName = Identifier \"text\", eltPos = Just (line 1, column 1), eltFields = fromList [(Identifier \"body\",VContent (fromList [Txt \"A second-level heading\"]))]}])),(Identifier \"level\",VInteger 2)]}]))]}\n"
-   },
-   "table-align": {
-    "stage": "pandocToCarve",
-    "message": "Cannot read properties of undefined (reading 'flatMap')"
-   },
-   "table-ragged": {
-    "stage": "pandocToCarve",
-    "message": "Cannot read properties of undefined (reading 'flatMap')"
-   },
-   "table-rowspan": {
-    "stage": "pandocToCarve",
-    "message": "Cannot read properties of undefined (reading 'flatMap')"
-   },
-   "table-span": {
-    "stage": "pandocToCarve",
-    "message": "Cannot read properties of undefined (reading 'flatMap')"
-   },
-   "table": {
-    "stage": "pandocToCarve",
-    "message": "Cannot read properties of undefined (reading 'flatMap')"
-   }
-  },
   "jats": {
    "raw-html": {
     "stage": "pandoc export/import",
     "message": "Command failed: pandoc -f jats -t json\nInvalid XML:\nMissing root element\n\n"
-   }
-  },
-  "latex": {
-   "table-span": {
-    "stage": "pandocToCarve",
-    "message": "renderCarve cannot spell table_row: a table row whose every cell is blank has no Carve source spelling"
    }
   }
  },

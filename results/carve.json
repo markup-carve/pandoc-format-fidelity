@@ -1,6 +1,6 @@
 {
- "generated": "2026-09-30T22:21:03Z",
- "bridgeRevision": "c3d85783623c2498370941e09d757b68b34fb839",
+ "generated": "2026-10-15T00:23:22Z",
+ "bridgeRevision": "cf9be6e5ad290294f9387126598a5e2a009b1136",
  "source": {
   "emph": "exact",
   "strong": "exact",
@@ -28,8 +28,8 @@
   "image": "exact",
   "image_title": "exact",
   "image_size": "exact",
-  "header": "exact",
-  "header_level": "exact",
+  "header": "diff",
+  "header_level": "diff",
   "header_attrs": "exact",
   "blockquote": "exact",
   "codeblock": "exact",
@@ -67,7 +67,7 @@
   "table_row_attrs": "exact",
   "table_block_cell": "exact",
   "table_rowheadcols": "exact",
-  "table_multibody": "same"
+  "table_multibody": "diff"
  },
  "ast": {
   "emph": "exact",
@@ -96,8 +96,8 @@
   "image": "exact",
   "image_title": "exact",
   "image_size": "exact",
-  "header": "exact",
-  "header_level": "exact",
+  "header": "diff",
+  "header_level": "diff",
   "header_attrs": "exact",
   "blockquote": "exact",
   "codeblock": "exact",
@@ -211,9 +211,7 @@
    "table: a cell holds block content, which a pipe table cannot spell - emitted as a `::: list-table` (structure preserved)"
   ],
   "table_rowheadcols": [],
-  "table_multibody": [
-   "table: 2 body groups - preserved in the Carve AST as `rowGroups`, but a pipe table states only its head and foot row counts, so the emitted source flattens them into body rows"
-  ]
+  "table_multibody": []
  },
  "carveOut": {
   "emph": "/alpha/\n",
@@ -281,10 +279,10 @@
   "table_row_attrs": "| a | b |{#rid .c1}\n| c | d |\n",
   "table_block_cell": "::: list-table\n- - alpha\n\n    beta\n\n  - b\n- - c\n  - d\n:::\n",
   "table_rowheadcols": "|= a | b |\n|= c | d |\n",
-  "table_multibody": "| a | b |\n| c | d |\n"
+  "table_multibody": "{body-rows=1,1}\n| a | b |\n| c | d |\n"
  },
- "renderer": "@markup-carve/carve 0.1.9",
- "rendererRevision": "04845b7fc31610e17e53ab64bdf7dc5d00a81b39",
+ "renderer": "@markup-carve/carve 0.1.11",
+ "rendererRevision": null,
  "rt": {
   "source": {
    "emph": "diff",
@@ -352,7 +350,7 @@
    "table_row_attrs": "diff",
    "table_block_cell": "diff",
    "table_rowheadcols": "diff",
-   "table_multibody": "same"
+   "table_multibody": "diff"
   },
   "ast": {
    "emph": "diff",
