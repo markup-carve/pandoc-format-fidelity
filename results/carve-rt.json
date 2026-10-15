@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-15T00:06:27Z",
+ "generated": "2026-10-15T00:23:24Z",
  "pandoc": "pandoc 3.11",
- "bridge": "/var/tmp/claude-lane-pff-bridge/dist/index.js",
- "bridgeRevision": "f6b16963aa826061ee015e7b46fd2ebcf90b1e13",
+ "bridge": "/var/tmp/claude-lane-pcfix/dist/index.js",
+ "bridgeRevision": "cf9be6e5ad290294f9387126598a5e2a009b1136",
  "renderer": "@markup-carve/carve 0.1.11",
  "rendererRevision": null,
  "formats": [

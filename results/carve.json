@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-15T00:06:26Z",
- "bridgeRevision": "f6b16963aa826061ee015e7b46fd2ebcf90b1e13",
+ "generated": "2026-10-15T00:23:22Z",
+ "bridgeRevision": "cf9be6e5ad290294f9387126598a5e2a009b1136",
  "source": {
   "emph": "exact",
   "strong": "exact",
@@ -35,8 +35,8 @@
   "codeblock": "exact",
   "codeblock_lang": "exact",
   "codeblock_attrs": "exact",
-  "rawblock_html": "diff",
-  "rawblock_tex": "diff",
+  "rawblock_html": "exact",
+  "rawblock_tex": "exact",
   "hrule": "exact",
   "lineblock": "exact",
   "div_attrs": "exact",
