@@ -56,13 +56,37 @@ jobs:
           # first entry was the 2026-08-16 run, which the provenance check below
           # cannot see (banner and run agree, both are just old). Sort by date
           # here and refuse a build too old to be tonight's.
-          latest=$(gh run list -R jgm/pandoc --workflow nightly.yml \
-                    --status success --limit 20 --json databaseId,createdAt \
-                    -q 'sort_by(.createdAt) | last | "\(.databaseId) \(.createdAt)"')
-          read -r run_id created <<< "$latest" || true
-          if [ -z "${run_id:-}" ] || [ -z "${created:-}" ]; then
-            echo "::error::could not read the newest successful upstream nightly"
-            exit 1
+          #
+          # Only the linux job matters here. Upstream's macOS job failed every
+          # night from 2026-10-17, which marked the whole run failed and hid
+          # five usable linux builds behind a "no fresh nightly" ticket. So
+          # pick the newest completed run whose linux job succeeded and whose
+          # nightly-linux artifact has not expired.
+          # Listed into a variable first: a failing gh inside the process
+          # substitution would read as "no build" instead of failing the step.
+          runs=$(gh run list -R jgm/pandoc --workflow nightly.yml \
+                   --status completed --limit 20 --json databaseId,createdAt \
+                   -q 'sort_by(.createdAt) | reverse | .[] | "\(.databaseId) \(.createdAt)"')
+          run_id=""
+          created=""
+          while read -r id at; do
+            [ -n "$id" ] || continue
+            linux=$(gh api "repos/jgm/pandoc/actions/runs/$id/jobs" \
+                      --jq '.jobs[] | select(.name == "linux") | .conclusion')
+            artifact=$(gh api "repos/jgm/pandoc/actions/runs/$id/artifacts" \
+                         --jq '[.artifacts[] | select(.name == "nightly-linux" and (.expired | not))] | length')
+            if [ "$linux" = "success" ] && [ "$artifact" -gt 0 ]; then
+              run_id=$id
+              created=$at
+              break
+            fi
+          done <<< "$runs"
+          if [ -z "$run_id" ]; then
+            msg="no upstream nightly with a usable linux build among the last 20 runs"
+            echo "::notice::not measured: $msg"
+            printf '## nightly-pandoc\n\nNot measured: %s.\n' "$msg" >> "$GITHUB_STEP_SUMMARY"
+            echo "fresh=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           age=$(( ($(date +%s) - $(date -d "$created" +%s)) / 86400 ))
           {
@@ -237,14 +261,18 @@ jobs:
             {
               echo "$STALE_MARKER"
               echo
-              echo 'The nightly watch did not measure: upstream `jgm/pandoc` has no successful'
-              echo 'nightly younger than three days, and a build that old would be filed as'
-              echo "tonight's measurement. See \"Which pandoc, measured when\" in the README."
+              echo 'The nightly watch did not measure: upstream `jgm/pandoc` has no nightly with a'
+              echo 'successful linux build younger than three days, and a build that old would be'
+              echo "filed as tonight's measurement. See \"Which pandoc, measured when\" in the README."
               echo
               echo "| | |"
               echo "| --- | --- |"
-              echo "| newest upstream nightly | https://github.com/jgm/pandoc/actions/runs/$UP_RUN |"
-              echo "| created | $UP_CREATED ($UP_AGE days old) |"
+              if [ -n "$UP_RUN" ]; then
+                echo "| newest usable linux build | https://github.com/jgm/pandoc/actions/runs/$UP_RUN |"
+                echo "| created | $UP_CREATED ($UP_AGE days old) |"
+              else
+                echo "| newest usable linux build | none among the last 20 upstream runs |"
+              fi
               echo "| last checked by | $RUN_URL |"
               echo
               echo "Nothing in this repo to fix. It closes on the first night a fresh build"
