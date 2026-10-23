@@ -122,6 +122,7 @@ controls:
 
 correctness:
 	PANDOC=$(PANDOC) python3 src/epub_order.py
+	PANDOC=$(PANDOC) python3 src/docx_structure.py
 
 check:
 	PYTHONPATH=src python3 -c "import probes; print(len(probes.PROBES), 'probes load')"
