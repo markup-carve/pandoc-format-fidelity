@@ -104,7 +104,7 @@ jobs:
       - name: Measure the nightly
         if: steps.nightly.outputs.fresh == 'true'
         run: PANDOC=$NIGHTLY make lanes
-      - name: EPUB reading order against nightly
+      - name: EPUB reading order and DOCX structure against nightly
         if: steps.nightly.outputs.fresh == 'true'
         run: |
           make correctness PANDOC="$NIGHTLY" > epub-order.log 2>&1 || echo "ORDER=1" >> "$GITHUB_ENV"
@@ -302,6 +302,6 @@ jobs:
             echo "::error::the measured build does not match the upstream run it came from"
           fi
           if [ "${ORDER:-}" = "1" ]; then
-            echo "::error::the nightly failed EPUB reading-order correctness"
+            echo "::error::the nightly failed EPUB reading-order or DOCX structure correctness"
           fi
           exit 1

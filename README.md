@@ -62,8 +62,22 @@ Two settings are load-bearing and were both bugs before they were settings:
 It runs 16 EPUB 2 and EPUB 3 cases with independently reversed spine, manifest,
 and ZIP entry orders. Plain-text output must be exactly the two chapter markers
 in spine order. The navigation order stays fixed so reversed-spine cases also
-detect readers that follow navigation instead. CI checks the pinned Pandoc 3.11
-and the nightly build. Run `./scripts/fetch-pandoc.sh` first on a fresh checkout.
+detect readers that follow navigation instead.
+
+It also checks that DOCX output carries the structure Word itself uses. The
+round-trip lanes read DOCX back through pandoc, which cannot tell whether a
+heading shows up in Word's navigation pane or a list renumbers when edited. One
+fixed document goes through the docx writer and the check reads
+`word/document.xml` directly:
+
+- headings use the built-in `heading 1` to `heading 3` styles, resolved by
+  style name rather than style id
+- list items use native numbering (`w:numPr`) at the right level and format,
+  one numbering instance per list, with no list marker typed into the text
+- the table's header row is marked `w:tblHeader`, so it repeats across pages,
+  and no body row is
+
+CI checks the pinned Pandoc 3.11 and the nightly build. Run `./scripts/fetch-pandoc.sh` first on a fresh checkout.
 Use `make correctness PANDOC=/path/to/pandoc` for another build.
 
 ## Which pandoc, measured when
