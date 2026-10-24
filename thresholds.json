@@ -1,5 +1,5 @@
 {
- "about": "Regression thresholds for src/delta.py. A regression is a cell that dropped rank between two runs (see src/verdicts.py); weight is what a reader loses (see src/severity.py). Pick a profile with --profile; `allow` is shared by both and exempts cells whose verdict depends on the machine rather than on pandoc.",
+ "about": "Regression thresholds for src/delta.py. A regression is a cell that dropped rank between two runs (see src/verdicts.py); weight is what a reader loses (see src/severity.py). Pick a profile with --profile; `allow` applies to every profile and exempts cells whose verdict depends on the machine rather than on pandoc.",
  "allow": [
   {
    "lane": "matrix",
@@ -15,6 +15,23 @@
     "total": 0
    },
    "max_regression_weight": 0,
+   "fail_on_unknown_verdict": true,
+   "fail_on_missing_coverage": true
+  },
+  "release": {
+   "description": "a new pandoc release against the previous pinned release: allow limited non-content movement while recording every changed cell",
+   "max_regressions": {
+    "total": 12,
+    "exact": 12,
+    "matrix": 6,
+    "roundtrip": 6,
+    "meta": 2
+   },
+   "max_regressions_by_class": {
+    "content": 0,
+    "structure": 4
+   },
+   "max_regression_weight": 24,
    "fail_on_unknown_verdict": true,
    "fail_on_missing_coverage": true
   },

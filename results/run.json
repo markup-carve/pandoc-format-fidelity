@@ -1,10 +1,10 @@
 {
- "date": "2026-09-30T22:08:13Z",
+ "date": "2026-10-24T18:07:49Z",
  "pandoc": {
-  "version": "3.11",
-  "banner": "pandoc 3.11",
+  "version": "3.12.1",
+  "banner": "pandoc 3.12.1",
   "binary": "pandoc",
-  "pinned": "3.11",
+  "pinned": "3.12.1",
   "is_pin": true,
   "api": [
    1,
@@ -14,7 +14,7 @@
   ]
  },
  "probes": 66,
- "commit": "09e7a7a",
+ "commit": "fc38462",
  "dirty": false,
  "python": "3.12.3",
  "platform": "Linux-x86_64"

@@ -77,7 +77,7 @@ fixed document goes through the docx writer and the check reads
 - the table's header row is marked `w:tblHeader`, so it repeats across pages,
   and no body row is
 
-CI checks the pinned Pandoc 3.11 and the nightly build. Run `./scripts/fetch-pandoc.sh` first on a fresh checkout.
+CI checks the pinned Pandoc 3.12.1 and the nightly build. Run `./scripts/fetch-pandoc.sh` first on a fresh checkout.
 Use `make correctness PANDOC=/path/to/pandoc` for another build.
 
 ## Which pandoc, measured when
@@ -119,9 +119,11 @@ Every cell that moved is reported as `format · probe · from -> to`, classified
 against the ranking in `src/verdicts.py` - each lane declares an order over its
 verdicts, so a cell that drops rank is a regression and one that rises is an
 improvement. `thresholds.json` decides whether that passes, and the exit code is
-the gate. Two profiles, because the two comparisons are not the same question:
+the gate. Use the profile for the comparison being made:
 
 - **`pin`** - the repo's own results against the pinned pandoc. Nothing may move.
+- **`release`** - a new pandoc release against the previous pin. It records
+  changed cells and rejects content loss or excessive structural movement.
 - **`nightly`** - the watch on pandoc's nightly build. Presentation-class
   movement is expected and tolerated up to a cap; content-class movement never is.
   A breach reports a change in pandoc rather than in this repo, so the scheduled
@@ -163,7 +165,7 @@ make controls # the two controls the report quotes (see src/controls.py)
 
 `make controls` is not part of the grid. It checks that the writer lane's comparison
 means what the report claims: every writer is asked to emit the same document twice
-(75 of 76 are byte-identical; `pdf` errors, so it cannot be checked), and the
+(76 of 77 are byte-identical; `pdf` errors, so it cannot be checked), and the
 `--wrap=preserve` effect is counted on the `softbreak` probe.
 
 The website browser checks require `npm ci` and Playwright Chromium.
@@ -175,7 +177,7 @@ Results are committed under `results/`, so a rerun shows up as a reviewable diff
 To measure a different pandoc:
 
 ```
-PANDOC_VERSION=3.11 ./scripts/fetch-pandoc.sh && make lanes report
+PANDOC_VERSION=3.12.1 ./scripts/fetch-pandoc.sh && make lanes report
 PANDOC=/path/to/pandoc make lanes report      # e.g. a nightly build
 ```
 
