@@ -20,11 +20,9 @@ changed, or because the machine cannot run a converter today. The exemption
 list in thresholds.json is where the third kind is written down, with a
 reason, rather than being quietly subtracted.
 
-There are two threshold profiles, because the two comparisons this repo makes
-are not the same question. Against the pinned pandoc nothing may move without
-a human deciding it should; against pandoc's nightly, upstream restyles
-writers routinely, so presentation-class movement is expected and content-class
-movement never is.
+The pin profile checks reproducibility. The release and nightly profiles compare
+different pandoc builds; they allow limited non-content movement and reject
+content loss.
 """
 import argparse
 import json

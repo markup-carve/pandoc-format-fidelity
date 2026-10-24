@@ -1,31 +1,7 @@
 {
- "generated": "2026-09-30T22:13:39Z",
+ "generated": "2026-10-24T18:10:51Z",
  "baseline": {
   "dir": "results-baseline",
-  "run": {
-   "date": "2026-09-30T00:53:45Z",
-   "pandoc": {
-    "version": "3.11",
-    "banner": "pandoc 3.11",
-    "binary": "pandoc",
-    "pinned": "3.11",
-    "is_pin": true,
-    "api": [
-     1,
-     23,
-     1,
-     2
-    ]
-   },
-   "probes": 66,
-   "commit": "dc52f36",
-   "dirty": true,
-   "python": "3.12.3",
-   "platform": "Linux-x86_64"
-  }
- },
- "candidate": {
-  "dir": "results",
   "run": {
    "date": "2026-09-30T22:08:13Z",
    "pandoc": {
@@ -48,12 +24,44 @@
    "platform": "Linux-x86_64"
   }
  },
+ "candidate": {
+  "dir": "results",
+  "run": {
+   "date": "2026-10-24T18:07:49Z",
+   "pandoc": {
+    "version": "3.12.1",
+    "banner": "pandoc 3.12.1",
+    "binary": "pandoc",
+    "pinned": "3.12.1",
+    "is_pin": true,
+    "api": [
+     1,
+     23,
+     1,
+     2
+    ]
+   },
+   "probes": 66,
+   "commit": "fc38462",
+   "dirty": false,
+   "python": "3.12.3",
+   "platform": "Linux-x86_64"
+  }
+ },
  "thresholds": {
-  "description": "the repo's own results against the pinned pandoc: nothing may move without a human deciding it should",
+  "description": "a new pandoc release against the previous pinned release: allow limited non-content movement while recording every changed cell",
   "max_regressions": {
-   "total": 0
+   "total": 12,
+   "exact": 12,
+   "matrix": 6,
+   "roundtrip": 6,
+   "meta": 2
   },
-  "max_regression_weight": 0,
+  "max_regressions_by_class": {
+   "content": 0,
+   "structure": 4
+  },
+  "max_regression_weight": 24,
   "fail_on_unknown_verdict": true,
   "fail_on_missing_coverage": true,
   "allow": [
@@ -64,18 +72,3020 @@
     "reason": "the pdf writer needs an external TeX engine, so this row measures whether the runner has one"
    }
   ],
-  "profile": "pin"
+  "profile": "release"
  },
- "changes": [],
+ "changes": [
+  {
+   "lane": "matrix",
+   "format": "docx",
+   "probe": "image_size",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "matrix",
+   "format": "docx",
+   "probe": "link_title",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "matrix",
+   "format": "odt",
+   "probe": "table_colwidth",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "docx",
+   "probe": "image_size",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "docx",
+   "probe": "link_title",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "odt",
+   "probe": "table_rowheadcols",
+   "from": "same",
+   "to": "diff",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "blockquote",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "bulletlist",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "cite",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "code_inline",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "code_inline_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "codeblock",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "codeblock_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "codeblock_lang",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "deflist",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "div_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "emph",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "figure",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "figure_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "header",
+   "from": "err",
+   "to": "diff",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "hrule",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "image",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "image_size",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "image_title",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "lineblock",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "linebreak",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "link",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "link_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "link_title",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "list_loose",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "list_nested",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "math_display",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "math_inline",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "note",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "ol_delim_paren",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "ol_example",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "ol_start",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "ol_style_alpha",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "ol_style_roman",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "orderedlist",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "quoted_double",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "quoted_single",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "rawblock_html",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "rawblock_tex",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "rawinline_html",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "rawinline_tex",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "smallcaps",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "softbreak",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "span_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "strikeout",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "strong",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "subscript",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "superscript",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_align",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_attrs_nocaption",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_block_cell",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_caption",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_cell_align",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_cell_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_colspan",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_colwidth",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_foot",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_head",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_multibody",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_row_attrs",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_rowheadcols",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "table_rowspan",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "opml",
+   "probe": "underline",
+   "from": "err",
+   "to": "same",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "roundtrip",
+   "format": "typst",
+   "probe": "header",
+   "from": "err",
+   "to": "diff",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "roundtrip",
+   "format": "typst",
+   "probe": "header_level",
+   "from": "err",
+   "to": "diff",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table_align",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table_block_cell",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table_caption",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table_cell_align",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table_colspan",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table_foot",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "asciidoc",
+   "probe": "table_rowspan",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "docx",
+   "probe": "link_title",
+   "from": "lossy",
+   "to": "exact",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "odt",
+   "probe": "table_head",
+   "from": "exact",
+   "to": "lossy",
+   "direction": "worse",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "blockquote",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "bulletlist",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "cite",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "code_inline",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "code_inline_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "codeblock",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "codeblock_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "codeblock_lang",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "deflist",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "div_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "emph",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "figure",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "figure_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "hrule",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "image",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "image_size",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "image_title",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "lineblock",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "linebreak",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "link",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "link_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "link_title",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "list_loose",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "list_nested",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "math_display",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "math_inline",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "note",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "ol_delim_paren",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "ol_example",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "ol_start",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "ol_style_alpha",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "ol_style_roman",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "orderedlist",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "quoted_double",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "quoted_single",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "rawblock_html",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "rawblock_tex",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "rawinline_html",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "rawinline_tex",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "smallcaps",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "softbreak",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "span_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "strikeout",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "strong",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "subscript",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "superscript",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_align",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_attrs_nocaption",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_block_cell",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_caption",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_cell_align",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_cell_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_colspan",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_colwidth",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_foot",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "content",
+   "weight": 3
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_head",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_multibody",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_row_attrs",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_rowheadcols",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "table_rowspan",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "opml",
+   "probe": "underline",
+   "from": "err",
+   "to": "lossy",
+   "direction": "better",
+   "class": "presentation",
+   "weight": 1
+  },
+  {
+   "lane": "exact",
+   "format": "typst",
+   "probe": "header",
+   "from": "err",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  },
+  {
+   "lane": "exact",
+   "format": "typst",
+   "probe": "header_level",
+   "from": "err",
+   "to": "exact",
+   "direction": "better",
+   "class": "structure",
+   "weight": 2
+  }
+ ],
  "exempt": [],
- "structural": [],
+ "structural": [
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "blockquote",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "bulletlist",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "cite",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "code_inline",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "code_inline_attrs",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock_lang",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "deflist",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "div_attrs",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "emph",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "figure",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "figure_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header_level",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "hrule",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image_size",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image_title",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "lineblock",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "linebreak",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link_title",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "list_loose",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "list_nested",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "math_display",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "math_inline",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "note",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_delim_paren",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_example",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_start",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_style_alpha",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_style_roman",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "orderedlist",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "quoted_double",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "quoted_single",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawblock_html",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawblock_tex",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawinline_html",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawinline_tex",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "smallcaps",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "softbreak",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "span_attrs",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "strikeout",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "strong",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "subscript",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "superscript",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_align",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_attrs_nocaption",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_block_cell",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_caption",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_cell_align",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_cell_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_colspan",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_colwidth",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_foot",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_head",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_multibody",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_row_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_rowheadcols",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_rowspan",
+   "to": "diff"
+  },
+  {
+   "lane": "matrix",
+   "what": "added",
+   "format": "fodt",
+   "probe": "underline",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "blockquote",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "bulletlist",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "cite",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "code_inline",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "code_inline_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock_lang",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "deflist",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "div_attrs",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "emph",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "figure",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "figure_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header_level",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "hrule",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image_size",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image_title",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "lineblock",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "linebreak",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link_title",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "list_loose",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "list_nested",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "math_display",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "math_inline",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "note",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_delim_paren",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_example",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_start",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_style_alpha",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_style_roman",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "orderedlist",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "quoted_double",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "quoted_single",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawblock_html",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawblock_tex",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawinline_html",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawinline_tex",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "smallcaps",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "softbreak",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "span_attrs",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "strikeout",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "strong",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "subscript",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "superscript",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_align",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_attrs_nocaption",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_block_cell",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_caption",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_cell_align",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_cell_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_colspan",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_colwidth",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_foot",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_head",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_multibody",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_row_attrs",
+   "to": "same"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_rowheadcols",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_rowspan",
+   "to": "diff"
+  },
+  {
+   "lane": "roundtrip",
+   "what": "added",
+   "format": "fodt",
+   "probe": "underline",
+   "to": "diff"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "blockquote",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "bulletlist",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "cite",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "code_inline",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "code_inline_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "codeblock_lang",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "deflist",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "div_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "emph",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "figure",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "figure_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header",
+   "to": "canonical"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "header_level",
+   "to": "canonical"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "hrule",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image_size",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "image_title",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "lineblock",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "linebreak",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "link_title",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "list_loose",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "list_nested",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "math_display",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "math_inline",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "note",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_delim_paren",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_example",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_start",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_style_alpha",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "ol_style_roman",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "orderedlist",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "quoted_double",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "quoted_single",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawblock_html",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawblock_tex",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawinline_html",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "rawinline_tex",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "smallcaps",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "softbreak",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "span_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "strikeout",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "strong",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "subscript",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "superscript",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_align",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_attrs_nocaption",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_block_cell",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_caption",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_cell_align",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_cell_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_colspan",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_colwidth",
+   "to": "canonical"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_foot",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_head",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_multibody",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_row_attrs",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_rowheadcols",
+   "to": "lossy"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "table_rowspan",
+   "to": "exact"
+  },
+  {
+   "lane": "exact",
+   "what": "added",
+   "format": "fodt",
+   "probe": "underline",
+   "to": "lossy"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "abstract",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "author",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "custom",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "date",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "flag",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "keywords",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "lang",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "nested",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "subtitle",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "fodt",
+   "probe": "title",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "abstract",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "author",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "custom",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "date",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "flag",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "keywords",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "lang",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "nested",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "subtitle",
+   "to": "lost"
+  },
+  {
+   "lane": "meta",
+   "what": "added",
+   "format": "typst",
+   "probe": "title",
+   "to": "lost"
+  }
+ ],
  "tally": {
-  "regressions": 0,
-  "improvements": 0,
+  "regressions": 1,
+  "improvements": 146,
   "unknown": 0,
-  "regression_weight": 0,
-  "regressions_by_lane": {},
-  "regressions_by_class": {}
+  "regression_weight": 2,
+  "regressions_by_lane": {
+   "exact": 1
+  },
+  "regressions_by_class": {
+   "structure": 1
+  }
  },
  "breaches": [],
  "status": "ok"
