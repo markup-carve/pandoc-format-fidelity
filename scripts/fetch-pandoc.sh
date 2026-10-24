@@ -3,7 +3,7 @@
 # against this exact build; bump PANDOC_VERSION and re-run to move the baseline.
 set -euo pipefail
 
-PANDOC_VERSION="${PANDOC_VERSION:-3.11}"
+PANDOC_VERSION="${PANDOC_VERSION:-3.12.1}"
 DEST="$(cd "$(dirname "$0")/.." && pwd)/vendor"
 TARBALL="pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz"
 URL="https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/${TARBALL}"
