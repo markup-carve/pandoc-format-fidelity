@@ -38,12 +38,17 @@ concurrency:
 jobs:
   compare:
     runs-on: ubuntu-latest
+    # Upstream builds on ubuntu-latest, which can have a newer glibc than this
+    # repository's runner. Rolling Ubuntu tracks that build environment.
+    container: ubuntu:rolling
     timeout-minutes: 20
     steps:
+      - name: Install measurement tools
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            ca-certificates curl gh git jq make python3 tar
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
-        with:
-          python-version: '3.12'
       - name: Fetch pinned pandoc
         run: ./scripts/fetch-pandoc.sh
       - name: Fetch pandoc nightly
