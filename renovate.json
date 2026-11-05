@@ -2,5 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "schedule": ["before 6am on monday"],
-  "labels": ["dependencies"]
+  "labels": ["dependencies"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^scripts\\/fetch-pandoc\\.sh$/"],
+      "matchStrings": ["PANDOC_VERSION=\\\"\\$\\{PANDOC_VERSION:-(?<currentValue>[0-9.]+)\\}\\\""],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "jgm/pandoc",
+      "versioningTemplate": "semver-coerced"
+    }
+  ]
 }

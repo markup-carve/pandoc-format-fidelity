@@ -53,6 +53,14 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             ca-certificates curl gh git jq make python3 tar
       - uses: actions/checkout@v7
+      - name: Report when the pinned release trails Pandoc
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/report-pandoc-release.py \
+            --pin-file scripts/fetch-pandoc.sh --source shell \
+            --repo "$GITHUB_REPOSITORY" \
+            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
       - name: Fetch pinned pandoc
         run: ./scripts/fetch-pandoc.sh
       - name: Fetch pandoc nightly
