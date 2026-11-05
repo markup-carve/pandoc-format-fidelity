@@ -132,7 +132,7 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
 <div class="wrap">
 
 <header class="top">
-  <p class="eyebrow">Measured against pandoc 3.12.1</p>
+  <p class="eyebrow">Measured against pandoc 3.13</p>
   <h1>Which pandoc format actually keeps your document</h1>
   <p class="lede">Every reader and writer pandoc ships was probed with 66 element and feature variants, one at a time. The question each probe answers: can this format
   tell the rich version apart from the stripped-down one at all - and if it
@@ -165,8 +165,8 @@ footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); colo
     <p>Every writer runs with <code>--wrap=preserve</code>. Without it a wrapping
     writer turns a SoftBreak into a space, and the probe reads as "cannot express" for
     a distinction the format handles fine - that alone moved 45 writers.</p>
-    <p>These measurements use released pandoc 3.12.1 and were refreshed on
-    2026-10-24. The current comparison with the preceding measurement is in
+    <p>These measurements use released pandoc 3.13 and were refreshed on
+    2026-11-05. The current comparison with the preceding measurement is in
     <code>results/delta.json</code>; dated comparisons are in
     <code>results/history.jsonl</code>. Carve source, exchange AST, and export-format
     round trips have separate results below, with the bridge and renderer revisions
@@ -434,8 +434,8 @@ make carve CARVE_BRIDGE=../pandoc-carve/dist/index.js   # optional Carve lanes</
 </section>
 
 <footer>
-  pandoc 3.12.1 &middot; 66 probes &middot; 77 writers &middot; 35 round-trippable &middot; measured 2026-10-24 on Linux-x86-64.
-  &middot; <a href="dashboard.html">Dashboard</a>
+  pandoc 3.13 &middot; 66 probes &middot; 77 writers &middot; 35 round-trippable &middot; measured 2026-11-05 on Linux-x86-64.
+  &middot; <a href="https://markup-carve.github.io/pandoc-format-fidelity/dashboard.html">Dashboard</a>
 </footer>
 
 </div>

@@ -77,7 +77,7 @@ fixed document goes through the docx writer and the check reads
 - the table's header row is marked `w:tblHeader`, so it repeats across pages,
   and no body row is
 
-CI checks the pinned Pandoc 3.12.1 and the nightly build. Run `./scripts/fetch-pandoc.sh` first on a fresh checkout.
+CI checks the pinned Pandoc 3.13 and the nightly build. Run `./scripts/fetch-pandoc.sh` first on a fresh checkout.
 Use `make correctness PANDOC=/path/to/pandoc` for another build.
 
 ## Which pandoc, measured when
@@ -177,7 +177,7 @@ Results are committed under `results/`, so a rerun shows up as a reviewable diff
 To measure a different pandoc:
 
 ```
-PANDOC_VERSION=3.12.1 ./scripts/fetch-pandoc.sh && make lanes report
+PANDOC_VERSION=3.13 ./scripts/fetch-pandoc.sh && make lanes report
 PANDOC=/path/to/pandoc make lanes report      # e.g. a nightly build
 ```
 
