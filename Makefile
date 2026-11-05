@@ -104,8 +104,9 @@ delta:
 	  --profile $(PROFILE) --json results/delta.json $(DELTA_ARGS)
 
 docs/report.pdf: docs/index.html
+	python3 src/pdf_source.py
 	google-chrome --headless --disable-gpu --no-sandbox --no-pdf-header-footer \
-	  --print-to-pdf=$(CURDIR)/$@ "file://$(CURDIR)/docs/index.html"
+	  --print-to-pdf=$(CURDIR)/$@ "file://$(CURDIR)/docs/_pdf-index.html"
 
 docs/overview.png: resources/overview.html
 	google-chrome --headless --disable-gpu --no-sandbox --hide-scrollbars \
