@@ -36,7 +36,7 @@ FIXTURES = {
     "code-block-header": '```python "config.py"\nx = 1\n```\n',
     "raw-html": "```=html\n<hr class=rule>\n```\n",
     "table": "|= Head A |= Head B |\n| a | b |\n| c | d |\n",
-    "table-align": "|=> Right |=~ Center |\n| a | b |\n",
+    "table-align": "|={>} Right |={~} Center |\n| a | b |\n",
     "table-caption": "|= Head A |= Head B |\n| a | b |\n^ A caption\n",
     "table-span": "|= Head A |= Head B |\n| a | < |\n| c | d |\n",
     "table-rowspan": "|= Head A |= Head B |\n| a | b |\n| ^ | d |\n",

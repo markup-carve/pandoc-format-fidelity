@@ -1,10 +1,10 @@
 {
- "generated": "2026-10-15T00:23:24Z",
- "pandoc": "pandoc 3.11",
- "bridge": "/var/tmp/claude-lane-pcfix/dist/index.js",
- "bridgeRevision": "cf9be6e5ad290294f9387126598a5e2a009b1136",
- "renderer": "@markup-carve/carve 0.1.11",
- "rendererRevision": null,
+ "generated": "2026-11-11T18:17:31Z",
+ "pandoc": "pandoc 3.13",
+ "bridge": "~/work/lanes/0-ds-pandoc-1794419870/pc-wave/dist/index.js",
+ "bridgeRevision": "9adebf64228d34ce963afd503e28567629c82e10",
+ "renderer": "@markup-carve/carve 0.1.16 (revision 3cd4a788411d)",
+ "rendererRevision": "3cd4a788411df629fac5560cc1e83e2472b8871d",
  "formats": [
   "markdown",
   "gfm",
@@ -158,8 +158,8 @@
    "source": "H{,2,}O and mc{^2^}.\n"
   },
   "table-align": {
-   "bytes": 33,
-   "source": "|=> Right |=~ Center |\n| a | b |\n"
+   "bytes": 37,
+   "source": "|={>} Right |={~} Center |\n| a | b |\n"
   },
   "table-caption": {
    "bytes": 44,
@@ -233,7 +233,7 @@
    "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "bridge-preserve": {
    "admonition": "exact",
@@ -277,7 +277,7 @@
    "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "markdown": {
    "admonition": "exact",
@@ -321,13 +321,13 @@
    "table-span": "lossy",
    "table": "lossy",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "gfm": {
    "admonition": "lossy",
    "autolink": "respelled",
    "blockquote": "exact",
-   "bold-italic": "exact",
+   "bold-italic": "lossy",
    "bullet-list": "exact",
    "caption-image": "lossy",
    "code-block-header": "lossy",
@@ -365,13 +365,13 @@
    "table-span": "lossy",
    "table": "exact",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "commonmark_x": {
    "admonition": "exact",
    "autolink": "respelled",
    "blockquote": "exact",
-   "bold-italic": "exact",
+   "bold-italic": "lossy",
    "bullet-list": "exact",
    "caption-image": "lossy",
    "code-block-header": "exact",
@@ -408,11 +408,11 @@
    "table-rowspan": "lossy",
    "table-span": "lossy",
    "table": "exact",
-   "task-list": "lossy",
-   "thematic-break": "exact"
+   "task-list": "exact",
+   "thematic-break": "respelled"
   },
   "djot": {
-   "admonition": "lossy",
+   "admonition": "exact",
    "autolink": "exact",
    "blockquote": "exact",
    "bold-italic": "exact",
@@ -453,7 +453,7 @@
    "table-span": "lossy",
    "table": "exact",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "html": {
    "admonition": "exact",
@@ -497,7 +497,7 @@
    "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "latex": {
    "admonition": "lossy",
@@ -576,7 +576,7 @@
    "quote-container": "respelled",
    "raw-html": "lossy",
    "span-attrs": "lossy",
-   "strike-highlight": "lossy",
+   "strike-highlight": "exact",
    "sup-sub": "exact",
    "table-align": "lossy",
    "table-caption": "lossy",
@@ -585,13 +585,13 @@
    "table-span": "lossy",
    "table": "lossy",
    "task-list": "lossy",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "docx": {
    "admonition": "lossy",
    "autolink": "respelled",
    "blockquote": "exact",
-   "bold-italic": "exact",
+   "bold-italic": "lossy",
    "bullet-list": "exact",
    "caption-image": "lossy",
    "code-block-header": "lossy",
@@ -611,7 +611,7 @@
    "heading": "lossy",
    "image": "lossy",
    "inline-footnote": "exact",
-   "link-title": "lossy",
+   "link-title": "exact",
    "link": "exact",
    "math-display": "lossy",
    "math-inline": "lossy",
@@ -629,13 +629,13 @@
    "table-span": "lossy",
    "table": "lossy",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "odt": {
    "admonition": "lossy",
    "autolink": "respelled",
    "blockquote": "exact",
-   "bold-italic": "exact",
+   "bold-italic": "lossy",
    "bullet-list": "exact",
    "caption-image": "lossy",
    "code-block-header": "lossy",
@@ -669,9 +669,9 @@
    "table-align": "lossy",
    "table-caption": "lossy",
    "table-ragged": "lossy",
-   "table-rowspan": "exact",
-   "table-span": "exact",
-   "table": "exact",
+   "table-rowspan": "lossy",
+   "table-span": "lossy",
+   "table": "lossy",
    "task-list": "exact",
    "thematic-break": "lossy"
   },
@@ -717,7 +717,7 @@
    "table-span": "exact",
    "table": "exact",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "org": {
    "admonition": "lossy",
@@ -761,7 +761,7 @@
    "table-span": "lossy",
    "table": "exact",
    "task-list": "exact",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   },
   "jats": {
    "admonition": "lossy",
@@ -794,7 +794,7 @@
    "nested-list": "lossy",
    "ordered-list": "lossy",
    "quote-container": "respelled",
-   "raw-html": "err",
+   "raw-html": "lossy",
    "span-attrs": "lossy",
    "strike-highlight": "lossy",
    "sup-sub": "exact",
@@ -849,7 +849,7 @@
    "table-span": "exact",
    "table": "exact",
    "task-list": "lossy",
-   "thematic-break": "exact"
+   "thematic-break": "respelled"
   }
  },
  "laneOptions": {
@@ -905,7 +905,7 @@
   "table-span": "|= Head A |= Head B |\n| a | < |\n| c | d |\n",
   "table": "|= Head A |= Head B |\n| a | b |\n| c | d |\n",
   "task-list": "- [ ] open\n- [x] done\n",
-  "thematic-break": "before\n\n---\n\nafter\n"
+  "thematic-break": "before\n\n***\n\nafter\n"
  },
  "warnings": {
   "comment": [
@@ -915,14 +915,7 @@
    "table: 1 row(s) shorter than the widest (2 cells) are padded with empty cells - a pandoc table is rectangular, and PART 9 §16 keeps each row's own cell count"
   ]
  },
- "errors": {
-  "jats": {
-   "raw-html": {
-    "stage": "pandoc export/import",
-    "message": "Command failed: pandoc -f jats -t json\nInvalid XML:\nMissing root element\n\n"
-   }
-  }
- },
+ "errors": {},
  "output": {
   "admonition": "::: note \"Take note\"\nBody of the note.\n:::\n",
   "autolink": "Bare <https://example.com> in prose.\n",
@@ -965,6 +958,6 @@
   "table-span": "|= Head A |= Head B |\n| a | < |\n| c | d |\n",
   "table": "|= Head A |= Head B |\n| a | b |\n| c | d |\n",
   "task-list": "- [ ] open\n- [x] done\n",
-  "thematic-break": "before\n\n---\n\nafter\n"
+  "thematic-break": "before\n\n***\n\nafter\n"
  }
 }
